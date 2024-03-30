@@ -1,0 +1,23 @@
+.container {
+    width: 400px;
+    height: 400px;
+    border: 1px solid black;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+    gap: 2px
+}
+
+.day {
+    // aspect-ratio: 1 / 1;
+    background-color:antiquewhite;
+    display: flex;
+    justify-content: center;
+    align-items: center;  
+}
+.not-current-month{
+    background-color:lightgray;
+}
+.current-date{
+    border: 1px solid blue;
+}

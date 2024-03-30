@@ -1,0 +1,8 @@
+<h2>{{title}}</h2>
+<button (click)="previous()">Previous</button>
+<button (click)="next()">Next</button>
+<div class="container">
+    <div class="day" *ngFor="let day of dayList" [ngClass]="[!day.inCurrentMonth ? 'not-current-month' : '', day.currentDate ? 'current-date' : '']">
+    {{day.number}}
+    </div>
+</div>

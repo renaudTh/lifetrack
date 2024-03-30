@@ -1,7 +1,8 @@
 import { Injectable } from "@angular/core";
 import { Observable, of } from "rxjs";
-import { Activity } from "src/domain/activity";
-import { IActivityProvider } from "src/domain/activity.provider.interface";
+import { IActivityProvider } from "../domain/activity.provider.interface";
+import { Activity } from "../domain/activity";
+
 
 @Injectable()
 export class ActivityProviderService implements IActivityProvider {
@@ -26,8 +27,23 @@ export class ActivityProviderService implements IActivityProvider {
             representation: "🎹",
             amount: 30,
             unit:  "min",
-            description: "30 min of playing the piano"
-        }
+            description: "Play the piano"
+        },
+        {
+            id: "3",
+            representation: "🏃‍♂️",
+            amount: 2,
+            unit:  "km",
+            description: "Running"
+        },
+        {
+            id: "4",
+            representation: "🍺",
+            amount: 25,
+            unit:  "cl",
+            description: "Drink a beer"
+        },
+
     ];
 
 
