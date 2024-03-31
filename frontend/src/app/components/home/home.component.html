@@ -1,8 +1,10 @@
-<h2>{{title}}</h2>
-<button (click)="previous()">Previous</button>
-<button (click)="next()">Next</button>
+<div class="header">
+  <button pButton (click)="previous()" icon="pi pi-chevron-left" class="p-button-secondary" ></button>
+  <h2>{{title}}</h2>  
+  <button pButton (click)="next()" icon="pi pi-chevron-right" [disabled]="!canNext" class="p-button-secondary" ></button>
+</div>
 <div class="container">
-    <div class="day" *ngFor="let day of dayList" [ngClass]="[!day.inCurrentMonth ? 'not-current-month' : '', day.currentDate ? 'current-date' : '']">
+    <div class="day" (click)="selectDay(day)" *ngFor="let day of dayList" [ngClass]="getClassList(day)">
     {{day.number}}
     </div>
 </div>
