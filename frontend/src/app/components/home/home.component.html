@@ -5,6 +5,6 @@
 </div>
 <div class="container">
     <div class="day" (click)="selectDay(day)" *ngFor="let day of dayList" [ngClass]="getClassList(day)">
-    {{day.number}}
+    {{day.date.toLocaleDateString('en-US', {day: 'numeric'})}}
     </div>
 </div>

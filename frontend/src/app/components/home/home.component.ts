@@ -5,8 +5,7 @@ import { ActivityMinimalComponent } from '../activity-minimal/activity-minimal.c
 import { ButtonModule } from 'primeng/button';
 
 export interface Day {
-  number: number;
-  name: string;
+  date: Date;
   inCurrentMonth: boolean;
   currentDate?: boolean;
 }
@@ -41,19 +40,16 @@ export class HomeComponent {
     this.displayedDate.setDate(1);
     this.displayedDate.setMonth(this.displayedDate.getMonth());
     this.displayedDate.setFullYear(this.currentDate.getFullYear());
-    console.log(this.currentDate.toDateString());
   }
 
   previous(){
     const month = this.displayedDate.getMonth()
     this.displayedDate.setMonth(month - 1);
-    // console.log(this.displayedDate.toLocaleDateString());
   }
   next(){
     
     const month = this.displayedDate.getMonth()
     this.displayedDate.setMonth(month + 1); 
-    // console.log(this.displayedDate.toLocaleDateString());
   }
   isToday(date: Date){
     return date.toDateString() === new Date().toDateString();
@@ -79,28 +75,25 @@ export class HomeComponent {
     const result: Day[] = [];
     let _date = new Date(date);
 
-    _date.setDate(_date.getDate()-1)
+    // _date.setDate(_date.getDate()-1)
     // We want to begin on Monday
-    while(_date.getDay() !== 0){
-        const dayNumber = _date.getDate(); 
+    while(_date.getDay() !== 1){
+      const dayNumber = _date.getDate(); 
         _date.setDate(dayNumber - 1);
-        const dayName = _date.toLocaleDateString('en-US', { weekday: 'long' });
-        result.unshift({ number: dayNumber, name: dayName, inCurrentMonth: false, currentDate:this.isToday(_date)  });
+        result.unshift({date: new Date(_date), inCurrentMonth: false, currentDate:this.isToday(_date)  });
       }
       // Reset to the beginning of the month
      _date = new Date(date);
       while (_date.getMonth() === date.getMonth()) {
       const dayNumber = _date.getDate();
-      const dayName = _date.toLocaleDateString('en-US', { weekday: 'long' });
-      result.push({ number: dayNumber, name: dayName, inCurrentMonth: true, currentDate:this.isToday(_date) });
+      result.push({ date: new Date(_date), inCurrentMonth: true, currentDate:this.isToday(_date) });
       _date.setDate(dayNumber + 1);
     }
     //We want to end on sunday
     while (_date.getDay() !== 1) {
       const dayNumber = _date.getDate();
       _date.setDate(dayNumber + 1);
-      const dayName = _date.toLocaleDateString('en-US', { weekday: 'long' });
-      result.push({ number: dayNumber, name: dayName, inCurrentMonth: false, currentDate:this.isToday(_date) });
+      result.push({ date: new Date(_date), inCurrentMonth: false, currentDate:this.isToday(_date) });
     }
     return result;
   }
