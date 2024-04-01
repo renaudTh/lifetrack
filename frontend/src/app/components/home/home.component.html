@@ -1,10 +1,9 @@
-<div class="header">
-  <button pButton (click)="previous()" icon="pi pi-chevron-left" class="p-button-secondary" ></button>
-  <h2>{{title}}</h2>  
-  <button pButton (click)="next()" icon="pi pi-chevron-right" [disabled]="!canNext" class="p-button-secondary" ></button>
-</div>
-<div class="container">
-    <div class="day" (click)="selectDay(day)" *ngFor="let day of dayList" [ngClass]="getClassList(day)">
-    {{day.date.toLocaleDateString('en-US', {day: 'numeric'})}}
-    </div>
+
+<app-calendar (onSelect)="onSelectDate($event)"></app-calendar>
+<app-add-activity-button [activities]="activities$ | async"></app-add-activity-button>
+<div class="days-activities">
+  <fieldset>
+    <legend> {{ selectedDate }}</legend>
+  </fieldset>
+  <h4></h4>
 </div>

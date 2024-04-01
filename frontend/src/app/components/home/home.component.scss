@@ -1,31 +1,20 @@
-.container {
-    width: 400px;
-    height: 400px;
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    grid-template-rows: repeat(6, 1fr);
-    gap: 2px
-}
-
-.day {
-    // aspect-ratio: 1 / 1;
-    background-color: antiquewhite;
+:host {
     display: flex;
-    justify-content: center;
-    align-items: center;  
+    flex-direction:column;
+    gap: 0.5em;
+    height: 100vh;
+    width: 100vw;
+    padding: 5px;
 }
-.not-current-month{
-    background-color:lightgray;
-}
-.current-date{
-    border: 1px solid blue;
-}
-.selected{
-    background-color: lightcoral;
-}
-.header {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
+.days-activities{
+    flex-grow: 1;
+    fieldset{
+        legend{
+            font-weight:700;
+            font-size: 1.1em;
+        }
+        border: 1px solid #1b4079ff;
+        border-radius: 4px;
+        height: 100%;
+    }
 }

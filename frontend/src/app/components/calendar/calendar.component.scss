@@ -1,0 +1,36 @@
+
+:host{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: auto;
+}
+.header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+.container {
+    aspect-ratio: 1/1;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px
+}
+
+.day {
+    background-color: #edebd7ff;
+    display: flex;
+    justify-content: center;
+    align-items: center;  
+}
+.not-current-month{
+    background-color: rgba(129, 164, 205, 0.237) ;
+}
+.current-date{
+    border: 1px solid #1b4079ff;
+}
+.selected{
+    background-color: #1b4079ff;
+    color: white;
+}

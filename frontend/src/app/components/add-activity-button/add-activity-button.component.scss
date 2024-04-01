@@ -1,0 +1,19 @@
+:host{
+    width: 100%;
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.left .right{
+    flex-grow: 1;
+}
+@keyframes slidein {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+  }
+.animated-right{
+    animation: 0.1s linear running slidein;
+    padding: 5px;
+}

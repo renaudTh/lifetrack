@@ -43,6 +43,13 @@ export class ActivityProviderService implements IActivityProvider {
             unit:  "cl",
             description: "Drink a beer"
         },
+        {
+            id: "6",
+            representation: "🍕",
+            amount: 1,
+            unit:  "u",
+            description: "Eat a pizza"
+        },
 
     ];
 

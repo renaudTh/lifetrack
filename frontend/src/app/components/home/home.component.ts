@@ -1,9 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, Inject } from '@angular/core';
+import { ButtonModule } from 'primeng/button';
+import { SpeedDialModule } from 'primeng/speeddial';
 import { ACTIVITY_PROVIDER, IActivityProvider } from '../../../domain/activity.provider.interface';
 import { ActivityMinimalComponent } from '../activity-minimal/activity-minimal.component';
-import { ButtonModule } from 'primeng/button';
-
+import { AddActivityButtonComponent } from '../add-activity-button/add-activity-button.component';
+import { CalendarComponent } from '../calendar/calendar.component';
 export interface Day {
   date: Date;
   inCurrentMonth: boolean;
@@ -13,90 +15,27 @@ export interface Day {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, ActivityMinimalComponent, ButtonModule],
+  imports: [CommonModule, ActivityMinimalComponent, ButtonModule, SpeedDialModule, CalendarComponent, AddActivityButtonComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
 export class HomeComponent {
 
-  private currentDate = new Date();
-  private displayedDate = new Date();
-  public selected: Day | null = null;
 
-  get title() {
-    return this.displayedDate.toLocaleDateString('en-US', { month: 'long', year: "numeric"});
-  }
-
-  get dayList(){
-    const list = this.generateDaysOfMonth(this.displayedDate);
-    return list;
-  }
-
-  getClassList(day: Day){
-    const isSelected = JSON.stringify(day) === JSON.stringify(this.selected);
-    return [!day.inCurrentMonth ? 'not-current-month' : '', day.currentDate ? 'current-date' : '', isSelected ? 'selected' : ''];
-  }
+  private _selectedDate: Date = new Date();
   constructor(@Inject(ACTIVITY_PROVIDER) private activityProvider: IActivityProvider){
-    this.displayedDate.setDate(1);
-    this.displayedDate.setMonth(this.displayedDate.getMonth());
-    this.displayedDate.setFullYear(this.currentDate.getFullYear());
-  }
-
-  previous(){
-    const month = this.displayedDate.getMonth()
-    this.displayedDate.setMonth(month - 1);
-  }
-  next(){
     
-    const month = this.displayedDate.getMonth()
-    this.displayedDate.setMonth(month + 1); 
   }
-  isToday(date: Date){
-    return date.toDateString() === new Date().toDateString();
-  }
-  get canNext(): boolean {
-    
-    const displayedMonth = this.displayedDate.getMonth();
-    const displayedYear = this.displayedDate.getFullYear();
-    const currentMonth = this.currentDate.getMonth();
-    const currentYear = this.currentDate.getFullYear();
-    if(displayedYear < currentYear) return true;
-    if(displayedYear === currentYear){
-      return (displayedMonth + 1) <= currentMonth;
-    }
-    return false;
-  }
-  selectDay(day: Day){
-    this.selected = day;
-    console.log("selected: ", this.selected);
-  }
-  generateDaysOfMonth(date: Date): Day[] {
+  protected activities$ = this.activityProvider.getAllActivities();
 
-    const result: Day[] = [];
-    let _date = new Date(date);
 
-    // _date.setDate(_date.getDate()-1)
-    // We want to begin on Monday
-    while(_date.getDay() !== 1){
-      const dayNumber = _date.getDate(); 
-        _date.setDate(dayNumber - 1);
-        result.unshift({date: new Date(_date), inCurrentMonth: false, currentDate:this.isToday(_date)  });
-      }
-      // Reset to the beginning of the month
-     _date = new Date(date);
-      while (_date.getMonth() === date.getMonth()) {
-      const dayNumber = _date.getDate();
-      result.push({ date: new Date(_date), inCurrentMonth: true, currentDate:this.isToday(_date) });
-      _date.setDate(dayNumber + 1);
-    }
-    //We want to end on sunday
-    while (_date.getDay() !== 1) {
-      const dayNumber = _date.getDate();
-      _date.setDate(dayNumber + 1);
-      result.push({ date: new Date(_date), inCurrentMonth: false, currentDate:this.isToday(_date) });
-    }
-    return result;
+  onSelectDate(date: Date){
+    console.log(date)
+    this._selectedDate = date;
   }
-
+  
+  get selectedDate(){
+    return this._selectedDate.toLocaleDateString("en-US", {weekday: "long", month: "long", day: "2-digit"});
+  }
   
 }
