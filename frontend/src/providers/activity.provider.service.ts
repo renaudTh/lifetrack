@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Observable, of } from "rxjs";
+import { BehaviorSubject, Observable, of } from "rxjs";
 import { IActivityProvider } from "../domain/activity.provider.interface";
 import { Activity } from "../domain/activity";
 
@@ -52,12 +52,14 @@ export class ActivityProviderService implements IActivityProvider {
         },
 
     ];
+    private _activitiesSubject = new BehaviorSubject<Activity[]>(this._activities);
 
 
     addActivity(activity: Activity): Observable<Activity> {
         const id = this._activities.length.toString();
         activity.id = id;
         this._activities = [...this._activities, activity];
+        this._activitiesSubject.next(this._activities);
         return of(activity);
     }
     updateActivity(activity: Partial<Activity>): Observable<Activity> {
@@ -69,7 +71,7 @@ export class ActivityProviderService implements IActivityProvider {
         return of(activity);
     }
     getAllActivities(): Observable<Activity[]> {
-        return of(this._activities);
+        return this._activitiesSubject.asObservable();
     }
 
 }

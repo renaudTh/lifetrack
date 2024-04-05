@@ -3,35 +3,34 @@ import { Component, Inject, Input, OnInit } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { SpeedDialModule } from 'primeng/speeddial';
-import { Activity } from '../../../domain/activity';
+import { Activity, ActivityRecord } from '../../../domain/activity';
 import { ActivityMinimalComponent } from '../activity-minimal/activity-minimal.component';
+import { ChipModule } from 'primeng/chip';
+import { IRecordProvider, RECORD_PROVIDER } from '../../../domain/record.provider.interface';
+import { firstValueFrom, mergeMap, take } from 'rxjs';
+import { DateService } from '../../../domain/date.service';
 @Component({
   selector: 'app-add-activity-button',
   standalone: true,
-  imports: [CommonModule, ButtonModule, SpeedDialModule, ActivityMinimalComponent],
+  imports: [CommonModule, ButtonModule, SpeedDialModule, ActivityMinimalComponent,  ChipModule],
   templateUrl: './add-activity-button.component.html',
   styleUrl: './add-activity-button.component.scss'
 })
-export class AddActivityButtonComponent implements OnInit {
+export class AddActivityButtonComponent {
   
   @Input() activities: Activity[] | null = [];
-  protected left: Activity[] = [];
-  protected right: Activity[] = [];
-  toggle: boolean = false;
-  
-  
-  ngOnInit(): void {
-    if(this.activities){
-      const mid = this.activities.length / 2;
-      this.left = this.activities.slice(0, mid);
-      this.right = this.activities.slice(mid, this.activities.length);
-    }
-  }
-  toggleRecent(){
-      this.toggle = !this.toggle;
-  }
 
-  addActivity(activity: Activity){
-    console.log(activity);
+  constructor(private dateService: DateService,@Inject(RECORD_PROVIDER) private recordProvider: IRecordProvider){}
+
+  async addActivity(activity: Activity){
+    const obs = this.dateService.selectedDate$.pipe(mergeMap((date) => {
+      const record:ActivityRecord = {
+        id: "test",
+        activity: activity,
+        date: date
+      }
+      return this.recordProvider.saveRecord(record)
+    }))
+    await firstValueFrom(obs)
   }
 }

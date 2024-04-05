@@ -1,13 +1,7 @@
-<div class="left">
-    <div *ngIf="toggle" class="animated-right">
-        <app-activity-minimal *ngFor="let item of left" [activity]="item" (onClick)="addActivity($event)"></app-activity-minimal>
-    </div>
-</div>
+
 <div class="center">
-      <p-button icon="pi pi-plus" [rounded]="true" (click)="toggleRecent()"></p-button>
+      <p-button icon="pi pi-plus" [rounded]="true"></p-button>
 </div>
 <div class="right">
-    <div *ngIf="toggle" class="animated-right">
-        <app-activity-minimal *ngFor="let item of right" [activity]="item" (onClick)="addActivity($event)"></app-activity-minimal>
-    </div>
+     <app-activity-minimal *ngFor="let item of activities" [activity]="item" (onClick)="addActivity($event)"></app-activity-minimal>
 </div>

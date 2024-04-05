@@ -7,6 +7,7 @@ export interface Activity{
 }
 
 export interface ActivityRecord {
+    id: string;
     activity: Activity;
     date: Date;
 }
