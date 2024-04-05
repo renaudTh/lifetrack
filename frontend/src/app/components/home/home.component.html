@@ -1,9 +1,14 @@
 
-<app-calendar (onSelect)="onSelectDate($event)"></app-calendar>
+<app-calendar></app-calendar>
 <app-add-activity-button [activities]="activities$ | async"></app-add-activity-button>
 <div class="days-activities">
-  <fieldset>
+  <fieldset *ngIf="selectedDate$ | async as selectedDate">
     <legend> {{ selectedDate }}</legend>
+    <div *ngIf="daily$ | async as daily" class="records">
+      <div *ngFor="let record of daily">
+        <app-activity-minimal [activity]="record.activity" [deletable]="true"></app-activity-minimal>
+      </div>
+    </div>
   </fieldset>
   <h4></h4>
 </div>

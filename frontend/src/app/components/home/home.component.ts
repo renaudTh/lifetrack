@@ -6,6 +6,9 @@ import { ACTIVITY_PROVIDER, IActivityProvider } from '../../../domain/activity.p
 import { ActivityMinimalComponent } from '../activity-minimal/activity-minimal.component';
 import { AddActivityButtonComponent } from '../add-activity-button/add-activity-button.component';
 import { CalendarComponent } from '../calendar/calendar.component';
+import { IRecordProvider, RECORD_PROVIDER } from '../../../domain/record.provider.interface';
+import { DateService } from '../../../domain/date.service';
+import { map, mergeMap, switchMap } from 'rxjs';
 export interface Day {
   date: Date;
   inCurrentMonth: boolean;
@@ -21,21 +24,11 @@ export interface Day {
 })
 export class HomeComponent {
 
-
-  private _selectedDate: Date = new Date();
-  constructor(@Inject(ACTIVITY_PROVIDER) private activityProvider: IActivityProvider){
-    
+  constructor(private dateService: DateService, @Inject(ACTIVITY_PROVIDER) private activityProvider: IActivityProvider, @Inject(RECORD_PROVIDER) private recordProvider: IRecordProvider){
   }
+
+  protected selectedDate$ = this.dateService.selectedDateString$;
   protected activities$ = this.activityProvider.getAllActivities();
-
-
-  onSelectDate(date: Date){
-    console.log(date)
-    this._selectedDate = date;
-  }
-  
-  get selectedDate(){
-    return this._selectedDate.toLocaleDateString("en-US", {weekday: "long", month: "long", day: "2-digit"});
-  }
+  protected daily$ = this.dateService.selectedDate$.pipe(mergeMap((date) => this.recordProvider.getUserDaily("", date)))
   
 }
