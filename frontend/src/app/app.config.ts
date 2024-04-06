@@ -6,9 +6,12 @@ import { ACTIVITY_PROVIDER } from '../domain/activity.provider.interface';
 import { ActivityProviderService } from '../providers/activity.provider.service';
 import { RECORD_PROVIDER } from '../domain/record.provider.interface';
 import { ActivityRecordProvider } from '../providers/record.provider.service';
-
+import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';
 export const appConfig: ApplicationConfig = {
+  
+  
   providers: [
+    provideAnimations(),
     provideRouter(routes),
     {
       provide: ACTIVITY_PROVIDER,

@@ -6,7 +6,7 @@ import { TooltipModule } from 'primeng/tooltip';
   selector: 'app-activity-minimal',
   standalone: true,
   imports: [ChipModule, TooltipModule],
-  template: '<p-chip [label]="activity.representation" [pTooltip]="description" [removable]="deletable" (click)="_onClick(activity)" (onRemove)="onRemove()"></p-chip>',
+  template: '<p-chip [label]="activity.representation" [pTooltip]="description" [removable]="removable" (click)="_onClick(activity)" (onRemove)="onRemove()"></p-chip>',
   styles: `
     p-chip{
       cursor: pointer;
@@ -16,13 +16,17 @@ import { TooltipModule } from 'primeng/tooltip';
 export class ActivityMinimalComponent {
 
   @Input() activity!: Activity;
-  @Input() deletable: boolean = false;
+  @Input() deletable: boolean | null = false;
   @Output() onClick = new EventEmitter<Activity>();
   @Output() onDelete = new EventEmitter<Activity>();
   get description() {
     return `${this.activity.description} (${this.activity.amount} ${this.activity.unit})` 
   }
 
+  get removable(){
+    if(this.deletable === null) return false;
+    else return this.deletable
+  }
   onRemove(){
     this.onDelete.emit(this.activity);
   }

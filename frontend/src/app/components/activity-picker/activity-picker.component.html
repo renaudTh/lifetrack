@@ -1,0 +1,31 @@
+<div class="container">
+    <div class="activities" *ngIf="activities$ | async as activities">
+        <app-activity-minimal *ngFor="let activity of activities" [activity]="activity"
+            (onClick)="_selectActivity(activity)"></app-activity-minimal>
+    </div>
+    <!-- <div class="add-form" *ngIf="addMode$ | async">
+        <h4>New Activity</h4>
+        <span class="p-float-label">
+            <input pInputText id="representation" [(ngModel)]="representation" />
+            <label for="representation">Representation</label>
+        </span>
+        <span class="p-float-label">
+            <input pInputText id="description" [(ngModel)]="description" />
+            <label for="description">Description</label>
+        </span>
+        <div class="unit-amount">
+            <span class="p-float-label">
+                <p-inputNumber inputId="amount" [(ngModel)]="amount" />
+                <label for="amount">Amount</label>
+            </span>
+            <span class="p-float-label">
+                <input pInputText id="unit" [(ngModel)]="unit" />
+                <label for="unit">Unit</label>
+            </span>
+        </div>
+        <div class="submit">
+            <button pButton icon="pi pi-send" class="p-button-success" label="Add Activity" [disabled]="disableSend" (click)="newActivity()"></button>
+            <button pButton icon="pi pi-times" class="p-button-secondary" label="Cancel"></button>
+        </div>
+    </div> -->
+</div>
