@@ -6,7 +6,7 @@
     <legend> {{ selectedDate }}</legend>
     <div *ngIf="daily$ | async as daily" class="records">
       <div *ngFor="let record of daily">
-        <app-activity-minimal [activity]="record.activity" [deletable]="true"></app-activity-minimal>
+        <app-merged-record-minimal [record]="record" [deletable]="true" (onDelete)="onDelete($event)"></app-merged-record-minimal>
       </div>
     </div>
   </fieldset>

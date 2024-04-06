@@ -1,14 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, Inject, Input, OnInit } from '@angular/core';
-import { MenuItem } from 'primeng/api';
+import { Component, Inject, Input } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
-import { SpeedDialModule } from 'primeng/speeddial';
-import { Activity, ActivityRecord } from '../../../domain/activity';
-import { ActivityMinimalComponent } from '../activity-minimal/activity-minimal.component';
 import { ChipModule } from 'primeng/chip';
-import { IRecordProvider, RECORD_PROVIDER } from '../../../domain/record.provider.interface';
-import { firstValueFrom, mergeMap, take } from 'rxjs';
+import { SpeedDialModule } from 'primeng/speeddial';
+import { firstValueFrom, mergeMap } from 'rxjs';
+import { Activity } from '../../../domain/activity';
 import { DateService } from '../../../domain/date.service';
+import { IRecordProvider, RECORD_PROVIDER } from '../../../domain/record.provider.interface';
+import { RecordDto } from '../../../providers/record.dto';
+import { ActivityMinimalComponent } from '../activity-minimal/activity-minimal.component';
 @Component({
   selector: 'app-add-activity-button',
   standalone: true,
@@ -24,12 +24,11 @@ export class AddActivityButtonComponent {
 
   async addActivity(activity: Activity){
     const obs = this.dateService.selectedDate$.pipe(mergeMap((date) => {
-      const record:ActivityRecord = {
-        id: "test",
+      const record: RecordDto = {
         activity: activity,
         date: date
       }
-      return this.recordProvider.saveRecord(record)
+      return this.recordProvider.upsertRecord("", record)
     }))
     await firstValueFrom(obs)
   }

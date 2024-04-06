@@ -22,5 +22,8 @@
 .records {
     display: flex;
     flex-wrap: wrap;
-    gap: 2px;
+}
+
+.p-overlay-badge:empty{
+    display: none;
 }

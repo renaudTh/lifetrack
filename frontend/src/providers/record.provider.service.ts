@@ -1,11 +1,14 @@
 import { Injectable } from "@angular/core";
-import { IRecordProvider } from "../domain/record.provider.interface";
-import { BehaviorSubject, Observable, filter, map, of } from "rxjs";
+import { BehaviorSubject, Observable, map, of } from "rxjs";
 import { ActivityRecord } from "../domain/activity";
+import { IRecordProvider } from "../domain/record.provider.interface";
+import { RecordDto } from "./record.dto";
 
 @Injectable()
 export class ActivityRecordProvider implements IRecordProvider
 {
+
+
 
     private _records: ActivityRecord[] = [
         {
@@ -18,6 +21,7 @@ export class ActivityRecordProvider implements IRecordProvider
                 unit:  "cl",
                 description: "Drink a beer"
             },
+            number: 2,
             
         },
         {
@@ -30,28 +34,32 @@ export class ActivityRecordProvider implements IRecordProvider
                 unit:  "min",
                 description: "Play the piano"
             },
-            
+            number: 2,
         },
-        {
-            id: "1",
-            date: new Date("2024-04-02"),
-            activity:{
-                id: "2",
-                representation: "🎹",
-                amount: 30,
-                unit:  "min",
-                description: "Play the piano"
-            },
-            
-        }
+
     ];
     private _recordSubject = new BehaviorSubject<ActivityRecord[]>(this._records);
     private selectedRecord$ = this._recordSubject.asObservable();
 
-    saveRecord(record: ActivityRecord): Observable<ActivityRecord> {
-        this._records = [...this._records, record];
-        this._recordSubject.next(this._records);
-        return of(record);
+    upsertRecord(userId: string, record: RecordDto): Observable<ActivityRecord> {
+        const foundRecord = this._records.find((r) => r.date.toDateString() === record.date.toDateString() && r.activity.id === record.activity.id);
+        if(!foundRecord){
+            const newRecord: ActivityRecord = {
+                activity: record.activity,
+                date: record.date,
+                id: `${Math.floor(5+Math.random()*995)}`,
+                number: 1
+            }
+            this._records = [...this._records, newRecord];
+            this._recordSubject.next(this._records);
+
+            return of(newRecord);
+        }
+        else{
+            foundRecord.number++;
+            this._recordSubject.next(this._records);
+            return of(foundRecord);
+        }
     }
     getUserHistory(userId: string, month: number, year: number): Observable<ActivityRecord[]> {
         const ret = this._records.filter((record) => {record.date.getMonth() === month && record.date.getFullYear() === year});
@@ -62,13 +70,16 @@ export class ActivityRecordProvider implements IRecordProvider
         map((records) => records.filter((record) => record.date.toDateString() === date.toDateString()))
        )
     }  
-    deleteRecord(recordId: string): Observable<ActivityRecord> {
-        const deleted = this._records.find((record) => record.id === recordId);
-        if(!deleted){
-            throw new Error("The record does not exists!");
+    downsertRecord(userId: string, record: RecordDto): Observable<ActivityRecord> {
+        const foundRecord = this._records.find((r) => r.date.toDateString() === record.date.toDateString() && r.activity.id === record.activity.id);
+        if(!foundRecord){
+            throw new Error("Record not found!");
         }
-        this._records = this._records.filter((record) => record.id !== recordId);
-        return of(deleted);
-
+        foundRecord.number--;
+        if(foundRecord.number == 0){
+            this._records = this._records.filter((r) => r.id !== foundRecord.id);
+        }
+        this._recordSubject.next(this._records);
+        return of(foundRecord);
     }
 }

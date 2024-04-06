@@ -10,4 +10,5 @@ export interface ActivityRecord {
     id: string;
     activity: Activity;
     date: Date;
+    number: number
 }
