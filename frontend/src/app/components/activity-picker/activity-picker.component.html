@@ -1,7 +1,7 @@
 <div class="container">
     <div class="activities" *ngIf="activities$ | async as activities">
         <app-activity-minimal *ngFor="let activity of activities" [activity]="activity"
-            (onClick)="_selectActivity(activity)"></app-activity-minimal>
+            (onClick)="addActivity(activity)"></app-activity-minimal>
     </div>
     <!-- <div class="add-form" *ngIf="addMode$ | async">
         <h4>New Activity</h4>

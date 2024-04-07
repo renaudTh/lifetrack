@@ -5,8 +5,7 @@ import { IRecordProvider } from "../domain/record.provider.interface";
 import { RecordDto } from "./record.dto";
 
 @Injectable()
-export class ActivityRecordProvider implements IRecordProvider
-{
+export class ActivityRecordProvider implements IRecordProvider {
 
 
 
@@ -14,24 +13,36 @@ export class ActivityRecordProvider implements IRecordProvider
         {
             id: "0",
             date: new Date("2024-04-01"),
-            activity:{
+            activity: {
                 id: "4",
                 representation: "🍺",
                 amount: 25,
-                unit:  "cl",
+                unit: "cl",
                 description: "Drink a beer"
             },
             number: 2,
-            
+
         },
         {
             id: "1",
             date: new Date("2024-04-02"),
-            activity:{
+            activity: {
                 id: "2",
                 representation: "🎹",
                 amount: 30,
-                unit:  "min",
+                unit: "min",
+                description: "Play the piano"
+            },
+            number: 2,
+        },
+        {
+            id: "2",
+            date: new Date("2024-05-02"),
+            activity: {
+                id: "2",
+                representation: "🎹",
+                amount: 30,
+                unit: "min",
                 description: "Play the piano"
             },
             number: 2,
@@ -43,43 +54,54 @@ export class ActivityRecordProvider implements IRecordProvider
 
     upsertRecord(userId: string, record: RecordDto): Observable<ActivityRecord> {
         const foundRecord = this._records.find((r) => r.date.toDateString() === record.date.toDateString() && r.activity.id === record.activity.id);
+        let newRecord: ActivityRecord;
         if(!foundRecord){
-            const newRecord: ActivityRecord = {
+            newRecord = {
                 activity: record.activity,
                 date: record.date,
-                id: `${Math.floor(5+Math.random()*995)}`,
+                id: `${Math.floor(5 + Math.random() * 995)}`,
                 number: 1
             }
-            this._records = [...this._records, newRecord];
-            this._recordSubject.next(this._records);
-
-            return of(newRecord);
+            this._records = [...this._records, newRecord]
         }
-        else{
-            foundRecord.number++;
-            this._recordSubject.next(this._records);
-            return of(foundRecord);
+        else {
+            newRecord = {
+                ...foundRecord,
+                number: foundRecord.number + 1
+            }
+           
+            this._records = this._records.map((record) => 
+                ((record.id === newRecord.id) ? newRecord : record)
+            )
         }
+        this._recordSubject.next(this._records);
+        return of(newRecord);
     }
-    getUserHistory(userId: string, month: number, year: number): Observable<ActivityRecord[]> {
-        const ret = this._records.filter((record) => {record.date.getMonth() === month && record.date.getFullYear() === year});
+    getUserMonthHistory(userId: string, date: Date): Observable<ActivityRecord[]> {
+        const ret = this._records.filter((record) => (record.date.getMonth() === date.getMonth() && record.date.getFullYear() === date.getFullYear()));
         return of(ret);
     }
     getUserDaily(userId: string, date: Date): Observable<ActivityRecord[]> {
-       return this.selectedRecord$.pipe(
-        map((records) => records.filter((record) => record.date.toDateString() === date.toDateString()))
-       )
-    }  
+        return this.selectedRecord$.pipe(
+            map((records) => records.filter((record) => record.date.toDateString() === date.toDateString()))
+        )
+    }
     downsertRecord(userId: string, record: RecordDto): Observable<ActivityRecord> {
         const foundRecord = this._records.find((r) => r.date.toDateString() === record.date.toDateString() && r.activity.id === record.activity.id);
+        let newRecord: ActivityRecord;
         if(!foundRecord){
             throw new Error("Record not found!");
         }
-        foundRecord.number--;
-        if(foundRecord.number == 0){
-            this._records = this._records.filter((r) => r.id !== foundRecord.id);
+        else {
+            newRecord = {
+                ...foundRecord,
+                number: foundRecord.number - 1
+            }
+            this._records = this._records.map((record) => 
+                ((record.id === newRecord.id) ? newRecord : record)
+            )
         }
         this._recordSubject.next(this._records);
-        return of(foundRecord);
+        return of(newRecord);
     }
 }

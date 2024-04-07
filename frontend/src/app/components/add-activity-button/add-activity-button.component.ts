@@ -3,13 +3,15 @@ import { Component, Inject, Input } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { ChipModule } from 'primeng/chip';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { firstValueFrom, mergeMap } from 'rxjs';
+import { firstValueFrom, mergeMap, take } from 'rxjs';
 import { Activity } from '../../../domain/activity';
 import { DateService } from '../../../domain/date.service';
 import { IRecordProvider, RECORD_PROVIDER } from '../../../domain/record.provider.interface';
 import { RecordDto } from '../../../providers/record.dto';
 import { ActivityMinimalComponent } from '../activity-minimal/activity-minimal.component';
 import { ActivityPickerComponent } from '../activity-picker/activity-picker.component';
+import { Store } from '@ngrx/store';
+import { RecordsActions } from '../../record-store/record.actions';
 
 
 @Component({
@@ -28,19 +30,13 @@ export class AddActivityButtonComponent {
   constructor(private dateService: DateService,
     @Inject(RECORD_PROVIDER) private recordProvider: IRecordProvider,
     private dialogService: DialogService,
+    private store: Store,
   ) {
 
   }
 
   async addActivity(activity: Activity) {
-    const obs = this.dateService.selectedDate$.pipe(mergeMap((date) => {
-      const record: RecordDto = {
-        activity: activity,
-        date: date
-      }
-      return this.recordProvider.upsertRecord("", record)
-    }))
-    await firstValueFrom(obs)
+    this.store.dispatch(RecordsActions.upsertRecord({userId: "", activity: activity}))
   }
 
   openDialog() {

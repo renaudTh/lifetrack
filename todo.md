@@ -1,1 +1,1 @@
-- Bug day name
+- selected day must be in store : if month changes, but not slected day, it disapear from view.

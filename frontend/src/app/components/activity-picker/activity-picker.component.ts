@@ -1,16 +1,17 @@
-import { Component, EventEmitter, Inject, Output } from '@angular/core';
-import { ACTIVITY_PROVIDER, IActivityProvider } from '../../../domain/activity.provider.interface';
 import { CommonModule } from '@angular/common';
-import { ActivityMinimalComponent } from '../activity-minimal/activity-minimal.component';
-import { DateService } from '../../../domain/date.service';
-import { Activity } from '../../../domain/activity';
-import { firstValueFrom, mergeMap } from 'rxjs';
-import { RecordDto } from '../../../providers/record.dto';
-import { IRecordProvider, RECORD_PROVIDER } from '../../../domain/record.provider.interface';
+import { Component, EventEmitter, Inject, Output } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
-import { FormsModule } from '@angular/forms';
+import { Activity } from '../../../domain/activity';
+import { ACTIVITY_PROVIDER, IActivityProvider } from '../../../domain/activity.provider.interface';
+import { ActivityMinimalComponent } from '../activity-minimal/activity-minimal.component';
+import { RecordState } from '../../record-store';
+import { Store } from '@ngrx/store';
+import { RecordsActions } from '../../record-store/record.actions';
+import { DateService } from '../../../domain/date.service';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-activity-picker',
@@ -24,11 +25,10 @@ export class ActivityPickerComponent {
 
   @Output() onPickActivity = new EventEmitter<Activity>();
 
-  constructor(@Inject(ACTIVITY_PROVIDER) private activitiesProvider: IActivityProvider, 
+  constructor(@Inject(ACTIVITY_PROVIDER) private activitiesProvider: IActivityProvider, private dateService: DateService, private store: Store<RecordState>
             ){}
   protected activities$ = this.activitiesProvider.getAllActivities();
-  
-  protected _selectActivity(activity: Activity){
-    this.onPickActivity.emit(activity);
+  async addActivity(activity: Activity) {
+      this.store.dispatch(RecordsActions.upsertRecord({userId: "", activity}))
   }
 }
