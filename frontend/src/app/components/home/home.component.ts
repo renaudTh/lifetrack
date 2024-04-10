@@ -12,8 +12,9 @@ import { AddActivityButtonComponent } from '../add-activity-button/add-activity-
 import { CalendarComponent } from '../calendar/calendar.component';
 import { MergedRecordMinimalComponent } from '../merged-record-minimal/merged-record-minimal.component';
 import { Store } from '@ngrx/store';
-import { RecordsActions } from '../../record-store/record.actions';
-import { RecordState, selectAllRecords } from '../../record-store';
+import { RecordsActions } from '../../stores/record-store/record.actions';
+import { RecordState, selectAllRecords } from '../../stores/record-store';
+import { ActivitiesActions } from '../../stores/activities-store/activities.actions';
 
 @Component({
   selector: 'app-home',
@@ -34,6 +35,7 @@ export class HomeComponent implements OnDestroy {
     this.dateService.displayedDate$.pipe(takeUntil(this.destroy$)).subscribe((date) => {
       this.store.dispatch(RecordsActions.loadDisplayedDateRecords({userId: "", date}))
     })
+    this.store.dispatch(ActivitiesActions.loadUserActivities({ userId: ""}));
   }
   ngOnDestroy(): void {
     this.destroy$.next(null);

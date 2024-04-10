@@ -7,9 +7,9 @@ import { InputTextModule } from 'primeng/inputtext';
 import { Activity } from '../../../domain/activity';
 import { ACTIVITY_PROVIDER, IActivityProvider } from '../../../domain/activity.provider.interface';
 import { ActivityMinimalComponent } from '../activity-minimal/activity-minimal.component';
-import { RecordState } from '../../record-store';
+import { RecordState } from '../../stores/record-store';
 import { Store } from '@ngrx/store';
-import { RecordsActions } from '../../record-store/record.actions';
+import { RecordsActions } from '../../stores/record-store/record.actions';
 import { DateService } from '../../../domain/date.service';
 import { take } from 'rxjs';
 
@@ -24,7 +24,12 @@ import { take } from 'rxjs';
 export class ActivityPickerComponent {
 
   @Output() onPickActivity = new EventEmitter<Activity>();
-
+  protected activity: Partial<Activity> = {
+    amount: undefined,
+    description: "",
+    representation: "",
+    unit: ""
+  }
   constructor(@Inject(ACTIVITY_PROVIDER) private activitiesProvider: IActivityProvider, private dateService: DateService, private store: Store<RecordState>
             ){}
   protected activities$ = this.activitiesProvider.getAllActivities();

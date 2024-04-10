@@ -1,6 +1,6 @@
 import { createActionGroup, props } from "@ngrx/store";
-import { RecordDto } from "../../providers/record.dto";
-import { Activity, ActivityRecord } from "../../domain/activity";
+import { RecordDto } from "../../../providers/record.dto";
+import { Activity, ActivityRecord } from "../../../domain/activity";
 
 export const RecordsActions = createActionGroup({
     source: 'Records',
@@ -13,3 +13,5 @@ export const RecordsActions = createActionGroup({
         'Downsert Success': props<{record: ActivityRecord}>()
     },
   });
+
+

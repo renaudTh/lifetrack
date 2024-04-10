@@ -1,8 +1,8 @@
 import { Inject, Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
-import { DateService } from "../../domain/date.service";
-import { IRecordProvider, RECORD_PROVIDER } from "../../domain/record.provider.interface";
-import { EMPTY, catchError, combineLatest, map, mergeMap, of, switchMap, tap, withLatestFrom, zip } from "rxjs";
+import { EMPTY, catchError, map, switchMap, withLatestFrom } from "rxjs";
+import { DateService } from "../../../domain/date.service";
+import { IRecordProvider, RECORD_PROVIDER } from "../../../domain/record.provider.interface";
 import { RecordsActions } from "./record.actions";
 
 @Injectable()

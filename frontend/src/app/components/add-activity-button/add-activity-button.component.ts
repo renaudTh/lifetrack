@@ -11,7 +11,7 @@ import { RecordDto } from '../../../providers/record.dto';
 import { ActivityMinimalComponent } from '../activity-minimal/activity-minimal.component';
 import { ActivityPickerComponent } from '../activity-picker/activity-picker.component';
 import { Store } from '@ngrx/store';
-import { RecordsActions } from '../../record-store/record.actions';
+import { RecordsActions } from '../../stores/record-store/record.actions';
 
 
 @Component({

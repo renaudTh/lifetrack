@@ -3,29 +3,11 @@
         <app-activity-minimal *ngFor="let activity of activities" [activity]="activity"
             (onClick)="addActivity(activity)"></app-activity-minimal>
     </div>
-    <!-- <div class="add-form" *ngIf="addMode$ | async">
-        <h4>New Activity</h4>
-        <span class="p-float-label">
-            <input pInputText id="representation" [(ngModel)]="representation" />
-            <label for="representation">Representation</label>
-        </span>
-        <span class="p-float-label">
-            <input pInputText id="description" [(ngModel)]="description" />
-            <label for="description">Description</label>
-        </span>
-        <div class="unit-amount">
-            <span class="p-float-label">
-                <p-inputNumber inputId="amount" [(ngModel)]="amount" />
-                <label for="amount">Amount</label>
-            </span>
-            <span class="p-float-label">
-                <input pInputText id="unit" [(ngModel)]="unit" />
-                <label for="unit">Unit</label>
-            </span>
-        </div>
-        <div class="submit">
-            <button pButton icon="pi pi-send" class="p-button-success" label="Add Activity" [disabled]="disableSend" (click)="newActivity()"></button>
-            <button pButton icon="pi pi-times" class="p-button-secondary" label="Cancel"></button>
-        </div>
-    </div> -->
+    <div class="add-form">
+            <input type="text" id="representation" [(ngModel)]="activity.representation" placeholder="🚀"/>
+            <input type="text" id="description" [(ngModel)]="activity.description" placeholder="launching rocket" />
+            <input type="number" id="amount" [(ngModel)]="activity.amount" placeholder="2000"/>
+            <input type="text" id="unit" [(ngModel)]="activity.unit" placeholder="kph"/>
+            <p-button icon="pi pi-send" severity="success" icon="pi pi-plus" size="small"></p-button>
+    </div>
 </div>

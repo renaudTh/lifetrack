@@ -1,5 +1,5 @@
 import { createFeatureSelector, createSelector } from "@ngrx/store";
-import { ActivityRecord } from "../../domain/activity";
+import { ActivityRecord } from "../../../domain/activity";
 
 export interface RecordState {
     [activityId: string]: ActivityRecord

@@ -8,38 +8,51 @@
     display: flex;
     flex-wrap: wrap;
     gap: 5px;
-    max-height: 50%;
     overflow-y: auto;
-}
-
-.buttons{
-    display: flex;
-    flex-direction: row;
-    gap: 5px;
+    flex-grow:1;
 }
 
 .add-form{
     width: 100%;
-    border-top: 1px solid var(--gray-500);
-    max-height: 50%;
     display: flex;
-    flex-direction: column;
-    gap: 1.75em;
     align-items: left;
     justify-content: center;
+    gap: 2px;
+    box-sizing: border-box;
+    input{
+        height:2rem;
+        border-radius: 10px;
+        border: 1px solid lightgray;
+        text-align:center;
+    }
+    input:focus{
+        outline: none;
+        border:1px solid lightblue;
+    }
+    input::placeholder{
+        opacity: 0.4;
+    }
+    input:focus::placeholder {
+        color: transparent;
+      }
+    #representation{
+        width: 20%;
+    }
+    #description{
+        width: 40%;
+    }
+    #amount{
+        width: 15%;
+    }
+    #unit{
+        width: 15%;
+    }
+    ::ng-deep {
+        .p-button{
+        width: 20%;
+        height: 2rem;
+    }
+    }
 }
 
-.unit-amount{
-    display: flex;
-    gap: 5px;
-    width: 100%;
-    ::ng-deep {
-        .p-inputnumber-input{
-         width: 50%;
-         } 
-         .p-inputtext{
-             width: 50%;
-         }
-     }
-}
 

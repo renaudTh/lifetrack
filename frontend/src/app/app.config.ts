@@ -10,8 +10,10 @@ import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-br
 import { provideState, provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
-import { recordsReducer } from './record-store/record.reducer';
-import { RecordsEffects } from './record-store/record.effects';
+import { recordsReducer } from './stores/record-store/record.reducer';
+import { RecordsEffects } from './stores/record-store/record.effects';
+import { activitiesReducer } from './stores/activities-store/activities.reducer';
+import { ActivitiesEffects } from './stores/activities-store/activities.effects';
 export const appConfig: ApplicationConfig = {
   
   
@@ -28,7 +30,8 @@ export const appConfig: ApplicationConfig = {
     },
     provideStore(),
     provideState({ name: 'records', reducer: recordsReducer}),
-    provideEffects(RecordsEffects),
+    provideState({ name: 'activities', reducer: activitiesReducer}),
+    provideEffects(RecordsEffects, ActivitiesEffects),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() })
 ]
 };
