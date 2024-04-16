@@ -6,7 +6,7 @@ export const ActivitiesActions = createActionGroup({
     events: {    
         'Load User Activities': props<{userId: string}>(),
         'Loading Success': props<{activities: Activity[]}>(),
-        'Add New Activity': props<{userId: string, activity: Activity}>(),
-        'Add new activity Success': props<{userId: string, activity: Activity}>(),
+        'Add New Activity': props<{userId: string, activity: Partial<Activity>}>(),
+        'Add new activity Success': props<{activity: Activity}>(),
     },
   });

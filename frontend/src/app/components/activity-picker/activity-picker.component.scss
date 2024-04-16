@@ -3,13 +3,14 @@
     flex-direction: column;
     height: 100%;
     gap: 1em;
+    justify-content: space-between
 }
 .activities{
     display: flex;
     flex-wrap: wrap;
-    gap: 5px;
+    gap: 0.5em;
     overflow-y: auto;
-    flex-grow:1;
+    justify-content: left;
 }
 
 .add-form{

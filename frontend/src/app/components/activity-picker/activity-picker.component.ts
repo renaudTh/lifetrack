@@ -12,6 +12,8 @@ import { Store } from '@ngrx/store';
 import { RecordsActions } from '../../stores/record-store/record.actions';
 import { DateService } from '../../../domain/date.service';
 import { take } from 'rxjs';
+import { ActivitiesActions } from '../../stores/activities-store/activities.actions';
+import { selectAllActivities } from '../../stores/activities-store';
 
 @Component({
   selector: 'app-activity-picker',
@@ -30,10 +32,14 @@ export class ActivityPickerComponent {
     representation: "",
     unit: ""
   }
-  constructor(@Inject(ACTIVITY_PROVIDER) private activitiesProvider: IActivityProvider, private dateService: DateService, private store: Store<RecordState>
+  constructor( private store: Store
             ){}
-  protected activities$ = this.activitiesProvider.getAllActivities();
+  protected activities$ = this.store.select(selectAllActivities);
   async addActivity(activity: Activity) {
       this.store.dispatch(RecordsActions.upsertRecord({userId: "", activity}))
+  }
+
+  newActivity(){
+    this.store.dispatch(ActivitiesActions.addNewActivity({userId: '', activity: this.activity}));
   }
 }

@@ -1,6 +1,6 @@
 
 <app-calendar></app-calendar>
-<app-add-activity-button [activities]="activities$ | async"></app-add-activity-button>
+<app-add-activity-button></app-add-activity-button>
 <div class="days-activities">
   <fieldset *ngIf="selectedDate$ | async as selectedDate">
     <legend> {{ selectedDate }}</legend>

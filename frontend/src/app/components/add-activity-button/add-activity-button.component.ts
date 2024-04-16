@@ -12,6 +12,7 @@ import { ActivityMinimalComponent } from '../activity-minimal/activity-minimal.c
 import { ActivityPickerComponent } from '../activity-picker/activity-picker.component';
 import { Store } from '@ngrx/store';
 import { RecordsActions } from '../../stores/record-store/record.actions';
+import { selectFive } from '../../stores/activities-store';
 
 
 @Component({
@@ -24,9 +25,10 @@ import { RecordsActions } from '../../stores/record-store/record.actions';
 })
 export class AddActivityButtonComponent {
 
-  @Input() activities: Activity[] | null = [];
+ 
   private _dialogRef: DynamicDialogRef | undefined;
-
+  
+  protected fiveLast$ = this.store.select(selectFive)
   constructor(private dateService: DateService,
     @Inject(RECORD_PROVIDER) private recordProvider: IRecordProvider,
     private dialogService: DialogService,

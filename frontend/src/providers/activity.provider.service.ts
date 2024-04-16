@@ -55,9 +55,15 @@ export class ActivityProviderService implements IActivityProvider {
     private _activitiesSubject = new BehaviorSubject<Activity[]>(this._activities);
 
 
-    addActivity(activity: Activity): Observable<Activity> {
+    addActivity(activityDto: Partial<Activity>): Observable<Activity> {
         const id = this._activities.length.toString();
-        activity.id = id;
+        const activity:Activity = {
+            id: id,
+            amount: activityDto.amount!,
+            description: activityDto.description!,
+            representation: activityDto.representation!,
+            unit: activityDto.unit!
+        }
         this._activities = [...this._activities, activity];
         this._activitiesSubject.next(this._activities);
         return of(activity);

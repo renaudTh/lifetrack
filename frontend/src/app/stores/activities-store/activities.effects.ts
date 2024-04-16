@@ -13,7 +13,19 @@ export class ActivitiesEffects {
             switchMap(({userId} ) => this.activitiesProvider.getAllActivities().pipe(
                 map((activities) => ActivitiesActions.loadingSuccess({activities})),
                 catchError((err: any) =>{
+                    console.error(err);
+                    return EMPTY;
+                })
+            ))
+        )
+    )
 
+    addActivity$ = createEffect(()=>
+        this.actions$.pipe(
+            ofType(ActivitiesActions.addNewActivity),
+            switchMap(({userId, activity}) => this.activitiesProvider.addActivity(activity).pipe(
+                map((activity) => ActivitiesActions.addNewActivitySuccess({activity})),
+                catchError((err: any) =>{
                     console.error(err);
                     return EMPTY;
                 })
