@@ -10,7 +10,7 @@ export class ActivitiesEffects {
     loadActivities$ = createEffect(() => 
         this.actions$.pipe(
             ofType(ActivitiesActions.loadUserActivities),
-            switchMap(({userId} ) => this.activitiesProvider.getAllActivities().pipe(
+            switchMap(({userId} ) => this.activitiesProvider.getAllActivitiesSUP(userId).pipe(
                 map((activities) => ActivitiesActions.loadingSuccess({activities})),
                 catchError((err: any) =>{
                     console.error(err);

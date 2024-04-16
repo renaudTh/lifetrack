@@ -9,5 +9,5 @@ export interface IActivityProvider {
     addActivity(activity:  Partial<Activity>): Observable<Activity>;
     updateActivity(activity: Partial<Activity>): Observable<Activity>
     getActivity(id: string): Observable<Activity>;
-    getAllActivities(): Observable<Activity[]>;
+    getAllActivitiesSUP(upserId: string): Observable<Activity[]>;
 }
