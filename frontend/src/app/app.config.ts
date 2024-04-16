@@ -14,6 +14,7 @@ import { recordsReducer } from './stores/record-store/record.reducer';
 import { RecordsEffects } from './stores/record-store/record.effects';
 import { activitiesReducer } from './stores/activities-store/activities.reducer';
 import { ActivitiesEffects } from './stores/activities-store/activities.effects';
+import { createClient } from '@supabase/supabase-js';
 export const appConfig: ApplicationConfig = {
   
   
@@ -32,6 +33,11 @@ export const appConfig: ApplicationConfig = {
     provideState({ name: 'records', reducer: recordsReducer}),
     provideState({ name: 'activities', reducer: activitiesReducer}),
     provideEffects(RecordsEffects, ActivitiesEffects),
-    provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() })
+    provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
+    {
+        provide: "SUPABASE_CLIENT",
+        useFactory: () => createClient("https://ntpiboyecoeeuabgggbq.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50cGlib3llY29lZXVhYmdnZ2JxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk5Nzk5MzIsImV4cCI6MjAyNTU1NTkzMn0.wkQurbr3xBPMr5d8j54NYxVUQ-tm4uPk3ttiTvdQHmk")
+
+    }
 ]
 };
