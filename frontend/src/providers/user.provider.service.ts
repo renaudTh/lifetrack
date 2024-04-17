@@ -1,5 +1,5 @@
 import { Inject, Injectable } from "@angular/core";
-import { AuthTokenResponsePassword, SupabaseClient, createClient } from "@supabase/supabase-js";
+import { AuthTokenResponsePassword, SupabaseClient, UserResponse, createClient } from "@supabase/supabase-js";
 import { EMPTY, Observable, catchError, from, map, of, throwError } from "rxjs";
 import { User } from "../domain/user";
 
@@ -32,5 +32,17 @@ export class UserProvider {
                 }
             })
         )
+    }
+
+    async getUser(){
+        from(this._supabase.auth.getUser()).pipe(
+            map((response: UserResponse) => {
+                if(response.error !== null || response.data === null){
+                    throw new Error("User not found");
+                }
+                return response.data
+            })
+        );
+        
     }
 }
