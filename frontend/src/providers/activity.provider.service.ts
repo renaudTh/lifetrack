@@ -1,8 +1,8 @@
 import { Inject, Injectable } from "@angular/core";
-import { BehaviorSubject, EMPTY, Observable, from, map, of } from "rxjs";
+import { BehaviorSubject, EMPTY, Observable, catchError, from, map, of, tap } from "rxjs";
 import { IActivityProvider } from "../domain/activity.provider.interface";
 import { Activity } from "../domain/activity";
-import { SupabaseClient } from "@supabase/supabase-js";
+import { PostgrestResponse, SupabaseClient } from "@supabase/supabase-js";
 
 
 @Injectable()
@@ -11,21 +11,31 @@ export class ActivityProviderService implements IActivityProvider {
    
     constructor(@Inject("SUPABASE_CLIENT") private _supabase: SupabaseClient){}
 
-
-    addActivity(activityDto: Partial<Activity>): Observable<Activity> {
-        // const id = this._activities.length.toString();
-        // const activity:Activity = {
-        //     id: id,
-        //     amount: activityDto.amount!,
-        //     description: activityDto.description!,
-        //     representation: activityDto.representation!,
-        //     unit: activityDto.unit!
-        // }
-        // this._activities = [...this._activities, activity];
-        // this._activitiesSubject.next(this._activities);
-        // return of(activity);
-        throw new Error("Method not implemented.");
-        
+    //TODO: typing
+    addActivity(activityDto: Partial<Activity>, userId: string): Observable<Activity> {
+        return from(this._supabase.from('activities').insert(
+        [{
+            user_id: userId,
+            representation: activityDto.representation,
+            description: activityDto.description,
+            unit: activityDto.unit,
+            amount: activityDto.amount
+        }]
+       ).select()).pipe(
+            map((response: PostgrestResponse<any>) => {
+                if(response.error !== null || response.data === null){
+                    throw new Error("impossible to add activity");
+                }
+                return response.data[0];
+            }),
+            map((data):Activity => ({
+                amount: data.amount,
+                description: data.desription,
+                id: data.id,
+                representation: data.representation,
+                unit: data.unit
+            }) )
+       )
     }
     updateActivity(activity: Partial<Activity>): Observable<Activity> {
         throw new Error("Method not implemented.");
