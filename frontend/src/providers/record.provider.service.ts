@@ -1,107 +1,90 @@
-import { Injectable } from "@angular/core";
-import { BehaviorSubject, Observable, map, of } from "rxjs";
+import { Inject, Injectable } from "@angular/core";
+import { BehaviorSubject, EMPTY, Observable, from, map, of } from "rxjs";
 import { ActivityRecord } from "../domain/activity";
 import { IRecordProvider } from "../domain/record.provider.interface";
 import { RecordDto } from "./record.dto";
+import { PostgrestSingleResponse, SupabaseClient } from "@supabase/supabase-js";
+import { FactoryTarget } from "@angular/compiler";
+
+export interface RecordsExists {
+    exists: boolean,
+    id?: string,
+    number?: number
+}
 
 @Injectable()
 export class ActivityRecordProvider implements IRecordProvider {
 
 
+    constructor(@Inject("SUPABASE_CLIENT") private _supabase: SupabaseClient) { }
 
-    private _records: ActivityRecord[] = [
-        {
-            id: "0",
-            date: new Date("2024-04-01"),
-            activity: {
-                id: "4",
-                representation: "🍺",
-                amount: 25,
-                unit: "cl",
-                description: "Drink a beer"
-            },
-            number: 2,
-
-        },
-        {
-            id: "1",
-            date: new Date("2024-04-02"),
-            activity: {
-                id: "2",
-                representation: "🎹",
-                amount: 30,
-                unit: "min",
-                description: "Play the piano"
-            },
-            number: 2,
-        },
-        {
-            id: "2",
-            date: new Date("2024-05-02"),
-            activity: {
-                id: "2",
-                representation: "🎹",
-                amount: 30,
-                unit: "min",
-                description: "Play the piano"
-            },
-            number: 2,
-        },
-
-    ];
-    private _recordSubject = new BehaviorSubject<ActivityRecord[]>(this._records);
-    private selectedRecord$ = this._recordSubject.asObservable();
+    private recordsExists(userId: string, record: RecordDto): Observable<RecordsExists> {
+        const date = record.date.toISOString().split("T")[0];
+        return from(this._supabase.from('records')
+            .select('id, number', { count: "estimated" })
+            .eq('user_id', userId)
+            .eq('date', date)
+            .eq('activity_id', record.activity.id)).pipe(
+                map((response: PostgrestSingleResponse<any>): RecordsExists => {
+                    if (response.error !== null) {
+                        throw new Error("Impossible to upsert record");
+                    }
+                    if (response.count! > 0) {
+                        const data = response.data[0]
+                        return {
+                            exists: true,
+                            id: data.id,
+                            number: data.number
+                        }
+                    }
+                    else return { exists: false }
+                }))
+    }
 
     upsertRecord(userId: string, record: RecordDto): Observable<ActivityRecord> {
-        const foundRecord = this._records.find((r) => r.date.toDateString() === record.date.toDateString() && r.activity.id === record.activity.id);
-        let newRecord: ActivityRecord;
-        if(!foundRecord){
-            newRecord = {
-                activity: record.activity,
-                date: record.date,
-                id: `${Math.floor(5 + Math.random() * 995)}`,
-                number: 1
-            }
-            this._records = [...this._records, newRecord]
-        }
-        else {
-            newRecord = {
-                ...foundRecord,
-                number: foundRecord.number + 1
-            }
-           
-            this._records = this._records.map((record) => 
-                ((record.id === newRecord.id) ? newRecord : record)
-            )
-        }
-        this._recordSubject.next(this._records);
-        return of(newRecord);
+        this.recordsExists(userId, record).subscribe((exists) => {
+            console.log(exists);
+        })
+        return EMPTY;
     }
     getUserMonthHistory(userId: string, date: Date): Observable<ActivityRecord[]> {
-        const ret = this._records.filter((record) => (record.date.getMonth() === date.getMonth() && record.date.getFullYear() === date.getFullYear()));
-        return of(ret);
+        return from(this._supabase
+            .from('records')
+            .select(`
+            id,
+            date,
+            number,
+            activities (
+                id,
+                description,
+                representation,
+                unit,
+                amount
+            )
+        `)
+            .eq('user_id', userId)
+            .gte('date', '2024-04-01')
+            .lt('date', '2024-05-01')).pipe(
+                map((response: PostgrestSingleResponse<any>) => {
+                    if (response.error !== null || response.data === null) {
+                        throw new Error("Impossible to retrieve Records");
+                    }
+                    return response.data
+                }),
+                map((data: any) => data.map((item: any): ActivityRecord => ({
+                    id: item.id,
+                    activity: item.activities,
+                    date: new Date(item.date),
+                    number: item.number
+                })))
+            )
     }
     getUserDaily(userId: string, date: Date): Observable<ActivityRecord[]> {
-        return this.selectedRecord$.pipe(
-            map((records) => records.filter((record) => record.date.toDateString() === date.toDateString()))
-        )
+        throw new Error("Not Implemented");
+
     }
     downsertRecord(userId: string, record: RecordDto): Observable<ActivityRecord> {
-        const foundRecord = this._records.find((r) => r.date.toDateString() === record.date.toDateString() && r.activity.id === record.activity.id);
-        let newRecord: ActivityRecord;
-        if(!foundRecord){
-            throw new Error("Record not found!");
-        }
-        else {
-            newRecord = {
-                ...foundRecord,
-                number: foundRecord.number - 1
-            }
-            this._records = this._records.map((record) => 
-                ((record.id === newRecord.id) ? newRecord : record)
-            )
-        }
-        this._recordSubject.next(this._records);
-        return of(newRecord);
+        throw new Error("Not Implemented");
     }
+
 }

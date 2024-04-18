@@ -36,7 +36,7 @@ export class ActivityPickerComponent {
             ){}
   protected activities$ = this.store.select(selectAllActivities);
   async addActivity(activity: Activity) {
-      this.store.dispatch(RecordsActions.upsertRecord({userId: "", activity}))
+      this.store.dispatch(RecordsActions.upsertRecord({userId:'8f7f2bdb-3529-4f65-808b-8cd8f81e2269', activity}))
   }
 
   newActivity(){

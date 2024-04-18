@@ -35,7 +35,7 @@ export class HomeComponent implements OnDestroy, OnInit {
   
   ){
     this.dateService.displayedDate$.pipe(takeUntil(this.destroy$)).subscribe((date) => {
-      this.store.dispatch(RecordsActions.loadDisplayedDateRecords({userId: "", date}))
+      this.store.dispatch(RecordsActions.loadDisplayedDateRecords({userId: "8f7f2bdb-3529-4f65-808b-8cd8f81e2269", date}))
     })
     this.store.dispatch(ActivitiesActions.loadUserActivities({ userId: "8f7f2bdb-3529-4f65-808b-8cd8f81e2269"}));
   }
