@@ -23,7 +23,7 @@ export class RecordsEffects {
         this.actions$.pipe(
             ofType(RecordsActions.upsertRecord),
             withLatestFrom(this.dateService.selectedDate$),
-            switchMap(([{ userId, activity }, date]) => this.recordProvider.upsertRecord(userId, { activity, date }).pipe(
+            switchMap(([{ userId, activity }, date]) => this.recordProvider.upsertRecord(userId,date, activity).pipe(
                 map((record) => RecordsActions.upsertSuccess({ record })),
                 catchError((error: any) => {
                     console.error(error)

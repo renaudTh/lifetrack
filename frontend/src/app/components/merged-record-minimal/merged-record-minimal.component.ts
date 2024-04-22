@@ -87,7 +87,7 @@ export class MergedRecordMinimalComponent {
   @Input() record!: ActivityRecord;
   @Input() deletable: boolean = false;
 //   @Output() onClick = new EventEmitter<Activity>();
-  @Output() onDelete = new EventEmitter<RecordDto>();
+  @Output() onDelete = new EventEmitter<ActivityRecord>();
   get description() {
     return `${this.record.activity.description} (${this.record.activity.amount * this.record.number} ${this.record.activity.unit})` 
   }
@@ -96,10 +96,7 @@ export class MergedRecordMinimalComponent {
   }
 
   protected _onDelete(){
-    this.onDelete.emit({
-        activity: this.record.activity,
-        date: this.record.date
-    })
+    this.onDelete.emit(this.record)
   }
 
   protected _onClick(activity: Activity){

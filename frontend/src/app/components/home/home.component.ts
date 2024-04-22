@@ -17,6 +17,7 @@ import { RecordState, selectAllRecords } from '../../stores/record-store';
 import { ActivitiesActions } from '../../stores/activities-store/activities.actions';
 import { selectAllActivities } from '../../stores/activities-store';
 import { UserProvider } from '../../../providers/user.provider.service';
+import { ActivityRecord } from '../../../domain/activity';
 
 @Component({
   selector: 'app-home',
@@ -59,7 +60,7 @@ export class HomeComponent implements OnDestroy, OnInit {
     map(([date, monthRecords]) => monthRecords.filter((record) => record.date.toDateString() === date.toDateString()))
   )
   
-  async onDelete(record: RecordDto){
-    this.store.dispatch(RecordsActions.downsertRecord({userId: "", record}));
+  async onDelete(record: ActivityRecord){
+    this.store.dispatch(RecordsActions.downsertRecord({userId: "8f7f2bdb-3529-4f65-808b-8cd8f81e2269", record}));
   }
 }
