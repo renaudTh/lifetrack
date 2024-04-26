@@ -1,0 +1,16 @@
+
+    <p-card header="Log in" [style]="{ width: '360px' }">
+        <div id="form">
+            <span class="p-float-label">
+            <input id="username" type="text" pInputText [(ngModel)]="login" />
+            <label for="username">Username</label>  
+        </span>
+        <span class="p-float-label">
+            <p-password id="password" [(ngModel)]="password" [feedback]="false"></p-password>
+            <label for="password">Password</label>  
+        </span>
+
+        <p-button label="Login" severity="success" [disabled]="cantSubmit" (onClick)="submit()"></p-button>  
+        </div>
+
+    </p-card>
