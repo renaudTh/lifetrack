@@ -1,9 +1,10 @@
 import { Inject, Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
-import { EMPTY, catchError, map, switchMap, withLatestFrom } from "rxjs";
+import { EMPTY, catchError, map, switchMap, withLatestFrom, zip } from "rxjs";
 import { DateService } from "../../../domain/date.service";
 import { IRecordProvider, RECORD_PROVIDER } from "../../../domain/record.provider.interface";
 import { RecordsActions } from "./record.actions";
+import { UserProviderService } from "../../../providers/user.provider.service";
 
 @Injectable()
 export class RecordsEffects {
@@ -11,7 +12,8 @@ export class RecordsEffects {
     loadMonth$ = createEffect(() =>
         this.actions$.pipe(
             ofType(RecordsActions.loadDisplayedDateRecords),
-            switchMap(({ userId, date }) => this.recordProvider.getUserMonthHistory(userId, date)
+            withLatestFrom(this.userService.getUser$()),
+            switchMap(([{date }, user]) => this.recordProvider.getUserMonthHistory(user!.id, date)
                 .pipe(
                     map(records => RecordsActions.loadingSuccess({ userMonth: records })),
                     catchError(() => EMPTY))
@@ -22,8 +24,8 @@ export class RecordsEffects {
     upsertRecord$ = createEffect(() =>
         this.actions$.pipe(
             ofType(RecordsActions.upsertRecord),
-            withLatestFrom(this.dateService.selectedDate$),
-            switchMap(([{ userId, activity }, date]) => this.recordProvider.upsertRecord(userId,date, activity).pipe(
+            withLatestFrom(this.dateService.selectedDate$, this.userService.getUser$()),
+            switchMap(([{activity }, date, user]) => this.recordProvider.upsertRecord(user!.id ,date, activity).pipe(
                 map((record) => RecordsActions.upsertSuccess({ record })),
                 catchError((error: any) => {
                     console.error(error)
@@ -36,7 +38,8 @@ export class RecordsEffects {
     downsertRecord$ = createEffect(() =>
         this.actions$.pipe(
             ofType(RecordsActions.downsertRecord),
-            switchMap(({ userId, record }) => this.recordProvider.downsertRecord(userId, record)
+            withLatestFrom(this.userService.getUser$()),
+            switchMap(([{record }, user]) => this.recordProvider.downsertRecord(user!.id, record)
                 .pipe(
                     map(record => RecordsActions.downsertSuccess({ record })),
                     catchError(() => EMPTY)
@@ -48,6 +51,7 @@ export class RecordsEffects {
     constructor(
         private actions$: Actions,
         private dateService: DateService,
+        private userService: UserProviderService,
         @Inject(RECORD_PROVIDER) private recordProvider: IRecordProvider,
     ) { }
 }

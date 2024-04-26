@@ -2,7 +2,8 @@ import { Inject, Injectable } from "@angular/core";
 import { ACTIVITY_PROVIDER, IActivityProvider } from "../../../domain/activity.provider.interface";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { ActivitiesActions } from "./activities.actions";
-import { EMPTY, catchError, map, switchMap } from "rxjs";
+import { EMPTY, catchError, exhaustMap, map, switchMap, withLatestFrom } from "rxjs";
+import { UserProviderService } from "../../../providers/user.provider.service";
 
 @Injectable()
 export class ActivitiesEffects {
@@ -10,7 +11,8 @@ export class ActivitiesEffects {
     loadActivities$ = createEffect(() => 
         this.actions$.pipe(
             ofType(ActivitiesActions.loadUserActivities),
-            switchMap(({userId} ) => this.activitiesProvider.getAllActivitiesSUP(userId).pipe(
+            withLatestFrom(this.userService.getUser$()),
+            exhaustMap(([_, user]) => this.activitiesProvider.getAllActivitiesSUP(user!.id).pipe(
                 map((activities) => ActivitiesActions.loadingSuccess({activities})),
                 catchError((err: any) =>{
                     console.error(err);
@@ -23,7 +25,8 @@ export class ActivitiesEffects {
     addActivity$ = createEffect(()=>
         this.actions$.pipe(
             ofType(ActivitiesActions.addNewActivity),
-            switchMap(({userId, activity}) => this.activitiesProvider.addActivity(activity, userId).pipe(
+            withLatestFrom(this.userService.getUser$()),
+            switchMap(([{activity}, user]) => this.activitiesProvider.addActivity(activity, user!.id).pipe(
                 map((activity) => ActivitiesActions.addNewActivitySuccess({activity})),
                 catchError((err: any) =>{
                     console.error(err);
@@ -34,5 +37,5 @@ export class ActivitiesEffects {
     )
 
 
-    constructor( private actions$: Actions, @Inject(ACTIVITY_PROVIDER) private activitiesProvider: IActivityProvider){}
+    constructor( private actions$: Actions,private userService: UserProviderService, @Inject(ACTIVITY_PROVIDER) private activitiesProvider: IActivityProvider){}
 }

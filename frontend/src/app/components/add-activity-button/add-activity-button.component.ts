@@ -1,18 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, Inject, Input } from '@angular/core';
+import { Component } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { ButtonModule } from 'primeng/button';
-import { ChipModule } from 'primeng/chip';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { firstValueFrom, mergeMap, take } from 'rxjs';
 import { Activity } from '../../../domain/activity';
-import { DateService } from '../../../domain/date.service';
-import { IRecordProvider, RECORD_PROVIDER } from '../../../domain/record.provider.interface';
-import { RecordDto } from '../../../providers/record.dto';
+import { selectFive } from '../../stores/activities-store';
+import { RecordsActions } from '../../stores/record-store/record.actions';
 import { ActivityMinimalComponent } from '../activity-minimal/activity-minimal.component';
 import { ActivityPickerComponent } from '../activity-picker/activity-picker.component';
-import { Store } from '@ngrx/store';
-import { RecordsActions } from '../../stores/record-store/record.actions';
-import { selectFive } from '../../stores/activities-store';
 
 
 @Component({
@@ -29,8 +24,7 @@ export class AddActivityButtonComponent {
   private _dialogRef: DynamicDialogRef | undefined;
   
   protected fiveLast$ = this.store.select(selectFive)
-  constructor(private dateService: DateService,
-    @Inject(RECORD_PROVIDER) private recordProvider: IRecordProvider,
+  constructor(
     private dialogService: DialogService,
     private store: Store,
   ) {
@@ -38,7 +32,7 @@ export class AddActivityButtonComponent {
   }
 
   async addActivity(activity: Activity) {
-    this.store.dispatch(RecordsActions.upsertRecord({userId: "8f7f2bdb-3529-4f65-808b-8cd8f81e2269", activity: activity}))
+    this.store.dispatch(RecordsActions.upsertRecord({activity}))
   }
 
   openDialog() {
