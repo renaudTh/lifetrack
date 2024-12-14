@@ -19,18 +19,18 @@
 }
 
 .day {
-    background-color: #edebd7ff;
+    background-color: var(--p-primary-200);
     display: flex;
     justify-content: center;
     align-items: center;  
 }
 .not-current-month{
-    background-color: rgba(129, 164, 205, 0.237) ;
+    background-color: var(--p-mask-color) ;
 }
 .current-date{
-    border: 1px solid #1b4079ff;
+    border: 1px solid var(--p-primary-700);
 }
 .selected{
-    background-color: #1b4079ff;
+    background-color: var(--p-primary-700);
     color: white;
 }

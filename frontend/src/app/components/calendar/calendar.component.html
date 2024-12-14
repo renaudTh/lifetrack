@@ -1,10 +1,20 @@
-<div *ngIf="displayedDateString$ | async as title" class="header">
-    <button pButton (click)="previous()" icon="pi pi-chevron-left" class="p-button-secondary" ></button>
-    <h2>{{title}}</h2>  
-    <button pButton (click)="next()" icon="pi pi-chevron-right" [disabled]="!canNext" class="p-button-secondary" ></button>
-  </div>
-  <div *ngIf="daysOfMoth$ | async as dayList" class="container">
-      <div class="day" (click)="selectDay(day.date)" *ngFor="let day of dayList" [ngClass]="getClassList(day)">
-      {{day.date.toLocaleDateString('en-US', {day: 'numeric'})}}
-      </div>
-  </div>
+@let title = displayedDateString$ | async;
+
+@if(title) {
+    <div class="header">
+        <button pButton (click)="previous()" icon="pi pi-chevron-left" class="p-button-secondary" ></button>
+        <h2>{{title}}</h2>  
+        <button pButton (click)="next()" icon="pi pi-chevron-right" [disabled]="!canNext" class="p-button-secondary" ></button>
+    </div>
+}
+
+@let daysList = daysOfMonth$ | async;
+@if(daysList){
+    <div  class="container">
+        @for (day of daysList; track day.date) {
+            <div class="day" (click)="selectDay(day.date)"[ngClass]="getClassList(day)">
+                {{day.date.toLocaleDateString('en-US', {day: 'numeric'})}}
+            </div>
+        }
+    </div>
+}

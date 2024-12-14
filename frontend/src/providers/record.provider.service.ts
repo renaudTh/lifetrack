@@ -12,7 +12,7 @@ export class ActivityRecordProvider implements IRecordProvider {
     private _records: ActivityRecord[] = [
         {
             id: "0",
-            date: new Date("2024-04-01"),
+            date: new Date("2024-12-14"),
             activity: {
                 id: "4",
                 representation: "🍺",
@@ -25,7 +25,7 @@ export class ActivityRecordProvider implements IRecordProvider {
         },
         {
             id: "1",
-            date: new Date("2024-04-02"),
+            date: new Date("2024-12-14"),
             activity: {
                 id: "2",
                 representation: "🎹",
@@ -37,7 +37,7 @@ export class ActivityRecordProvider implements IRecordProvider {
         },
         {
             id: "2",
-            date: new Date("2024-05-02"),
+            date: new Date("2024-12-13"),
             activity: {
                 id: "2",
                 representation: "🎹",

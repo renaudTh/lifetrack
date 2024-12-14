@@ -1,11 +1,13 @@
-
-
-
-
-
 <div class="center">
       <p-button icon="pi pi-plus" [rounded]="true" (click)="openDialog()"></p-button>
 </div>
-<div class="right" *ngIf="fiveLast$ | async as activities">
-     <app-activity-minimal *ngFor="let item of activities" [activity]="item" (onClick)="addActivity($event)"></app-activity-minimal>
-</div>
+
+@let fiveLast = fiveLast$ | async;
+
+@if(fiveLast){
+      <div class="right">
+            @for (activity of fiveLast; track activity.id) {
+                  <app-activity-minimal [activity]="activity" (onClick)="addActivity($event)"></app-activity-minimal>
+            }
+      </div>
+}

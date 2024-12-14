@@ -1,13 +1,25 @@
+
+@let activities = activities$ | async;
+
+
 <div class="container">
-    <div class="activities" *ngIf="activities$ | async as activities">
-        <app-activity-minimal *ngFor="let activity of activities" [activity]="activity"
-            (onClick)="addActivity(activity)"></app-activity-minimal>
-    </div>
+
+    @if (activities) {
+        <div class="activities">
+            @for (activity of activities; track activity.id) {
+                <app-activity-minimal 
+                    [activity]="activity"
+                    (onClick)="addActivity(activity)">
+                </app-activity-minimal>
+            }
+ 
+        </div>
+    }
     <div class="add-form">
-            <input type="text" id="representation" [(ngModel)]="activity.representation" placeholder="🚀"/>
-            <input type="text" id="description" [(ngModel)]="activity.description" placeholder="launching rocket" />
-            <input type="number" id="amount" [(ngModel)]="activity.amount" placeholder="2000"/>
-            <input type="text" id="unit" [(ngModel)]="activity.unit" placeholder="kph"/>
-            <p-button icon="pi pi-send" severity="success" icon="pi pi-plus" size="small" (onClick)="newActivity()"></p-button>
+        <input type="text" id="representation" [(ngModel)]="activity.representation" placeholder="🚀"/>
+        <input type="text" id="description" [(ngModel)]="activity.description" placeholder="launching rocket" />
+        <input type="number" id="amount" [(ngModel)]="activity.amount" placeholder="2000"/>
+        <input type="text" id="unit" [(ngModel)]="activity.unit" placeholder="kph"/>
+        <p-button icon="pi pi-send" severity="success" icon="pi pi-plus" size="small" (onClick)="newActivity()"></p-button>
     </div>
 </div>
