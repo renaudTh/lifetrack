@@ -2,12 +2,19 @@
 <app-calendar></app-calendar>
 <app-add-activity-button></app-add-activity-button>
 <div class="days-activities">
-  <fieldset *ngIf="selectedDate$ | async as selectedDate">
+  @let selectedDate = selectedDateString$ | async;
+  @if (selectedDate) {
+    <fieldset >
     <legend> {{ selectedDate }}</legend>
-    <div *ngIf="daily$ | async as daily" class="records">
-      <div *ngFor="let record of daily">
-        <app-merged-record-minimal [record]="record" [deletable]="true" (onDelete)="onDelete($event)"></app-merged-record-minimal>
-      </div>
+    @let daily = daily$ | async;
+    @if(daily){
+      <div class="records">
+        @for (record of daily; track record.id) {
+          <app-merged-record-minimal [record]="record" [deletable]="true" (onDelete)="onDelete($event)"></app-merged-record-minimal>
+        }
     </div>
+    }
   </fieldset>
+  }
+
 </div>
