@@ -1,30 +1,28 @@
+
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Output } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
-import { DateService } from '../../../domain/date.service';
 import { Day } from '../../../domain/date';
+import { DateService } from '../../../domain/date.service';
 
 @Component({
   selector: 'app-calendar',
   standalone: true,
   imports: [CommonModule, ButtonModule],
   templateUrl: './calendar.component.html',
-  styleUrl: './calendar.component.scss'
+  styleUrl: './calendar.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CalendarComponent {
 
-
-
-
+  private readonly dateService = inject(DateService)
+  protected displayedDateString$ = this.dateService.displayedDateString$;
+  protected daysOfMonth$ = this.dateService.daysOfCurrentMonth$;
+ 
   getClassList(day: Day){
     return [!day.inCurrentMonth ? 'not-current-month' : '', day.currentDate ? 'current-date' : '', day.selected ? 'selected' : ''];
-  }
-
-  constructor(private dateService: DateService){
-  }
-  
-  protected displayedDateString$ = this.dateService.displayedDateString$;
-  protected daysOfMoth$ = this.dateService.daysOfCurrentMonth$;
+  }  
 
   previous(){
     this.dateService.previousMonth();
