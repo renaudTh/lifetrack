@@ -33,7 +33,7 @@ export class HomeComponent {
     this.dateService.displayedDate$.pipe(takeUntilDestroyed()).subscribe((date) => {
       this.store.dispatch(RecordsActions.loadDisplayedDateRecords({userId: "", date}))
     })
-    this.store.dispatch(ActivitiesActions.loadUserActivities({ userId: ""}));
+    this.store.dispatch(ActivitiesActions.loadUserActivities());
   }
 
   protected daily$ = this.dateService.selectedDate$.pipe(
