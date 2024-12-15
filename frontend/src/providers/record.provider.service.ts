@@ -1,107 +1,104 @@
-import { Injectable } from "@angular/core";
-import { BehaviorSubject, Observable, map, of } from "rxjs";
+import { Client, Databases, ID, Models, Query } from "appwrite";
+import { from, map, Observable, switchMap } from "rxjs";
 import { ActivityRecord } from "../domain/activity";
 import { IRecordProvider } from "../domain/record.provider.interface";
 import { RecordDto } from "./record.dto";
+import { inject } from "@angular/core";
+import { ApiService } from "./api.service";
 
-@Injectable()
-export class ActivityRecordProvider implements IRecordProvider {
+export class RecordProviderService implements IRecordProvider {
 
 
+    private readonly api = inject(ApiService);
+    private collectionId = '675db2c70024c64a4934';
+    
+    constructor(){
+    }
 
-    private _records: ActivityRecord[] = [
-        {
-            id: "0",
-            date: new Date("2024-12-14"),
+    private parseDocument(doc: Models.Document): ActivityRecord {
+        return {
             activity: {
-                id: "4",
-                representation: "🍺",
-                amount: 25,
-                unit: "cl",
-                description: "Drink a beer"
+                amount:doc['activity']["base_amount"],
+                description: doc["activity"]["description"],
+                id: doc["activity"]["$id"],
+                representation: doc["activity"]["representation"],
+                unit: doc["activity"]["unit"]
             },
-            number: 2,
-
-        },
-        {
-            id: "1",
-            date: new Date("2024-12-14"),
-            activity: {
-                id: "2",
-                representation: "🎹",
-                amount: 30,
-                unit: "min",
-                description: "Play the piano"
-            },
-            number: 2,
-        },
-        {
-            id: "2",
-            date: new Date("2024-12-13"),
-            activity: {
-                id: "2",
-                representation: "🎹",
-                amount: 30,
-                unit: "min",
-                description: "Play the piano"
-            },
-            number: 2,
-        },
-
-    ];
-    private _recordSubject = new BehaviorSubject<ActivityRecord[]>(this._records);
-    private selectedRecord$ = this._recordSubject.asObservable();
-
-    upsertRecord(userId: string, record: RecordDto): Observable<ActivityRecord> {
-        const foundRecord = this._records.find((r) => r.date.toDateString() === record.date.toDateString() && r.activity.id === record.activity.id);
-        let newRecord: ActivityRecord;
-        if(!foundRecord){
-            newRecord = {
-                activity: record.activity,
-                date: record.date,
-                id: `${Math.floor(5 + Math.random() * 995)}`,
-                number: 1
-            }
-            this._records = [...this._records, newRecord]
+            date: new Date(doc['date']),
+            id: doc.$id,
+            number: doc["amount"]
         }
-        else {
-            newRecord = {
-                ...foundRecord,
-                number: foundRecord.number + 1
-            }
-           
-            this._records = this._records.map((record) => 
-                ((record.id === newRecord.id) ? newRecord : record)
-            )
-        }
-        this._recordSubject.next(this._records);
-        return of(newRecord);
+    }
+
+    upsertRecord(userId: string, recordDto: RecordDto): Observable<ActivityRecord> {
+        //Get all daily records
+        const start = new Date(recordDto.date);
+        start.setHours(0,0,0,0);
+        const end = new Date(recordDto.date);
+        end.setHours(23,59,999);
+
+        const recordsRequest = this.api.listDocuments(
+            this.collectionId,
+            [Query.and([Query.lessThan('date', end.toISOString()),Query.greaterThan('date', start.toISOString())])]
+        );
+        const recordsResult = recordsRequest.then((r) => r.documents.map((doc) => this.parseDocument(doc)));        
+        return from(recordsResult).pipe(
+            //Filter by concerned activity
+            map((list) => list.filter((record) => record.activity.id === recordDto.activity.id)),
+            switchMap((list) => {
+                //If activity recorded for the given date, create it
+                if(list.length === 0){
+                    const body: any = {
+                        "id": "1",
+                        "amount": 1,
+                        "activity": recordDto.activity.id,
+                        "date": recordDto.date
+                    }
+                    const request = this.api.createDocument(this.collectionId, ID.unique(), body);
+                    const response = request.then((doc) => this.parseDocument(doc));
+                    return from(response);
+                }
+                //Else update the amount
+                else {
+                    const element = list[0];
+                    const request = this.api.updateDocument(this.collectionId, element.id, {amount: element.number + 1 });
+                    const response = request.then((doc) => this.parseDocument(doc));
+                    return from(response);
+                }
+            })
+        );
+
     }
     getUserMonthHistory(userId: string, date: Date): Observable<ActivityRecord[]> {
-        const ret = this._records.filter((record) => (record.date.getMonth() === date.getMonth() && record.date.getFullYear() === date.getFullYear()));
-        return of(ret);
-    }
-    getUserDaily(userId: string, date: Date): Observable<ActivityRecord[]> {
-        return this.selectedRecord$.pipe(
-            map((records) => records.filter((record) => record.date.toDateString() === date.toDateString()))
+        
+        const month = date.getMonth();
+        const year = date.getFullYear();
+        const start = new Date(year, month, 1).toISOString();
+        const end = new Date(year, month+1, 1).toISOString();
+
+        const request = this.api.listDocuments(this.collectionId, 
+            [Query.and([Query.greaterThan('date', start), Query.lessThan('date', end)])]
         )
+        const result = request.then((result) => result.documents.map((doc) => this.parseDocument(doc)))
+        return from(result);
     }
-    downsertRecord(userId: string, record: RecordDto): Observable<ActivityRecord> {
-        const foundRecord = this._records.find((r) => r.date.toDateString() === record.date.toDateString() && r.activity.id === record.activity.id);
-        let newRecord: ActivityRecord;
-        if(!foundRecord){
-            throw new Error("Record not found!");
+    downsertRecord(userId: string, record: ActivityRecord): Observable<ActivityRecord> {
+        
+        if(record.number > 1){
+            const request = this.api.updateDocument(this.collectionId, record.id, {amount: record.number - 1 });
+            const response = request.then((doc) => this.parseDocument(doc));
+            return from(response);
         }
         else {
-            newRecord = {
-                ...foundRecord,
-                number: foundRecord.number - 1
-            }
-            this._records = this._records.map((record) => 
-                ((record.id === newRecord.id) ? newRecord : record)
+            const request = this.api.deleteDocument(this.collectionId, record.id);
+            return from(request).pipe(
+                map((_) => ({
+                    ...record,
+                    number: 0,
+                }))
             )
         }
-        this._recordSubject.next(this._records);
-        return of(newRecord);
+        
     }
+
 }

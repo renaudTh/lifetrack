@@ -9,5 +9,5 @@ export interface IRecordProvider {
 
     upsertRecord(userId: string, record: RecordDto): Observable<ActivityRecord>
     getUserMonthHistory(userId: string,date:Date): Observable<ActivityRecord[]>
-    downsertRecord(userId: string, record: RecordDto): Observable<ActivityRecord>
+    downsertRecord(userId: string, record: ActivityRecord): Observable<ActivityRecord>
 }

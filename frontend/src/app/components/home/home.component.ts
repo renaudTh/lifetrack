@@ -5,8 +5,8 @@ import { Store } from '@ngrx/store';
 import { ButtonModule } from 'primeng/button';
 import { SpeedDialModule } from 'primeng/speeddial';
 import { switchMap } from 'rxjs';
+import { ActivityRecord } from '../../../domain/activity';
 import { DateService } from '../../../domain/date.service';
-import { RecordDto } from '../../../providers/record.dto';
 import { ActivitiesActions } from '../../stores/activities-store/activities.actions';
 import { RecordState, selectDailyRecord } from '../../stores/record-store';
 import { RecordsActions } from '../../stores/record-store/record.actions';
@@ -40,7 +40,7 @@ export class HomeComponent {
    switchMap((date) => this.store.select(selectDailyRecord(date))))
 
   
-  onDelete(record: RecordDto){
+  onDelete(record: ActivityRecord){
     this.store.dispatch(RecordsActions.downsertRecord({userId: "", record}));
   }
 }

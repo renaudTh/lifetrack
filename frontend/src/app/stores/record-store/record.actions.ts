@@ -9,7 +9,7 @@ export const RecordsActions = createActionGroup({
         'Loading Success': props<{userMonth: ActivityRecord[]}>(),
         'Upsert Record': props<{userId: string, activity: Activity}>(),
         'Upsert Success': props<{record: ActivityRecord}>(),
-        'Downsert Record': props<{userId: string, record: RecordDto}>(),
+        'Downsert Record': props<{userId: string, record: ActivityRecord}>(),
         'Downsert Success': props<{record: ActivityRecord}>()
     },
   });
