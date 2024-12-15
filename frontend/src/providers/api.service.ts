@@ -1,17 +1,15 @@
 import { inject, Injectable } from "@angular/core";
-import { Client, Databases, Models } from "appwrite";
-import { CLIENT_ID, DB_ID } from "./api.config";
+import { Databases, Models } from "appwrite";
+import { CLIENT, DB_ID } from "./api.config";
 
 @Injectable({providedIn: "root"})
 export class ApiService {
 
     private readonly dbId: string = inject(DB_ID);
-    private readonly clientId= inject(CLIENT_ID);
-    private client:Client;
+    private readonly client= inject(CLIENT);
     private databases: Databases;
     constructor(){
-        this.client = new Client();
-        this.client.setProject(this.clientId);
+
         this.databases = new Databases(this.client);
     }
     public listDocuments(collectionId: string, queries?: string[]){

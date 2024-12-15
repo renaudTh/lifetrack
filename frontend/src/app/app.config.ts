@@ -40,8 +40,12 @@ export const appConfig: ApplicationConfig = {
         useClass: RecordProviderService,
     },
     {
-       provide: CLIENT_ID,
-       useValue: '675daf91000a5b007d0c' 
+       provide: CLIENT,
+       useFactory: () => {
+        const client = new Client()
+        client.setProject('675daf91000a5b007d0c');
+        return client;
+       } 
     },
     {
         provide: DB_ID,

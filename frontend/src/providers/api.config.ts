@@ -1,5 +1,6 @@
 import { InjectionToken } from "@angular/core";
+import { Client } from "appwrite";
 
 
-export const CLIENT_ID = new InjectionToken<string>("CLIENT_ID");
+export const CLIENT = new InjectionToken<Client>("CLIENT");
 export const DB_ID = new InjectionToken<string>("DB_ID");
