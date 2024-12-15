@@ -14,8 +14,13 @@ export const selectAllRecords = createSelector(
 export const selectDailyRecord = (date: Date) => createSelector(
     selectAllRecords, 
     (records: ActivityRecord[]) => {
-        date.setHours(0,0,0,0)
-        const filter = records.filter((item) => { item.date.setHours(0,0,0,0); return item.date.getTime() === date.getTime();});
+        const filteredDate = new Date(date);
+        filteredDate.setHours(0,0,0,0)
+        const filter = records.filter((item) => { 
+            const itemDate = new Date(item.date);
+            itemDate.setHours(0,0,0,0);
+            return itemDate.getTime() === filteredDate.getTime();
+        });
         return filter;
     }
 )
