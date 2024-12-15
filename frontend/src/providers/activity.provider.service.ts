@@ -1,83 +1,47 @@
-import { Injectable } from "@angular/core";
-import { BehaviorSubject, Observable, of } from "rxjs";
-import { IActivityProvider } from "../domain/activity.provider.interface";
+import { Client, Databases, ID, Models } from "appwrite";
+import { from, Observable } from "rxjs";
 import { Activity } from "../domain/activity";
+import { IActivityProvider } from "../domain/activity.provider.interface";
+import { inject } from "@angular/core";
+import { ApiService } from "./api.service";
 
 
-@Injectable()
 export class ActivityProviderService implements IActivityProvider {
 
-    private _activities: Activity[] = [
-        {
-            id: "0",
-            representation: "🚴‍♂️",
-            amount: 4,
-            unit: "km",
-            description: "cycling"
-        },
-        {
-            id: "1",
-            representation: "🍔",
-            amount: 1,
-            unit: "u",
-            description: "Eat a burger"
-        },
-        {
-            id: "2",
-            representation: "🎹",
-            amount: 30,
-            unit:  "min",
-            description: "Play the piano"
-        },
-        {
-            id: "3",
-            representation: "🏃‍♂️",
-            amount: 2,
-            unit:  "km",
-            description: "Running"
-        },
-        {
-            id: "4",
-            representation: "🍺",
-            amount: 25,
-            unit:  "cl",
-            description: "Drink a beer"
-        },
-        {
-            id: "6",
-            representation: "🍕",
-            amount: 1,
-            unit:  "u",
-            description: "Eat a pizza"
-        },
+    private readonly api = inject(ApiService);
+    private collectionId = '675db0bb003314cb9055';
 
-    ];
-    private _activitiesSubject = new BehaviorSubject<Activity[]>(this._activities);
-
-
-    addActivity(activityDto: Partial<Activity>): Observable<Activity> {
-        const id = this._activities.length.toString();
-        const activity:Activity = {
-            id: id,
-            amount: activityDto.amount!,
-            description: activityDto.description!,
-            representation: activityDto.representation!,
-            unit: activityDto.unit!
+    private parseDocument(doc: Models.Document) : Activity {
+        return {
+            amount: doc['base_amount'],
+            description: doc["description"],
+            id: doc.$id,
+            representation: doc['representation'],
+            unit: doc["unit"]
         }
-        this._activities = [...this._activities, activity];
-        this._activitiesSubject.next(this._activities);
-        return of(activity);
+    }
+    addActivity(activity: Partial<Activity>): Observable<Activity> {
+        const body: any = {
+            "description": activity.description,
+            "base_amount": activity.amount,
+            "representation": activity.representation,
+            "unit": activity.unit,
+        }
+        const request = this.api.createDocument(this.collectionId, ID.unique(), body);
+        const response = request.then((doc: Models.Document) => this.parseDocument(doc));
+        return from(response);
     }
     updateActivity(activity: Partial<Activity>): Observable<Activity> {
         throw new Error("Method not implemented.");
     }
     getActivity(id: string): Observable<Activity> {
-        const activity = this._activities.find((activity) => activity.id === id);
-        if(!activity) throw new Error("Activity not found");
-        return of(activity);
+        throw new Error("Method not implemented.");
     }
     getAllActivities(): Observable<Activity[]> {
-        return this._activitiesSubject.asObservable();
+        const request = this.api.listDocuments(this.collectionId);
+        const response = request.then((value: Models.DocumentList<Models.Document>) => 
+           value.documents.map((doc) => this.parseDocument(doc))
+        )
+        return from(response);
     }
-
 }
