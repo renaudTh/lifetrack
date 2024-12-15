@@ -19,15 +19,12 @@ export class MergedRecordMinimalComponent {
 
   public record = input.required<ActivityRecord>()
   public deletable = input<boolean>(false);
-  public onDelete = output<RecordDto>();
+  public onDelete = output<ActivityRecord>();
   protected description = computed(() => `${this.record().activity.description} (${this.record().activity.amount * this.record().number} ${this.record().activity.unit})`)
   protected badgeValue = computed(() => this.record().number > 1 ? this.record().number : 0)
   
 
   protected _onDelete(){
-    this.onDelete.emit({
-        activity: this.record().activity,
-        date: this.record().date
-    })
+    this.onDelete.emit(this.record());
   }
 }
