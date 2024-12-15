@@ -13,10 +13,11 @@ import { RecordsActions } from '../../stores/record-store/record.actions';
 import { AddActivityButtonComponent } from '../add-activity-button/add-activity-button.component';
 import { CalendarComponent } from '../calendar/calendar.component';
 import { MergedRecordMinimalComponent } from '../merged-record-minimal/merged-record-minimal.component';
+import { HeaderComponent } from "../header/header.component";
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule,  MergedRecordMinimalComponent, ButtonModule, SpeedDialModule, CalendarComponent, AddActivityButtonComponent],
+  imports: [CommonModule, MergedRecordMinimalComponent, ButtonModule, SpeedDialModule, CalendarComponent, AddActivityButtonComponent, HeaderComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -33,7 +34,7 @@ export class HomeComponent {
     this.dateService.displayedDate$.pipe(takeUntilDestroyed()).subscribe((date) => {
       this.store.dispatch(RecordsActions.loadDisplayedDateRecords({userId: "", date}))
     })
-    this.store.dispatch(ActivitiesActions.loadUserActivities({ userId: ""}));
+    this.store.dispatch(ActivitiesActions.loadUserActivities());
   }
 
   protected daily$ = this.dateService.selectedDate$.pipe(

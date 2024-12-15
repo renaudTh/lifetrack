@@ -36,6 +36,6 @@ export class ActivityPickerComponent {
       this.store.dispatch(RecordsActions.upsertRecord({userId: "", activity}))
   }
   newActivity(){
-    this.store.dispatch(ActivitiesActions.addNewActivity({userId: '', activity: this.activity}));
+    this.store.dispatch(ActivitiesActions.addNewActivity({activity: this.activity}));
   }
 }
