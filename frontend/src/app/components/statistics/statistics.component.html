@@ -1,0 +1,19 @@
+<app-header></app-header>
+<div class="content">
+    @let activities = activities$ | async;
+    <h2>Your amazing stats 📊</h2>
+    @if (activities) {
+        <div class="activities">
+            @for (activity of activities; track activity.id) {
+                <app-activity-minimal 
+                    [activity]="activity"
+                    >
+                </app-activity-minimal>
+            }
+        </div>
+    }  
+    <div class="chart">
+        
+        <p-chart type="line" [data]="data" [options]="options" class="h-[30rem]" />
+    </div>
+</div>
