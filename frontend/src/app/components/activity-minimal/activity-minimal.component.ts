@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, EventEmitter, input, Input, output, Output } from '@angular/core';
+import { Activity } from '@lifetrack/lib';
 
-import { Activity } from '../../../domain/activity';
+
 import { ChipModule } from 'primeng/chip';
 import { TooltipModule } from 'primeng/tooltip';
 

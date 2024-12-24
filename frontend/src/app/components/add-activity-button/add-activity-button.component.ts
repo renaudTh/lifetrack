@@ -3,11 +3,11 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { ButtonModule } from 'primeng/button';
 import { DialogService } from 'primeng/dynamicdialog';
-import { Activity } from '../../../domain/activity';
 import { selectFive } from '../../stores/activities-store';
 import { RecordsActions } from '../../stores/record-store/record.actions';
 import { ActivityMinimalComponent } from '../activity-minimal/activity-minimal.component';
 import { ActivityPickerComponent } from '../activity-picker/activity-picker.component';
+import { Activity } from '@lifetrack/lib';
 
 
 @Component({

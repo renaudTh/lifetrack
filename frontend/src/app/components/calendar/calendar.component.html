@@ -1,4 +1,4 @@
-@let title = displayedDateString$ | async;
+@let title = displayedMonth();
 
 @if(title) {
     <div class="header">
@@ -8,7 +8,7 @@
     </div>
 }
 
-@let daysList = daysOfMonth$ | async;
+@let daysList = daysOfMonth();
 @if(daysList){
     <div  class="container">
         @for (day of daysList; track day.date) {

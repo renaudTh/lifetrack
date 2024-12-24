@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 
-import { ActivityRecord } from '../../../domain/activity';
+
 
 import { CommonModule } from '@angular/common';
 import { TooltipModule } from 'primeng/tooltip';
-import { RecordDto } from '../../../providers/record.dto';
+import { ActivityRecord } from '@lifetrack/lib';
+
 
 
 @Component({

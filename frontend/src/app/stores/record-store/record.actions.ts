@@ -1,6 +1,6 @@
+import { Activity, ActivityRecord, DjsDate } from "@lifetrack/lib";
 import { createActionGroup, props } from "@ngrx/store";
-import { Activity, ActivityRecord } from "../../../domain/activity";
-import { DjsDate } from "../../../domain/date";
+
 
 export const RecordsActions = createActionGroup({
     source: 'Records',

@@ -7,11 +7,11 @@ import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { Activity } from '../../../domain/activity';
 import { selectAllActivities } from '../../stores/activities-store';
 import { ActivitiesActions } from '../../stores/activities-store/activities.actions';
 import { RecordsActions } from '../../stores/record-store/record.actions';
 import { ActivityMinimalComponent } from '../activity-minimal/activity-minimal.component';
+import { Activity } from '@lifetrack/lib';
 
 @Component({
     selector: 'app-activity-picker',

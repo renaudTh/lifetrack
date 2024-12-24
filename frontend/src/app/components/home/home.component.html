@@ -2,7 +2,7 @@
 <app-calendar></app-calendar>
 <app-add-activity-button></app-add-activity-button>
 <div class="days-activities">
-  @let selectedDate = selectedDateString$ | async;
+  @let selectedDate = selectedDateString();
   @if (selectedDate) {
     <fieldset >
     <legend> {{ selectedDate }}</legend>

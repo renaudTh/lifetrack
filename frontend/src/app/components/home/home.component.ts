@@ -5,7 +5,6 @@ import { Store } from '@ngrx/store';
 import { ButtonModule } from 'primeng/button';
 import { SpeedDialModule } from 'primeng/speeddial';
 import { switchMap } from 'rxjs';
-import { ActivityRecord } from '../../../domain/activity';
 import { DateService } from '../../../domain/date.service';
 import { ActivitiesActions } from '../../stores/activities-store/activities.actions';
 import { RecordState, selectDailyRecord } from '../../stores/record-store';
@@ -14,6 +13,7 @@ import { AddActivityButtonComponent } from '../add-activity-button/add-activity-
 import { CalendarComponent } from '../calendar/calendar.component';
 import { MergedRecordMinimalComponent } from '../merged-record-minimal/merged-record-minimal.component';
 import { HeaderComponent } from "../header/header.component";
+import { ActivityRecord } from '@lifetrack/lib';
 @Component({
     selector: 'app-home',
     imports: [CommonModule, MergedRecordMinimalComponent, ButtonModule, SpeedDialModule, CalendarComponent, AddActivityButtonComponent, HeaderComponent],
@@ -26,7 +26,7 @@ export class HomeComponent {
   private readonly dateService = inject(DateService);
   private readonly store = inject(Store<RecordState>);
 
-  protected selectedDateString$ = this.dateService.selectedDateString$;
+  protected selectedDateString = this.dateService.selectedDateString;
 
   constructor(){
 

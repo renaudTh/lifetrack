@@ -2,11 +2,10 @@ import { inject } from "@angular/core";
 import { ID, Models, Query } from "appwrite";
 import dayjs from "dayjs";
 import { from, map, Observable, switchMap } from "rxjs";
-import { ActivityRecord } from "../domain/activity";
-import { DjsDate } from "../domain/date";
 import { IRecordProvider } from "../domain/record.provider.interface";
 import { ApiService } from "./api.service";
 import { RecordDto } from "./record.dto";
+import { ActivityRecord, DjsDate } from "@lifetrack/lib";
 
 export class RecordProviderService implements IRecordProvider {
 

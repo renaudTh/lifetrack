@@ -1,5 +1,6 @@
+import { Activity, ActivityStats } from "@lifetrack/lib";
 import { ChartData, ChartOptions } from "chart.js";
-import { Activity, ActivityStats } from "./activity";
+
 
 export function generateChartsData(activity: Activity, stats: ActivityStats, sample: string[]): [ChartData<'line'>, ChartOptions<'line'>] {
 

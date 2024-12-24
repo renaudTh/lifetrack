@@ -1,8 +1,8 @@
 import { InjectionToken } from "@angular/core";
 import { Observable } from "rxjs";
 import { RecordDto } from "../providers/record.dto";
-import { ActivityRecord } from "./activity";
-import { DjsDate } from "./date";
+import { ActivityRecord, DjsDate } from "@lifetrack/lib";
+
 
 export const RECORD_PROVIDER = new InjectionToken<IRecordProvider>("record.provider.interface");
 

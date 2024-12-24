@@ -1,5 +1,6 @@
+import { Activity } from "@lifetrack/lib";
 import { createFeatureSelector, createSelector } from "@ngrx/store";
-import { Activity } from "../../../domain/activity";
+
 
 
 export interface ActivitiesState {

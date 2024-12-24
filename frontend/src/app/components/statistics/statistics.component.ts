@@ -5,14 +5,15 @@ import { ChartData, ChartOptions } from 'chart.js';
 import dayjs from 'dayjs';
 import { ChartModule } from 'primeng/chart';
 import { map, Observable, take } from 'rxjs';
-import { Activity, ActivityStats } from '../../../domain/activity';
 import { generateChartsData } from '../../../domain/chart.service';
-import { StatsEngine } from '../../../domain/stats.engine';
+
 import { RecordProviderService } from '../../../providers/record.provider.service';
 import { selectAllActivities } from '../../stores/activities-store';
 import { ActivityMinimalComponent } from "../activity-minimal/activity-minimal.component";
 import { HeaderComponent } from "../header/header.component";
+import { Activity, ActivityStats, StatsEngine } from '@lifetrack/lib';
 
+import weekOfYear from 'dayjs/plugin/weekOfYear';
 @Component({
     selector: 'app-statistics',
     imports: [HeaderComponent, AsyncPipe, ActivityMinimalComponent, ChartModule],
@@ -35,7 +36,7 @@ export class StatisticsComponent {
   protected stats$: Observable<ActivityStats[]>;
 
   constructor(){
-
+    dayjs.extend(weekOfYear)
     const sampling = "week"
     const start = dayjs().subtract(12, sampling);
     const end = dayjs();
