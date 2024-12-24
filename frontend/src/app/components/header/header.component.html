@@ -1,5 +1,8 @@
+
+@let user = user$ | async;
+
 <p-menubar [model]="items"  >
-    <ng-template #end let-item let-root="root" >
-       
-    </ng-template>
+   @if (user) {
+    <span>Hi, {{ user.name }} 🙋‍♂️</span>
+   }
 </p-menubar>

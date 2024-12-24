@@ -1,13 +1,15 @@
 import { InjectionToken } from "@angular/core";
 import { Observable } from "rxjs";
-import { ActivityRecord } from "./activity";
 import { RecordDto } from "../providers/record.dto";
+import { ActivityRecord } from "./activity";
+import { DjsDate } from "./date";
 
 export const RECORD_PROVIDER = new InjectionToken<IRecordProvider>("record.provider.interface");
 
 export interface IRecordProvider {
 
-    upsertRecord(userId: string, record: RecordDto): Observable<ActivityRecord>
-    getUserMonthHistory(userId: string,date:Date): Observable<ActivityRecord[]>
-    downsertRecord(userId: string, record: ActivityRecord): Observable<ActivityRecord>
+    upsertRecord(record: RecordDto): Observable<ActivityRecord>
+    getUserMonthHistory(date: DjsDate): Observable<ActivityRecord[]>
+    downsertRecord(record: ActivityRecord): Observable<ActivityRecord>
+    getRecordsBetweenDates(start: DjsDate, end: DjsDate): Observable<ActivityRecord[]>
 }

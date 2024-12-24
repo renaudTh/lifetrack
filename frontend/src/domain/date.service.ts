@@ -1,94 +1,77 @@
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, Observable, combineLatest, map, zip } from "rxjs";
-import { Day } from "./date";
+import dayjs from "dayjs";
+import { BehaviorSubject, Observable, combineLatest, map } from "rxjs";
+import { Day, DjsDate } from "./date";
 
 @Injectable({ providedIn: "root" })
 export class DateService {
 
-    private _selectedDate: BehaviorSubject<Date>;
-    private _displayedDate: BehaviorSubject<Date>;
+    private _selectedDate: BehaviorSubject<DjsDate>;
+    private _currentMonth: BehaviorSubject<DjsDate>;
 
-    public selectedDate$: Observable<Date>;
-    public displayedDate$: Observable<Date>;
+    public selectedDate$: Observable<DjsDate>;
+    public currentMonth$: Observable<DjsDate>;
 
     constructor() {
 
-        const date = new Date();
-        date.setDate(1);
-        this._displayedDate = new BehaviorSubject<Date>(date);
-        this._selectedDate = new BehaviorSubject<Date>(new Date());
+        const date = dayjs().date(1)
+        this._currentMonth = new BehaviorSubject<DjsDate>(date);
+        this._selectedDate = new BehaviorSubject<DjsDate>(dayjs());
         this.selectedDate$ = this._selectedDate.asObservable();
-        this.displayedDate$ = this._displayedDate.asObservable();
-
+        this.currentMonth$ = this._currentMonth.asObservable();
     }
 
     public nextMonth() {
-        const date = this._displayedDate.value;
-        date.setMonth(date.getMonth() + 1);
-        this._displayedDate.next(date);
+        const date = this._currentMonth.value.add(1, 'month');
+        this._currentMonth.next(date);
     }
     public previousMonth() {
-        const date = this._displayedDate.value;
-        date.setMonth(date.getMonth() - 1);
-        this._displayedDate.next(date);
+        const date = this._currentMonth.value.subtract(1, 'month');
+        this._currentMonth.next(date);
     }
     get displayedDateString$(): Observable<string> {
-        return this.displayedDate$.pipe(
-            map((date) => date.toLocaleDateString('en-US', { month: 'long', year: "numeric"}))
-        )
+        return this.currentMonth$.pipe(
+            map((date) => date.format("MMMM YYYY")
+        ))
     }
 
     get selectedDateString$(): Observable<string>{
-        return this.selectedDate$.pipe(map((date) => date.toLocaleDateString("en-US", {weekday: "long", month: "long", day: "2-digit"})))
+        return this.selectedDate$.pipe(map((date) => date.format('dddd, MMMM D')))
     }
 
     get daysOfCurrentMonth$(): Observable<Day[]> {
-        
-        return combineLatest([this.displayedDate$, this.selectedDate$]).pipe(
-            map(([displayed, selected]) => this._generateDaysOfMonth(displayed, selected)
+        return combineLatest([this.currentMonth$, this.selectedDate$]).pipe(
+            map(([displayed, selected]) => this.generate(displayed, selected)
         ))
     }
-    set selectedDate(date: Date) {
+    set selectedDate(date: DjsDate) {
         this._selectedDate.next(date);
     }
 
-    private _isToday(date: Date): boolean {
-        return date.toDateString() === new Date().toDateString();
-    }
-    private _equals(date1: Date, date2: Date): boolean{
-        return date1.toDateString() === date2.toDateString();
-    }
-    private _generateDaysOfMonth(date: Date, selected: Date): Day[] {
-
+    public generate(currentMonth: DjsDate, selectedDate: DjsDate): Day[]{
         const result: Day[] = [];
-        let _date = new Date(date);
-
-        // We want to begin on Monday
-        while (_date.getDay() !== 1) {
-            const dayNumber = _date.getDate();
-            _date.setDate(dayNumber - 1);
-            const isSelected = this._equals(_date, selected);
-            const day: Day = { date: new Date(_date), inCurrentMonth: false, currentDate: this._isToday(_date), selected:isSelected}
+        let runner = currentMonth.clone();
+        while(runner.day() !== 0){
+            runner = runner.subtract(1, "day");
+            const selected = runner.isSame(selectedDate, 'day')
+            const currentDate = runner.isSame(dayjs(), "day")
+            const day: Day = { date: runner, inCurrentMonth: false, currentDate, selected} 
             result.unshift(day);
         }
-        // Reset to the beginning of the month
-        _date = new Date(date);
-        while (_date.getMonth() === date.getMonth()) {
-            const dayNumber = _date.getDate();
-            const isSelected = this._equals(_date, selected);
-            result.push({ date: new Date(_date), inCurrentMonth: true, currentDate: this._isToday(_date),  selected: isSelected });
-            _date.setDate(dayNumber + 1);
+        runner = currentMonth.clone();
+        while(runner.month() === currentMonth.month()){
+            const selected = runner.isSame(selectedDate, 'day')
+            const currentDate = runner.isSame(dayjs(), "day")
+            result.push({ date: runner, inCurrentMonth: true, currentDate,  selected });
+            runner = runner.add(1, "day");
         }
-        //We want to end on sunday
-        while (_date.getDay() !== 1) {
-            const dayNumber = _date.getDate();
-            const isSelected = this._equals(_date, selected);
-            const day: Day = { date: new Date(_date), inCurrentMonth: false, currentDate: this._isToday(_date), selected:isSelected}
-            result.push(day);
-            _date.setDate(dayNumber + 1);
+        
+        while(runner.day() !== 0){
+            const selected = runner.isSame(selectedDate, 'day')
+            const currentDate = runner.isSame(dayjs(), "day")
+            result.push({ date: runner, inCurrentMonth: false, currentDate,  selected });
+            runner = runner.add(1, "day");
         }
-        return result;
+        return result
     }
-
-
 }

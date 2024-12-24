@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
-import { Day } from '../../../domain/date';
+import { Day, DjsDate } from '../../../domain/date';
 import { DateService } from '../../../domain/date.service';
 
 @Component({
@@ -30,7 +30,7 @@ export class CalendarComponent {
   next(){
     this.dateService.nextMonth();
   }
-  selectDay(day: Date){
+  selectDay(day: DjsDate){
     this.dateService.selectedDate = day;
   }
   get canNext(): boolean {

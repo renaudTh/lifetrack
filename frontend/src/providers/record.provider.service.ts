@@ -1,10 +1,12 @@
-import { Client, Databases, ID, Models, Query } from "appwrite";
+import { inject } from "@angular/core";
+import { ID, Models, Query } from "appwrite";
+import dayjs from "dayjs";
 import { from, map, Observable, switchMap } from "rxjs";
 import { ActivityRecord } from "../domain/activity";
+import { DjsDate } from "../domain/date";
 import { IRecordProvider } from "../domain/record.provider.interface";
-import { RecordDto } from "./record.dto";
-import { inject } from "@angular/core";
 import { ApiService } from "./api.service";
+import { RecordDto } from "./record.dto";
 
 export class RecordProviderService implements IRecordProvider {
 
@@ -13,6 +15,15 @@ export class RecordProviderService implements IRecordProvider {
     private collectionId = '675db2c70024c64a4934';
     
     constructor(){
+    }
+
+    getRecordsBetweenDates(start: DjsDate, end: DjsDate): Observable<ActivityRecord[]> {
+        const request = this.api.listDocuments(
+            this.collectionId,
+            [Query.and([Query.lessThan('date', end.toISOString()),Query.greaterThan('date', start.toISOString())])]
+        );
+        const result = request.then((result) => result.documents.map((doc) => this.parseDocument(doc)))
+        return from(result);
     }
 
     private parseDocument(doc: Models.Document): ActivityRecord {
@@ -24,24 +35,21 @@ export class RecordProviderService implements IRecordProvider {
                 representation: doc["activity"]["representation"],
                 unit: doc["activity"]["unit"]
             },
-            date: new Date(doc['date']),
+            date: dayjs(doc['date']),
             id: doc.$id,
             number: doc["amount"]
         }
     }
 
-    upsertRecord(userId: string, recordDto: RecordDto): Observable<ActivityRecord> {
+    upsertRecord(recordDto: RecordDto): Observable<ActivityRecord> {
         //Get all daily records
-        const start = new Date(recordDto.date);
-        start.setHours(0,0,0,0);
-        const end = new Date(recordDto.date);
-        end.setHours(23,59,999);
+        const start = recordDto.date.clone();
+        start.hour(0).minute(0).second(0).millisecond(0).toISOString();
+        const end = recordDto.date.clone();
+        end.hour(23).minute(59).second(59).millisecond(999).toISOString();
 
-        const recordsRequest = this.api.listDocuments(
-            this.collectionId,
-            [Query.and([Query.lessThan('date', end.toISOString()),Query.greaterThan('date', start.toISOString())])]
-        );
-        const recordsResult = recordsRequest.then((r) => r.documents.map((doc) => this.parseDocument(doc)));        
+
+        const recordsResult = this.getRecordsBetweenDates(start, end);
         return from(recordsResult).pipe(
             //Filter by concerned activity
             map((list) => list.filter((record) => record.activity.id === recordDto.activity.id)),
@@ -69,21 +77,18 @@ export class RecordProviderService implements IRecordProvider {
         );
 
     }
-    getUserMonthHistory(userId: string, date: Date): Observable<ActivityRecord[]> {
+    getUserMonthHistory(date: DjsDate): Observable<ActivityRecord[]> {
         
-        const month = date.getMonth();
-        const year = date.getFullYear();
-        const start = new Date(year, month, 1).toISOString();
-        const end = new Date(year, month+1, 1).toISOString();
-
+        const start = date.clone().date(1).hour(0).minute(0).second(0).millisecond(0)
+        const end = start.clone().add(1, "month");
         const request = this.api.listDocuments(this.collectionId, 
-            [Query.and([Query.greaterThan('date', start), Query.lessThan('date', end)])]
+            [Query.and([Query.greaterThan('date', start.toISOString()), Query.lessThan('date', end.toISOString())])]
         )
         const result = request.then((result) => result.documents.map((doc) => this.parseDocument(doc)))
         return from(result);
     }
-    downsertRecord(userId: string, record: ActivityRecord): Observable<ActivityRecord> {
-        
+    
+    downsertRecord(record: ActivityRecord): Observable<ActivityRecord> {
         if(record.number > 1){
             const request = this.api.updateDocument(this.collectionId, record.id, {amount: record.number - 1 });
             const response = request.then((doc) => this.parseDocument(doc));
@@ -100,5 +105,4 @@ export class RecordProviderService implements IRecordProvider {
         }
         
     }
-
 }

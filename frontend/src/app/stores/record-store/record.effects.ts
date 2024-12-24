@@ -11,7 +11,7 @@ export class RecordsEffects {
     loadMonth$ = createEffect(() =>
         this.actions$.pipe(
             ofType(RecordsActions.loadDisplayedDateRecords),
-            switchMap(({ userId, date }) => this.recordProvider.getUserMonthHistory(userId, date)
+            switchMap(({ date }) => this.recordProvider.getUserMonthHistory(date)
                 .pipe(
                     map(records => RecordsActions.loadingSuccess({ userMonth: records })),
                     catchError(() => EMPTY))
@@ -23,7 +23,7 @@ export class RecordsEffects {
         this.actions$.pipe(
             ofType(RecordsActions.upsertRecord),
             withLatestFrom(this.dateService.selectedDate$),
-            switchMap(([{ userId, activity }, date]) => this.recordProvider.upsertRecord(userId, { activity, date }).pipe(
+            switchMap(([{ activity }, date]) => this.recordProvider.upsertRecord({ activity, date }).pipe(
                 map((record) => RecordsActions.upsertSuccess({ record })),
                 catchError((error: any) => {
                     console.error(error)
@@ -36,7 +36,7 @@ export class RecordsEffects {
     downsertRecord$ = createEffect(() =>
         this.actions$.pipe(
             ofType(RecordsActions.downsertRecord),
-            switchMap(({ userId, record }) => this.recordProvider.downsertRecord(userId, record)
+            switchMap(({ record }) => this.recordProvider.downsertRecord(record)
                 .pipe(
                     map(record => RecordsActions.downsertSuccess({ record })),
                     catchError(() => EMPTY)
