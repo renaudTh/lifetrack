@@ -1,5 +1,6 @@
 import { createFeatureSelector, createSelector } from "@ngrx/store";
 import { ActivityRecord } from "../../../domain/activity";
+import { DjsDate } from "../../../domain/date";
 
 export interface RecordState {
     [activityId: string]: ActivityRecord
@@ -11,15 +12,11 @@ export const selectAllRecords = createSelector(
     (records: RecordState) => Object.values(records)
 )
 
-export const selectDailyRecord = (date: Date) => createSelector(
+export const selectDailyRecord = (date: DjsDate) => createSelector(
     selectAllRecords, 
     (records: ActivityRecord[]) => {
-        const filteredDate = new Date(date);
-        filteredDate.setHours(0,0,0,0)
         const filter = records.filter((item) => { 
-            const itemDate = new Date(item.date);
-            itemDate.setHours(0,0,0,0);
-            return itemDate.getTime() === filteredDate.getTime();
+            return item.date.isSame(date, "day")
         });
         return filter;
     }

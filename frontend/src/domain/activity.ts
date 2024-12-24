@@ -1,3 +1,5 @@
+import { DjsDate } from "./date";
+
 export interface Activity{
     id: string;
     unit: string;
@@ -9,6 +11,11 @@ export interface Activity{
 export interface ActivityRecord {
     id: string;
     activity: Activity;
-    date: Date;
+    date: DjsDate;
     number: number
+}
+
+export interface ActivityStats {
+    activityId: string,
+    data: number[]
 }

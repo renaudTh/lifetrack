@@ -13,7 +13,7 @@
     <div  class="container">
         @for (day of daysList; track day.date) {
             <div class="day" (click)="selectDay(day.date)"[ngClass]="getClassList(day)">
-                {{day.date.toLocaleDateString('en-US', {day: 'numeric'})}}
+                {{day.date.format("D")}}
             </div>
         }
     </div>

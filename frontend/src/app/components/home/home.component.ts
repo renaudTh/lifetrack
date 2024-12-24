@@ -30,11 +30,12 @@ export class HomeComponent {
   protected selectedDateString$ = this.dateService.selectedDateString$;
 
   constructor(){
+
     //TODO: rework loading of data
-    this.dateService.displayedDate$.pipe(takeUntilDestroyed()).subscribe((date) => {
-      this.store.dispatch(RecordsActions.loadDisplayedDateRecords({userId: "", date}))
-    })
     this.store.dispatch(ActivitiesActions.loadUserActivities());
+    this.dateService.currentMonth$.pipe(takeUntilDestroyed()).subscribe((date) => {
+      this.store.dispatch(RecordsActions.loadDisplayedDateRecords({date}))
+    })
   }
 
   protected daily$ = this.dateService.selectedDate$.pipe(
