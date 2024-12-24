@@ -1,7 +1,7 @@
 
 # TODO:
 
-- Migration to Angular 19 / primeng 19
+- Migration to jest for testing
 - Write an external (but same repo) lib for all domain stuff and test it
 - Write a minimal CI
 - Basic deployment to github pages
