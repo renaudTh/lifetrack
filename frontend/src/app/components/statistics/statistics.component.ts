@@ -14,13 +14,12 @@ import { ActivityMinimalComponent } from "../activity-minimal/activity-minimal.c
 import { HeaderComponent } from "../header/header.component";
 
 @Component({
-  selector: 'app-statistics',
-  standalone: true,
-  imports: [HeaderComponent, AsyncPipe, ActivityMinimalComponent, ChartModule],
-  templateUrl: './statistics.component.html',
-  styleUrl: './statistics.component.scss',
-  providers: [RecordProviderService],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-statistics',
+    imports: [HeaderComponent, AsyncPipe, ActivityMinimalComponent, ChartModule],
+    templateUrl: './statistics.component.html',
+    styleUrl: './statistics.component.scss',
+    providers: [RecordProviderService],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StatisticsComponent {
 

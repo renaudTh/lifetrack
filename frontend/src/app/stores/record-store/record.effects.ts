@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { EMPTY, catchError, map, switchMap, withLatestFrom } from "rxjs";
 import { DateService } from "../../../domain/date.service";
@@ -7,6 +7,10 @@ import { RecordsActions } from "./record.actions";
 
 @Injectable()
 export class RecordsEffects {
+    private actions$ = inject(Actions);
+    private dateService = inject(DateService);
+    private recordProvider = inject<IRecordProvider>(RECORD_PROVIDER);
+
 
     loadMonth$ = createEffect(() =>
         this.actions$.pipe(
@@ -44,10 +48,4 @@ export class RecordsEffects {
             )
         )
     )
-
-    constructor(
-        private actions$: Actions,
-        private dateService: DateService,
-        @Inject(RECORD_PROVIDER) private recordProvider: IRecordProvider,
-    ) { }
 }

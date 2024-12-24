@@ -7,11 +7,10 @@ import { Router } from '@angular/router';
 import { FloatLabel } from 'primeng/floatlabel';
 import { Message } from 'primeng/message';
 @Component({
-  selector: 'app-login',
-  standalone: true,
-  imports: [ReactiveFormsModule, Button, InputText, FloatLabel, Message],
-  templateUrl: './login.component.html',
-  styleUrl: './login.component.scss'
+    selector: 'app-login',
+    imports: [ReactiveFormsModule, Button, InputText, FloatLabel, Message],
+    templateUrl: './login.component.html',
+    styleUrl: './login.component.scss'
 })
 export class LoginComponent {
 

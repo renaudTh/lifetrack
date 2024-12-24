@@ -14,12 +14,11 @@ import { RecordsActions } from '../../stores/record-store/record.actions';
 import { ActivityMinimalComponent } from '../activity-minimal/activity-minimal.component';
 
 @Component({
-  selector: 'app-activity-picker',
-  standalone: true,
-  imports: [CommonModule,ActivityMinimalComponent, ButtonModule, InputTextModule, FormsModule],
-  templateUrl: './activity-picker.component.html',
-  styleUrl: './activity-picker.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-activity-picker',
+    imports: [CommonModule, ActivityMinimalComponent, ButtonModule, InputTextModule, FormsModule],
+    templateUrl: './activity-picker.component.html',
+    styleUrl: './activity-picker.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ActivityPickerComponent {
 

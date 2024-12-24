@@ -6,11 +6,10 @@ import { map } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { Router } from '@angular/router';
 @Component({
-  selector: 'app-header',
-  standalone: true,
-  imports: [Menubar, AsyncPipe],
-  templateUrl: './header.component.html',
-  styleUrl: './header.component.scss'
+    selector: 'app-header',
+    imports: [Menubar, AsyncPipe],
+    templateUrl: './header.component.html',
+    styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
 

@@ -5,16 +5,15 @@ import { ChipModule } from 'primeng/chip';
 import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
-  selector: 'app-activity-minimal',
-  standalone: true,
-  imports: [ChipModule, TooltipModule],
-  template: '<p-chip [label]="activity().representation" [pTooltip]="description()" [removable]="false" (click)="_onClick()"></p-chip>',
-  styles: `
+    selector: 'app-activity-minimal',
+    imports: [ChipModule, TooltipModule],
+    template: '<p-chip [label]="activity().representation" [pTooltip]="description()" [removable]="false" (click)="_onClick()"></p-chip>',
+    styles: `
     p-chip{
       cursor: pointer;
     }
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ActivityMinimalComponent {
 

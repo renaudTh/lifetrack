@@ -7,12 +7,11 @@ import { Day, DjsDate } from '../../../domain/date';
 import { DateService } from '../../../domain/date.service';
 
 @Component({
-  selector: 'app-calendar',
-  standalone: true,
-  imports: [CommonModule, ButtonModule],
-  templateUrl: './calendar.component.html',
-  styleUrl: './calendar.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-calendar',
+    imports: [CommonModule, ButtonModule],
+    templateUrl: './calendar.component.html',
+    styleUrl: './calendar.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CalendarComponent {
 
