@@ -30,7 +30,7 @@ export class RecordProviderService implements IRecordProvider {
         }
     }
 
-    upsertRecord(userId: string, recordDto: RecordDto): Observable<ActivityRecord> {
+    upsertRecord(recordDto: RecordDto): Observable<ActivityRecord> {
         //Get all daily records
         const start = new Date(recordDto.date);
         start.setHours(0,0,0,0);
@@ -84,6 +84,7 @@ export class RecordProviderService implements IRecordProvider {
     }
     downsertRecord(userId: string, record: ActivityRecord): Observable<ActivityRecord> {
         
+    downsertRecord(record: ActivityRecord): Observable<ActivityRecord> {
         if(record.number > 1){
             const request = this.api.updateDocument(this.collectionId, record.id, {amount: record.number - 1 });
             const response = request.then((doc) => this.parseDocument(doc));

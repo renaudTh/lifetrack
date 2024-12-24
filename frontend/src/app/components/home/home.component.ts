@@ -42,6 +42,6 @@ export class HomeComponent {
 
   
   onDelete(record: ActivityRecord){
-    this.store.dispatch(RecordsActions.downsertRecord({userId: "", record}));
+    this.store.dispatch(RecordsActions.downsertRecord({ record}));
   }
 }

@@ -28,7 +28,7 @@ export class AddActivityButtonComponent {
   protected fiveLast$ = this.store.select(selectFive)
 
   async addActivity(activity: Activity) {
-    this.store.dispatch(RecordsActions.upsertRecord({userId: "", activity: activity}))
+    this.store.dispatch(RecordsActions.upsertRecord({activity: activity}))
   }
 
   openDialog() {
