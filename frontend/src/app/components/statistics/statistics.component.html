@@ -7,13 +7,16 @@
             @for (activity of activities; track activity.id) {
                 <app-activity-minimal 
                     [activity]="activity"
+                    (onClick)="loadActivityStats($event)"
                     >
                 </app-activity-minimal>
             }
         </div>
     }  
     <div class="chart">
-        
+        @let data = chartData();
+        @let options = chartOptions();
+
         <p-chart type="line" [data]="data" [options]="options" class="h-[30rem]" />
     </div>
 </div>
