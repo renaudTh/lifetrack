@@ -8,12 +8,11 @@ import { RecordDto } from '../../../providers/record.dto';
 
 
 @Component({
-  selector: 'app-merged-record-minimal',
-  standalone: true,
-  imports: [CommonModule,TooltipModule],
-  templateUrl: './merged-record-minimal.component.html',
-  styleUrl: './merged-record-minimal.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-merged-record-minimal',
+    imports: [CommonModule, TooltipModule],
+    templateUrl: './merged-record-minimal.component.html',
+    styleUrl: './merged-record-minimal.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MergedRecordMinimalComponent {
 

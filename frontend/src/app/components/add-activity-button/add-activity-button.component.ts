@@ -11,13 +11,12 @@ import { ActivityPickerComponent } from '../activity-picker/activity-picker.comp
 
 
 @Component({
-  selector: 'app-add-activity-button',
-  standalone: true,
-  imports: [CommonModule, ButtonModule, ActivityMinimalComponent],
-  templateUrl: './add-activity-button.component.html',
-  styleUrl: './add-activity-button.component.scss',
-  providers: [DialogService],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-add-activity-button',
+    imports: [CommonModule, ButtonModule, ActivityMinimalComponent],
+    templateUrl: './add-activity-button.component.html',
+    styleUrl: './add-activity-button.component.scss',
+    providers: [DialogService],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddActivityButtonComponent {
 

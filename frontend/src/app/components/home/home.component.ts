@@ -15,12 +15,11 @@ import { CalendarComponent } from '../calendar/calendar.component';
 import { MergedRecordMinimalComponent } from '../merged-record-minimal/merged-record-minimal.component';
 import { HeaderComponent } from "../header/header.component";
 @Component({
-  selector: 'app-home',
-  standalone: true,
-  imports: [CommonModule, MergedRecordMinimalComponent, ButtonModule, SpeedDialModule, CalendarComponent, AddActivityButtonComponent, HeaderComponent],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-home',
+    imports: [CommonModule, MergedRecordMinimalComponent, ButtonModule, SpeedDialModule, CalendarComponent, AddActivityButtonComponent, HeaderComponent],
+    templateUrl: './home.component.html',
+    styleUrl: './home.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HomeComponent {
 
