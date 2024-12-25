@@ -1,9 +1,9 @@
 import { Client, Databases, ID, Models } from "appwrite";
 import { from, Observable } from "rxjs";
-import { Activity } from "../domain/activity";
 import { IActivityProvider } from "../domain/activity.provider.interface";
 import { inject } from "@angular/core";
 import { ApiService } from "./api.service";
+import { Activity } from "@lifetrack/lib";
 
 
 export class ActivityProviderService implements IActivityProvider {

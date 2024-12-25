@@ -1,10 +1,10 @@
 import { ResolveFn } from "@angular/router";
-import { Activity } from "../../domain/activity";
 import { Observable } from "rxjs";
 import { inject } from "@angular/core";
 import { Store } from "@ngrx/store";
 import { ActivitiesActions } from "../stores/activities-store/activities.actions";
 import { selectAllActivities } from "../stores/activities-store";
+import { Activity } from "@lifetrack/lib";
 
 export const activitiesResolver: ResolveFn<Activity[]> = (
     route,

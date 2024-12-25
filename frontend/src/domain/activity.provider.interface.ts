@@ -1,6 +1,6 @@
 import { Observable } from "rxjs";
-import { Activity } from "./activity";
 import { InjectionToken } from "@angular/core";
+import { Activity } from "@lifetrack/lib";
 
 
 export const ACTIVITY_PROVIDER = new InjectionToken<IActivityProvider>("activity.provider.interface");

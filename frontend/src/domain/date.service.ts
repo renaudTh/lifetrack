@@ -1,77 +1,47 @@
-import { Injectable } from "@angular/core";
-import dayjs from "dayjs";
-import { BehaviorSubject, Observable, combineLatest, map } from "rxjs";
-import { Day, DjsDate } from "./date";
+import { computed, Injectable, signal, Signal, WritableSignal } from "@angular/core";
+import { toObservable } from "@angular/core/rxjs-interop";
+
+
+import { Calendar, Day, DjsDate } from '@lifetrack/lib';
+import { Observable } from "rxjs";
+
 
 @Injectable({ providedIn: "root" })
 export class DateService {
 
-    private _selectedDate: BehaviorSubject<DjsDate>;
-    private _currentMonth: BehaviorSubject<DjsDate>;
+    private _selectedDate: WritableSignal<DjsDate>;
+    private _currentMonth: WritableSignal<DjsDate>;
 
-    public selectedDate$: Observable<DjsDate>;
-    public currentMonth$: Observable<DjsDate>;
+    //Rxjs compatibility but uses effects under the hood
+    public readonly currentMonth$: Observable<DjsDate>;
+    public readonly selectedDate$: Observable<DjsDate>;
 
+    private calendar: Calendar;
     constructor() {
-
-        const date = dayjs().date(1)
-        this._currentMonth = new BehaviorSubject<DjsDate>(date);
-        this._selectedDate = new BehaviorSubject<DjsDate>(dayjs());
-        this.selectedDate$ = this._selectedDate.asObservable();
-        this.currentMonth$ = this._currentMonth.asObservable();
+        this.calendar = new Calendar()
+        this._currentMonth = signal<DjsDate>(this.calendar.currentMonth);
+        this._selectedDate = signal<DjsDate>(this.calendar.selectedDate);
+        this.currentMonth$ = toObservable(this._currentMonth);
+        this.selectedDate$ = toObservable(this._selectedDate);
     }
-
     public nextMonth() {
-        const date = this._currentMonth.value.add(1, 'month');
-        this._currentMonth.next(date);
+        this.calendar.nextMonth();
+        this._currentMonth.set(this.calendar.currentMonth);
     }
     public previousMonth() {
-        const date = this._currentMonth.value.subtract(1, 'month');
-        this._currentMonth.next(date);
+       this.calendar.previousMonth();
+       this._currentMonth.set(this.calendar.currentMonth);
     }
-    get displayedDateString$(): Observable<string> {
-        return this.currentMonth$.pipe(
-            map((date) => date.format("MMMM YYYY")
-        ))
-    }
+    public readonly currentMonthString: Signal<string> = computed(() => this._currentMonth().format("MMMM YYYY")); 
+    public readonly selectedDateString: Signal<string> = computed(() =>this._selectedDate().format('dddd, MMMM D'))
+    public readonly daysOfCurrentMonth :Signal<Day[]> = computed(() => {
+        this._currentMonth();
+        this._selectedDate();
+        return this.calendar.daysOfMonths
+    })
 
-    get selectedDateString$(): Observable<string>{
-        return this.selectedDate$.pipe(map((date) => date.format('dddd, MMMM D')))
-    }
-
-    get daysOfCurrentMonth$(): Observable<Day[]> {
-        return combineLatest([this.currentMonth$, this.selectedDate$]).pipe(
-            map(([displayed, selected]) => this.generate(displayed, selected)
-        ))
-    }
     set selectedDate(date: DjsDate) {
-        this._selectedDate.next(date);
-    }
-
-    public generate(currentMonth: DjsDate, selectedDate: DjsDate): Day[]{
-        const result: Day[] = [];
-        let runner = currentMonth.clone();
-        while(runner.day() !== 0){
-            runner = runner.subtract(1, "day");
-            const selected = runner.isSame(selectedDate, 'day')
-            const currentDate = runner.isSame(dayjs(), "day")
-            const day: Day = { date: runner, inCurrentMonth: false, currentDate, selected} 
-            result.unshift(day);
-        }
-        runner = currentMonth.clone();
-        while(runner.month() === currentMonth.month()){
-            const selected = runner.isSame(selectedDate, 'day')
-            const currentDate = runner.isSame(dayjs(), "day")
-            result.push({ date: runner, inCurrentMonth: true, currentDate,  selected });
-            runner = runner.add(1, "day");
-        }
-        
-        while(runner.day() !== 0){
-            const selected = runner.isSame(selectedDate, 'day')
-            const currentDate = runner.isSame(dayjs(), "day")
-            result.push({ date: runner, inCurrentMonth: false, currentDate,  selected });
-            runner = runner.add(1, "day");
-        }
-        return result
+        this.calendar.selectedDate = date;
+        this._selectedDate.set(this.calendar.selectedDate);
     }
 }

@@ -1,4 +1,5 @@
-import { DjsDate } from "./date";
+import { DjsDate } from "./date.model";
+
 
 export interface Activity{
     id: string;

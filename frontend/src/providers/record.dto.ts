@@ -1,5 +1,5 @@
-import { Activity } from "../domain/activity";
-import { DjsDate } from "../domain/date";
+import { Activity, DjsDate } from "@lifetrack/lib";
+
 
 export interface RecordDto {
     activity: Activity,

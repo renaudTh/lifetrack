@@ -1,6 +1,6 @@
+import { ActivityRecord, DjsDate } from "@lifetrack/lib";
 import { createFeatureSelector, createSelector } from "@ngrx/store";
-import { ActivityRecord } from "../../../domain/activity";
-import { DjsDate } from "../../../domain/date";
+
 
 export interface RecordState {
     [activityId: string]: ActivityRecord

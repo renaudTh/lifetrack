@@ -1,7 +1,8 @@
-import { ActivityRecord, ActivityStats } from './activity';
-import { DateSampling, DjsDate } from './date';
+
 import weekOfYear from 'dayjs/plugin/weekOfYear';
 import dayjs from 'dayjs';
+import { DateSampling, DjsDate } from './models/date.model';
+import { ActivityRecord, ActivityStats } from './models/activity.model';
 
 export class StatsEngine {
   constructor(
@@ -36,7 +37,6 @@ export class StatsEngine {
   }
 
   public compute(records: ActivityRecord[]): ActivityStats[] {
-    dayjs.extend(weekOfYear);
     const sample = this.generateSampleKeys();
     const groupped = Object.groupBy(records, (item) => item.activity.id);
     return Object.entries(groupped).map(([id, records]): ActivityStats => {

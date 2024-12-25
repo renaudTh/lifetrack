@@ -1,0 +1,64 @@
+name: CI Pipeline
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build Library and App
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
+
+      # Build the library
+      - name: Build the library
+        run: |
+          cd lifetracklib
+          npm ci
+          npm run build
+
+      # Build the Angular app
+      - name: Build the Angular app
+        run: |
+          cd frontend
+          npm ci
+          npm run build
+
+  test:
+    name: Test Library
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      # Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
+
+      # Run tests with coverage
+      - name: Run library tests with coverage
+        run: |
+          cd lifetracklib
+          npm ci
+          npm test -- --coverage
+
+      # Upload coverage report as artifact
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: lifetracklib/coverage
