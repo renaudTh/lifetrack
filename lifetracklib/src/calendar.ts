@@ -6,10 +6,9 @@ export class Calendar {
     private _selectedDate:DjsDate;
     private _currentMonth: DjsDate;
 
-    constructor() {
-        const date = dayjs().date(1)
-        this._currentMonth = date;
-        this._selectedDate = dayjs();
+    constructor(currenMonth?: DjsDate, selectedDate?: DjsDate) {
+        this._currentMonth = currenMonth?.date(1) ?? dayjs().date(1);
+        this._selectedDate = selectedDate ?? dayjs();
     }
 
     public nextMonth() {
