@@ -42,14 +42,13 @@ export class RecordProviderService implements IRecordProvider {
 
     upsertRecord(recordDto: RecordDto): Observable<ActivityRecord> {
         //Get all daily records
-        const start = recordDto.date.clone();
-        start.hour(0).minute(0).second(0).millisecond(0).toISOString();
-        const end = recordDto.date.clone();
-        end.hour(23).minute(59).second(59).millisecond(999).toISOString();
+        const start = recordDto.date.hour(0).minute(0).second(0).millisecond(0);
+        const end = recordDto.date.hour(23).minute(59).second(59).millisecond(999)
 
-
-        const recordsResult = this.getRecordsBetweenDates(start, end);
-        return from(recordsResult).pipe(
+      
+        const recordsResult = this.getRecordsBetweenDates(start, end)
+        recordsResult.subscribe(console.log)
+        return recordsResult.pipe(
             //Filter by concerned activity
             map((list) => list.filter((record) => record.activity.id === recordDto.activity.id)),
             switchMap((list) => {
@@ -76,15 +75,10 @@ export class RecordProviderService implements IRecordProvider {
         );
 
     }
-    getUserMonthHistory(date: DjsDate): Observable<ActivityRecord[]> {
-        
-        const start = date.clone().date(1).hour(0).minute(0).second(0).millisecond(0)
-        const end = start.clone().add(1, "month");
-        const request = this.api.listDocuments(this.collectionId, 
-            [Query.and([Query.greaterThan('date', start.toISOString()), Query.lessThan('date', end.toISOString())])]
-        )
-        const result = request.then((result) => result.documents.map((doc) => this.parseDocument(doc)))
-        return from(result);
+    getUserMonthHistory(date: DjsDate): Observable<ActivityRecord[]> {      
+        const start = date.date(1).hour(0).minute(0).second(0).millisecond(0)
+        const end = start.add(1, "month");
+        return this.getRecordsBetweenDates(start, end);
     }
     
     downsertRecord(record: ActivityRecord): Observable<ActivityRecord> {
