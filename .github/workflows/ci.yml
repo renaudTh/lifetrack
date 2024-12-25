@@ -20,20 +20,18 @@ jobs:
         with:
           node-version: 22
 
-      # Install dependencies
-      - name: Install dependencies
-        run: npm ci
-
       # Build the library
       - name: Build the library
         run: |
           cd lifetracklib
+          npm ci
           npm run build
 
       # Build the Angular app
       - name: Build the Angular app
         run: |
-          cd ../frontend
+          cd frontend
+          npm ci
           npm run build
 
   test:
@@ -51,14 +49,11 @@ jobs:
         with:
           node-version: 22
 
-      # Install dependencies
-      - name: Install dependencies
-        run: npm ci
-
       # Run tests with coverage
       - name: Run library tests with coverage
         run: |
-          cd lifetrack
+          cd lifetracklib
+          npm ci
           npm test -- --coverage
 
       # Upload coverage report as artifact
