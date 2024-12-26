@@ -16,12 +16,14 @@
         border: 1px solid #1b4079ff;
         border-radius: 4px;
         height: 100%;
+        padding: 1em;
     }
 }
 
 .records {
     display: flex;
     flex-wrap: wrap;
+    gap: 1em;
 }
 
 .p-overlay-badge:empty{
