@@ -1,16 +1,20 @@
-
-<div class="chip-wrapper">
-    <div class="chip-content" [pTooltip]="description()">
-        @if (badgeValue() > 1) {
-            <div class="chip-badge">
-                <span>{{badgeValue()}}</span>
-            </div>
-        }
-        @if(deletable()){
-            <div class="chip-delete-badge"  (click)="_onDelete()">
-                <i class="pi pi-minus"></i>
-            </div>
-        }
-        <span>{{ record().activity.representation}}</span>
-    </div>
-</div>
+@if (badgeValue() > 1) {
+    <p-overlay-badge [value]="badgeValue()">
+        <p-chip 
+        #chip
+        [label]="record().activity.representation" 
+        [pTooltip]="description()" 
+        [removable]="true"
+        (onRemove)="_onDelete($event)"
+        removeIcon="pi pi-minus-circle"
+        ></p-chip>
+    </p-overlay-badge>
+}
+@else {
+    <p-chip #chip 
+    [label]="record().activity.representation" 
+    [pTooltip]="description()"
+    [label]="record().activity.representation" 
+    [removable]="true"
+    (onRemove)="_onDelete($event)"></p-chip>
+}
