@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+  push:
+    tags:
+     -'*'
+     
 jobs:
   build:
     name: Build Library and App
@@ -61,7 +65,7 @@ jobs:
         with:
           name: coverage-report
           path: lifetracklib/coverage
-          
+
   deploy:
     name: Deploy to Github pages
     runs-on: ubuntu-latest
