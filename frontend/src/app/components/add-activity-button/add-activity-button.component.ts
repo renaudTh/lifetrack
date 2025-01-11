@@ -31,6 +31,13 @@ export class AddActivityButtonComponent {
   }
 
   openDialog() {
-    this.dialogService.open(ActivityPickerComponent, { header: "My activities", width: '95vw', height: '50vh', position: 'top', modal: false });
+    this.dialogService.open(ActivityPickerComponent, 
+      { header: "My activities", 
+        width: '500px', 
+        height: '50%', 
+        position: 'top', 
+        modal: false, 
+        closable: true 
+      });
   }
 }

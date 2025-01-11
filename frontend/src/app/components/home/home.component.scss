@@ -2,12 +2,17 @@
     display: flex;
     flex-direction:column;
     gap: 0.5em;
-    height: 100vh;
-    width: 100vw;
+    width: 100%;
+    height: 100%;
     padding: 5px;
 }
+
+app-calendar{
+    width: 100%;
+    max-height: 50%;
+}
 .days-activities{
-    flex-grow: 1;
+    height: 50%;
     fieldset{
         legend{
             font-weight:700;
@@ -16,14 +21,14 @@
         border: 1px solid #1b4079ff;
         border-radius: 4px;
         height: 100%;
+        padding: 1em;
     }
 }
-
 .records {
     display: flex;
     flex-wrap: wrap;
+    gap: 1em;
 }
-
 .p-overlay-badge:empty{
     display: none;
 }

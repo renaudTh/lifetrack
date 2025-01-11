@@ -13,15 +13,13 @@ export class RecordProviderService implements IRecordProvider {
     private readonly api = inject(ApiService);
     private collectionId = '675db2c70024c64a4934';
     
-    constructor(){
-    }
-
     getRecordsBetweenDates(start: DjsDate, end: DjsDate): Observable<ActivityRecord[]> {
         const request = this.api.listDocuments(
             this.collectionId,
-            [Query.and([Query.lessThan('date', end.toISOString()),Query.greaterThan('date', start.toISOString())])]
-        );
+            [Query.and([Query.lessThanEqual('creationTimestamp', end.unix()),Query.greaterThanEqual('creationTimestamp', start.unix())])]
+        );  
         const result = request.then((result) => result.documents.map((doc) => this.parseDocument(doc)))
+        
         return from(result);
     }
 
@@ -34,7 +32,7 @@ export class RecordProviderService implements IRecordProvider {
                 representation: doc["activity"]["representation"],
                 unit: doc["activity"]["unit"]
             },
-            date: dayjs(doc['date']),
+            date: dayjs(doc['creationTimestamp'] * 1000),
             id: doc.$id,
             number: doc["amount"]
         }
@@ -44,10 +42,7 @@ export class RecordProviderService implements IRecordProvider {
         //Get all daily records
         const start = recordDto.date.hour(0).minute(0).second(0).millisecond(0);
         const end = recordDto.date.hour(23).minute(59).second(59).millisecond(999)
-
-      
         const recordsResult = this.getRecordsBetweenDates(start, end)
-        recordsResult.subscribe(console.log)
         return recordsResult.pipe(
             //Filter by concerned activity
             map((list) => list.filter((record) => record.activity.id === recordDto.activity.id)),
@@ -55,10 +50,9 @@ export class RecordProviderService implements IRecordProvider {
                 //If activity recorded for the given date, create it
                 if(list.length === 0){
                     const body: any = {
-                        "id": "1",
                         "amount": 1,
                         "activity": recordDto.activity.id,
-                        "date": recordDto.date
+                        "creationTimestamp": recordDto.date.unix()
                     }
                     const request = this.api.createDocument(this.collectionId, ID.unique(), body);
                     const response = request.then((doc) => this.parseDocument(doc));
@@ -78,7 +72,8 @@ export class RecordProviderService implements IRecordProvider {
     getUserMonthHistory(date: DjsDate): Observable<ActivityRecord[]> {      
         const start = date.date(1).hour(0).minute(0).second(0).millisecond(0)
         const end = start.add(1, "month");
-        return this.getRecordsBetweenDates(start, end);
+        const res = this.getRecordsBetweenDates(start, end);
+        return res;
     }
     
     downsertRecord(record: ActivityRecord): Observable<ActivityRecord> {

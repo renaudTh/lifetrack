@@ -2,8 +2,6 @@
 :host{
     display: flex;
     flex-direction: column;
-    width: 100%;
-    height: auto;
 }
 .header {
     display: flex;
@@ -12,7 +10,7 @@
     justify-content: space-between;
 }
 .container {
-    aspect-ratio: 1/1;
+    aspect-ratio: 3/2;
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: 2px
@@ -23,6 +21,9 @@
     display: flex;
     justify-content: center;
     align-items: center;  
+}
+.day:hover{
+    cursor: pointer;
 }
 .not-current-month{
     background-color: var(--p-mask-color) ;
