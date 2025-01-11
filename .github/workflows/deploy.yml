@@ -6,27 +6,38 @@ on:
       -'v*'
 
 jobs:
-  deploy:
-    name: Deploy to Github pages
+
+  build:
     runs-on: ubuntu-latest
-
+    name: Build
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 22
-
-      - name: Install dependencies and build Angular app
+      - name: Build the library
+        run: |
+          cd lifetracklib
+          npm ci
+          npm run build
+      - name: Build the Angular app
         run: |
           cd frontend
           npm ci
-          npm run build -- --configuration production
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+          npm run build
+      - name: Upload static files as artifact
+        id: deployment
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: frontend/dist/frontend
+          path: frontend/dist/frontend/browser
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
