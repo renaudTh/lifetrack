@@ -8,7 +8,15 @@ import { TooltipModule } from 'primeng/tooltip';
 @Component({
     selector: 'app-activity-minimal',
     imports: [ChipModule, TooltipModule],
-    template: '<p-chip [label]="activity().representation" [pTooltip]="description()" [removable]="false" (click)="_onClick()"></p-chip>',
+    template: `
+    <p-chip 
+      [label]="activity().representation" 
+      [pTooltip]="description()" 
+      [removable]="false" 
+      (click)="_onClick()">
+    </p-chip>
+    `
+    ,
     styles: `
     p-chip{
       cursor: pointer;
