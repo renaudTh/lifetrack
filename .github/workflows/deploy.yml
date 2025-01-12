@@ -11,20 +11,26 @@ jobs:
     runs-on: ubuntu-latest
     name: Build
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 22
+
       - name: Build the library
         run: |
           cd lifetracklib
           npm ci
           npm run build
+
       - name: Build the Angular app
         run: |
           cd frontend
           npm ci
-          npm run build
+          npm run build -- --configuration production --base-href /lifetrack/
+
       - name: Upload static files as artifact
         id: deployment
         uses: actions/upload-pages-artifact@v3
@@ -32,6 +38,9 @@ jobs:
           path: frontend/dist/frontend/browser
 
   deploy:
+    permissions:
+      id-token: write
+      pages: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
