@@ -1,0 +1,44 @@
+{
+    "name": "Lifetrack",
+    "dockerComposeFile": "./devcontainer/lifetrack/docker-compose.yml",
+    "service": "devcontainer",
+    "workspaceFolder": "/home/user/lifetrack",
+    "remoteUser": "user",
+    "shutdownAction": "stopCompose",
+    "customizations": {
+      "vscode": {
+        "extensions": [
+          // GIT
+          "mhutchie.git-graph",
+          "waderyan.gitblame",
+          "GitLab.gitlab-workflow",
+  
+          // TODOs
+          "Gruntfuggly.todo-tree",
+  
+          // Doc (Markdown, DrawIO)
+          "yzhang.markdown-all-in-one",
+          "hediet.vscode-drawio",
+  
+          // Docker
+          "ms-azuretools.vscode-docker",
+  
+          // Web
+          "esbenp.prettier-vscode",
+          "rvest.vs-code-prettier-eslint",
+          "Angular.ng-template",
+          "orta.vscode-jest",
+          "chamboug.js-auto-backticks",
+  
+          // Backend - Handlebars
+          "andrejunges.Handlebars",
+  
+          // Other formats
+          "mikestead.dotenv",
+          "tamasfe.even-better-toml"
+        ]
+      }
+    }
+  }
+  
+  

@@ -3,7 +3,7 @@
 [X] Write an external (but same repo) lib for all domain stuff and test it
 [X] Don't package tests in dist folder and all dev dependencies
 [X] Write a minimal CI
-[] Basic deployment to github pages
+[X] Basic deployment to github pages
 
 User Stories before beta testing
 [] Activities management
@@ -22,3 +22,4 @@ User Stories before beta testing
     - Error management
 
 
+[] Bugs:

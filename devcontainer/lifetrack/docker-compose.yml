@@ -1,0 +1,20 @@
+version: "3"
+
+services:
+  devcontainer:
+    build:
+      context: ./../..
+      dockerfile: devcontainer/lifetrack/Dockerfile
+    volumes:
+      - ~/.ssh:/home/user/.ssh:ro
+      - ~:/var/host_home:cached
+      - ./../..:/home/user/lifetrack:cached
+      - ~/.gitconfig:/home/user/.gitconfig:cached
+      - ~/.zshrc:/home/user/.zshrc:cached
+      - ~/.zsh_history:/home/user/.zsh_history:cached
+    command: /bin/sh -c "sleep infinity"
+    hostname: lifetrack-devcontainer
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - seccomp:unconfined
