@@ -1,0 +1,34 @@
+@let activities = activitiesSignal();
+
+
+<div class="content is-flex is-gap-1 is-flex-wrap-nowrap">
+    <button class="button is-primary" (click)="openNew()"><i class="pi pi-plus"></i></button>
+    <div class="is-flex is-gap-1 is-flex-wrap-nowrap overflow">
+        @for (entry of activities | keyvalue; track entry.value.id) {
+        <div class="button is-normal" (click)="upsertActivity(entry.value)">{{entry.value.representation}}</div>
+        }
+    </div>
+    <button class="button is-primary is-normal" (click)="openOther()"><i class="pi pi-ellipsis-h"></i></button>
+</div>
+
+<app-modal-component [(visible)]="openOtherSignal">
+    <div class="card">
+        <div class="card-header">
+            <div class="card-header-title">Pick an activity</div>
+        </div>
+        <div class="card-content ">
+            <div class="block is-flex is-gap-2 is-flex-wrap-wrap">
+                @for (entry of activities | keyvalue; track entry.value.id) {
+                <div class="button is-medium" (click)="upsertActivity(entry.value)">{{entry.value.representation}}
+                </div>
+                }
+            </div>
+
+        </div>
+        <footer class="card-footer">
+            <a class="card-footer-item">Edit</a>
+            <a class="card-footer-item">Delete</a>
+        </footer>
+    </div>
+</app-modal-component>
+<app-activity-form [(visible)]="openNewSignal"></app-activity-form>

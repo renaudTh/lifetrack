@@ -3,10 +3,11 @@
 
 <app-calendar></app-calendar>
 <div class="fixed-grid has-3-cols mt-5">
-    <div class="grid">
+    <app-recent-activities></app-recent-activities>
+    <!-- <div class="grid">
         @for (entry of activities | keyvalue; track entry.value.id) {
         <div class="cell button is-large" (click)="upsertActivity(entry.value)">{{entry.value.representation}}</div>
         }
-    </div>
+    </div> -->
 </div>
 <app-daily></app-daily>
