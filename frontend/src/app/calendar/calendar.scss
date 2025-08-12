@@ -1,7 +1,6 @@
 .grid {
     aspect-ratio: 3/2;
 }
-
 .cell {
     display:flex;
     justify-content: center;
@@ -11,5 +10,12 @@
     cursor: pointer;
 }
 .current-date{
-    border: 1px solid black;
+    background-color: rgba(var(--bulma-primary-rgb), 0.2)
+}
+.selected{
+    background-color: var(--bulma-primary);
+    color:var(--bulma-primary-bold)
+}
+.in-current-month{
+    background-color: var(--bulma-primary-soft)
 }

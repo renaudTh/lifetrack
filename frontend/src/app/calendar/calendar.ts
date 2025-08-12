@@ -19,10 +19,10 @@ export class Calendar {
   protected daysOfMonth = this.dateService.daysOfCurrentMonth;
 
   getClassList(day: Day) {
-    if (day.selected) return ['has-background-primary-bold', 'has-text-primary-bold-invert']
-    if (!day.inCurrentMonth) return ['has-background-grey-lighter']
-    if (day.currentDate) return ['has-background-primary-50']
-    return ['has-background-primary-90']
+    if (day.selected) return ['selected']
+    if (!day.inCurrentMonth) return ['not-in-current-month']
+    if (day.currentDate) return ['current-date']
+    return ['in-current-month']
   }
 
   previous() {
