@@ -1,11 +1,11 @@
 import { Activity, ActivityRecordDTO } from '@lifetrack/lib';
-import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import dayjs from 'dayjs';
 import { AppService } from './app.service';
 import { CallingContext } from './auth/calling.context.decorator';
 import { type CallingContext as CC } from './domain/calling.context';
-import { type ActivityDto } from './dto/activity.dto';
+import { type ActivityDto, type ActivityUpdateDto } from './dto/activity.dto';
 import { type RecordUpsertDto } from './dto/record.dto';
 
 @UseGuards(AuthGuard('jwt'))
@@ -22,6 +22,14 @@ export class AppController {
   @Post("/activity")
   async addActivity(@CallingContext() ctx: CC, @Body() dto: ActivityDto): Promise<Activity> {
     return this.appService.addActivity(ctx, dto);
+  }
+  @Delete("/activity/:id")
+  async deleteActivity(@CallingContext() ctx: CC, @Param("id") id: string): Promise<void> {
+    return this.appService.deleteActivity(ctx, { id });
+  }
+  @Patch("/activity")
+  async updateActivity(@CallingContext() ctx: CC, @Body() dto: ActivityUpdateDto) {
+    return this.appService.updateActivity(ctx, dto);
   }
 
   @Get("/records")

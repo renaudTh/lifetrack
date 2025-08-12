@@ -6,6 +6,9 @@ export interface IRepoService {
     getActivities(userId: string): Promise<Activity[]>
     getActivity(userId: string, activityId: string): Promise<Activity | null>;
     saveActivity(userId: string, activity: Activity): Promise<Activity>;
+    deleteActivity(userId: string, activityId: string): Promise<void>;
+    updateActivity(userId: string, activity: Activity): Promise<Activity>;
+
     getHistory(userId: string, start: string, end: string): Promise<ActivityRecord[]>
     getRecordByActivityAndDate(userId: string, date: DjsDate, activityId: string): Promise<ActivityRecord | null>
     getRecordById(userId: string, recordId: string): Promise<ActivityRecord | null>;

@@ -1,16 +1,17 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, model, OnInit, signal } from '@angular/core';
 import { AuthService } from '@auth0/auth0-angular';
 import { Activity } from '@lifetrack/lib';
-import { activities } from '../../domain/activities';
 import { DateService } from '../../domain/date.service';
 import { StateService } from '../../domain/state.service';
+import { ActivityForm } from "../activity-form/activity-form";
+import { ActivityPicker } from "../activity-picker/activity-picker";
 import { Calendar } from "../calendar/calendar";
 import { Daily } from "../daily/daily";
-import { KeyValuePipe } from '@angular/common';
+import { RecentActivities } from "../recent-activities/recent-activities";
 
 @Component({
   selector: 'app-home',
-  imports: [Calendar, Daily, KeyValuePipe],
+  imports: [Calendar, Daily, RecentActivities, ActivityPicker, ActivityForm],
   templateUrl: './home.html',
   styleUrl: './home.scss'
 })
@@ -20,9 +21,18 @@ export class Home implements OnInit {
   private readonly state = inject(StateService)
   private readonly dateService = inject(DateService)
 
-
   public activitiesSignal = this.state.selectActivities;
 
+  protected displayPicker = model<boolean>(false);
+  protected displayForm = model<boolean>(false);
+  protected activityToEdit = signal<Activity | null>(null);
+  constructor() {
+    this.displayForm.subscribe((v) => {
+      if (!v) {
+        this.activityToEdit.set(null);
+      }
+    })
+  }
   ngOnInit(): void {
     const sortedDisplayed = this.dateService.daysOfCurrentMonth().map((d) => d.date).sort((a, b) => a.isBefore(b) ? -1 : 1);
     const start = sortedDisplayed[0];
@@ -33,9 +43,17 @@ export class Home implements OnInit {
   login() {
     this.authService.loginWithRedirect();
   }
-
-
-  upsertActivity(activity: Activity) {
-    this.state.recordActivity(activity)
+  openActivityForm() {
+    this.activityToEdit.set(null);
+    this.displayForm.set(true);
   }
+  openActivityPicker() {
+    this.displayPicker.set(true);
+
+  }
+  editActivity(a: Activity) {
+    this.displayForm.set(true);
+    this.activityToEdit.set(a);
+  }
+
 }

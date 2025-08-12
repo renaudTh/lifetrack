@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { CallingContext } from './domain/calling.context';
 import type { IRepoService } from './domain/repo.service.interface';
 import { REPO_SERVICE } from './domain/repo.service.interface';
-import { ActivityDto } from './dto/activity.dto';
+import { ActivityDeleteDto, ActivityDto, ActivityUpdateDto } from './dto/activity.dto';
 @Injectable()
 export class AppService {
 
@@ -23,6 +23,17 @@ export class AppService {
     return saved;
   }
 
+  public async updateActivity(ctx: CallingContext, dto: ActivityUpdateDto): Promise<Activity> {
+    const toUpdate = await this.repo.getActivity(ctx.userId, dto.id);
+    if (toUpdate === null) {
+      throw new Error("Activity not found!")
+    }
+    const newVersion: Activity = { ...toUpdate, ...dto };
+    return await this.repo.updateActivity(ctx.userId, newVersion);
+  }
+  public async deleteActivity(ctx: CallingContext, dto: ActivityDeleteDto): Promise<void> {
+    return await this.repo.deleteActivity(ctx.userId, dto.id);
+  }
   async getRecords(ctx: CallingContext, start: DjsDate, end: DjsDate) {
     return this.repo.getHistory(ctx.userId, start.format("YYYY-MM-DD"), end.format("YYYY-MM-DD"));
   }

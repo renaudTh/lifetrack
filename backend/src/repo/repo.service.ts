@@ -11,6 +11,16 @@ export class RepoService implements IRepoService {
     constructor(@InjectDataSource() private dataSource: DataSource) {
 
     }
+    async updateActivity(userId: string, activity: Activity): Promise<Activity> {
+        const repo = this.dataSource.getRepository(ActivityDBO);
+        const dbo = activityToSaveDbo(activity, userId);
+        await repo.save(dbo);
+        return activity
+    }
+    async deleteActivity(userId: string, activityId: string): Promise<void> {
+        const repo = this.dataSource.getRepository(ActivityDBO);
+        await repo.softDelete({ owner_id: userId, id: activityId });
+    }
 
 
     async saveActivity(userId: string, activity: Activity): Promise<Activity> {
@@ -26,7 +36,7 @@ export class RepoService implements IRepoService {
     }
     async getRecordById(userId: string, recordId: string): Promise<ActivityRecord | null> {
         const repo = this.dataSource.getRepository(RecordDBO);
-        const dbo = await repo.findOne({ where: { userId: userId, id: recordId }, relations: ['activity'] });
+        const dbo = await repo.findOne({ where: { userId: userId, id: recordId }, relations: ['activity'], withDeleted: true });
         return dbo ? dboToRecord(dbo) : null;
     }
     async getActivity(userId: string, activityId: string): Promise<Activity | null> {
@@ -58,7 +68,7 @@ export class RepoService implements IRepoService {
 
     async getHistory(userId: string, start: string, end: string): Promise<ActivityRecord[]> {
         const repo = this.dataSource.getRepository(RecordDBO);
-        const dbos = await repo.find({ where: { userId: userId, date: Between(start, end) }, relations: ['activity'] })
+        const dbos = await repo.find({ where: { userId: userId, date: Between(start, end) }, relations: ['activity'], withDeleted: true })
         return dbos.map((dbo) => dboToRecord(dbo));
     }
 

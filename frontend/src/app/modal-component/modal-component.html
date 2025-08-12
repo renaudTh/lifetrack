@@ -1,0 +1,9 @@
+@let modal = modalClasses();
+
+<div [class]="modal">
+    <div class="modal-background" (click)="close()"></div>
+    <div class="modal-content">
+        <ng-content />
+    </div>
+    <button class="modal-close is-large" aria-label="close" (click)="close()"></button>
+</div>

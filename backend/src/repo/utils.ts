@@ -1,9 +1,9 @@
 import { Activity, ActivityRecord } from "@lifetrack/lib";
+import dayjs from 'dayjs';
 import { ActivityDBO } from "src/entities/activity.entity";
 import { RecordDBO } from "src/entities/record.entity";
-import dayjs from 'dayjs'
 
-export function dboToActivity(dbo: ActivityDBO) : Activity {
+export function dboToActivity(dbo: ActivityDBO): Activity {
     return {
         id: dbo.id,
         amount: dbo.base_amount,
@@ -12,7 +12,7 @@ export function dboToActivity(dbo: ActivityDBO) : Activity {
         unit: dbo.unit
     }
 }
-export type ActivitySaveDBO = Omit<ActivityDBO, "records">
+export type ActivitySaveDBO = Omit<ActivityDBO, "records" | "deleted_date">
 
 export function activityToSaveDbo(activity: Activity, userId: string): ActivitySaveDBO {
     return {
@@ -24,7 +24,7 @@ export function activityToSaveDbo(activity: Activity, userId: string): ActivityS
         owner_id: userId
     }
 }
-export type RecordSaveDBO = Omit<RecordDBO, "activity"> & {activity: ActivitySaveDBO}
+export type RecordSaveDBO = Omit<RecordDBO, "activity"> & { activity: ActivitySaveDBO }
 
 export function dboToRecord(dbo: RecordDBO): ActivityRecord {
     return {
