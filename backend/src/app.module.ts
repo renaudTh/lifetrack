@@ -1,17 +1,19 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { ActivityDBO } from './entities/activity.entity';
-import { REPO_SERVICE } from './domain/repo.service.interface';
-import { RepoService } from './repo/repo.service';
-import { RecordDBO } from './entities/record.entity';
 import { AuthModule } from './auth/auth.module';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { REPO_SERVICE } from './domain/repo.service.interface';
+import { ActivityDBO } from './entities/activity.entity';
+import { RecordDBO } from './entities/record.entity';
+import { RepoService } from './repo/repo.service';
+import { AppLoggerMiddleware } from './utils/logger.middleware';
+import { HealthController } from './health.controller';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({isGlobal: true}),
+    ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -26,7 +28,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         synchronize: true
       }),
     }), AuthModule],
-  controllers: [AppController],
+  controllers: [AppController, HealthController],
   providers: [
     {
       provide: REPO_SERVICE,
@@ -36,5 +38,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
   ,
 })
 export class AppModule {
+
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(AppLoggerMiddleware)
+      .forRoutes('*');
+  }
 
 }

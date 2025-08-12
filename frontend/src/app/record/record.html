@@ -1,0 +1,12 @@
+@let record = recordSignal();
+@let tooltip = tooltipSignal();
+
+<span class="tooltip" [attr.data-tooltip]="tooltip">
+    <span class="number">
+        {{record.number}}
+    </span>
+    <span class="tag is-large">
+        {{record.activity.representation}}
+        <button class="delete" (click)="downsert()"></button>
+    </span>
+</span>

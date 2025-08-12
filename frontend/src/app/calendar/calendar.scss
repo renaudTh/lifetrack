@@ -1,0 +1,15 @@
+.grid {
+    aspect-ratio: 3/2;
+}
+
+.cell {
+    display:flex;
+    justify-content: center;
+    align-items: center;  
+}
+.cell:hover{
+    cursor: pointer;
+}
+.current-date{
+    border: 1px solid black;
+}
