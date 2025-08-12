@@ -1,0 +1,18 @@
+@let currentDate = selectedDateSignal();
+@let records = recordsSignal();
+
+<div class="card">
+    <div class="card-header">
+        <div class="card-header-title">{{ currentDate }}</div>
+    </div>
+    <div class="card-content is-flex is-gap-2 is-flex-wrap-wrap">
+        @if(records.length > 0){
+        @for(record of records; track record.id){
+        <app-record [record]="record" (onDelete)="downsert($event)"></app-record>
+        }
+        }
+        @else {
+        <div class="block is-size-6 is-italic">No records for today</div>
+        }
+    </div>
+</div>

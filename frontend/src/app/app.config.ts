@@ -1,75 +1,57 @@
-import { APP_INITIALIZER, ApplicationConfig, isDevMode } from '@angular/core';
+import { ApplicationConfig, isDevMode, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
-import { ACTIVITY_PROVIDER } from '../domain/activity.provider.interface';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideServiceWorker } from '@angular/service-worker';
+import { authHttpInterceptorFn, provideAuth0 } from '@auth0/auth0-angular';
+import { API_PROVIDER } from '../domain/api.provider.interface';
+import { StateService } from '../domain/state.service';
+import { environment } from '../environments/environment';
+import { API_URL } from '../environments/environment.interface';
+import { ApiProvider } from '../providers/api.provider.service';
+import { apiInterceptorFn } from '../utils/api.interceptor';
 import { routes } from './app.routes';
 
-import { RECORD_PROVIDER } from '../domain/record.provider.interface';
-
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { provideEffects } from '@ngrx/effects';
-import { provideState, provideStore } from '@ngrx/store';
-import { provideStoreDevtools } from '@ngrx/store-devtools';
-import Lara from '@primeng/themes/lara';
-import { Client } from 'appwrite';
-import { providePrimeNG } from 'primeng/config';
-import { UserService } from '../domain/user.service';
-import { ActivityProviderService } from '../providers/activity.provider.service';
-import { CLIENT, DB_ID } from '../providers/api.config';
-import { RecordProviderService } from '../providers/record.provider.service';
-import { ActivitiesEffects } from './stores/activities-store/activities.effects';
-import { activitiesReducer } from './stores/activities-store/activities.reducer';
-import { RecordsEffects } from './stores/record-store/record.effects';
-import { recordsReducer } from './stores/record-store/record.reducer';
-
-
-function  checkAuthentication(userService: UserService) : () => Promise<void> {
-  return async () => {
-    await userService.checkUser();
-  }
-}
-
 export const appConfig: ApplicationConfig = {
-  
   providers: [
-    provideAnimationsAsync(),
-    providePrimeNG({ 
-        theme: {
-            preset: Lara
-        }
-    }),
+    {
+      provide: API_URL,
+      useValue: environment.apiUrl,
+    },
+    provideBrowserGlobalErrorListeners(),
+    provideZonelessChangeDetection(),
     provideRouter(routes),
+    provideAuth0({
+      domain: environment.auth0.domain,
+      clientId: environment.auth0.clientId,
+      authorizationParams: {
+        redirect_uri: window.location.origin,
+        audience: environment.auth0.audience,
+      },
+      httpInterceptor: {
+        allowedList: [
+          {
+            uri: `${environment.apiUrl}/*`,
+            tokenOptions: {
+              authorizationParams: {
+                audience: environment.auth0.audience,
+              }
+            }
+          }
+        ]
+      }
+    }),
+    provideHttpClient(withInterceptors([apiInterceptorFn, authHttpInterceptorFn])),
     {
-        provide: ACTIVITY_PROVIDER,
-        useClass: ActivityProviderService
+      provide: API_PROVIDER,
+      useClass: ApiProvider
     },
-    {
-        provide: RECORD_PROVIDER,
-        useClass: RecordProviderService,
-    },
-    {
-       provide: CLIENT,
-       useFactory: () => {
-        const client = new Client()
-        client.setProject('675daf91000a5b007d0c');
-        return client;
-       }
-    },
-    {
-        provide: DB_ID,
-        useValue: "675db0a800230f2466fe"
-     },
-     {
-        provide:APP_INITIALIZER,
-        useFactory:  (user: UserService) => checkAuthentication(user), 
-        deps:[UserService],
-        multi: true
-  
-     },
-    provideStore(),
-    provideState({ name: 'records', reducer: recordsReducer}),
-    provideState({ name: 'activities', reducer: activitiesReducer}),
-    provideEffects(RecordsEffects, ActivitiesEffects),
-    provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() })
-]
+    StateService, provideServiceWorker('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:30000'
+    }), provideServiceWorker('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:30000'
+    }),
+  ]
 };

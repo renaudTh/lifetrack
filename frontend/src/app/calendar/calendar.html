@@ -1,0 +1,29 @@
+@let title = displayedMonth();
+
+<div class="content">
+    @if(title) {
+    <div class="is-flex is-justify-content-space-between is-align-items-center is-vertial-align-middle">
+        <button (click)="previous()" class="button is-small"> <span class="icon">
+                <i class="pi pi-angle-left"></i>
+            </span> </button>
+        <h2 class="title is-4 is-block">{{title}}</h2>
+        <button (click)="next()" [disabled]="!canNext" class="button is-small"> <span class="icon">
+                <i class="pi pi-angle-right"></i>
+            </span> </button>
+    </div>
+    }
+
+    @let daysList = daysOfMonth();
+    @if(daysList){
+    <div class="fixed-grid has-7-cols">
+        <div class="grid is-gap-0.5">
+            @for (day of daysList; track day.date) {
+            <div class="cell" (click)="selectDay(day.date)" [ngClass]="getClassList(day)">
+                {{day.date.format("D")}}
+            </div>
+            }
+
+        </div>
+    </div>
+    }
+</div>

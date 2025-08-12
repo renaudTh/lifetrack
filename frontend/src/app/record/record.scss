@@ -1,0 +1,43 @@
+.number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background-color: var(--bulma-primary);
+    padding: 0.4em;
+    border-radius: 50%;
+    width: 1.2rem;
+    height: 1.2rem;
+    font-size: small;
+    top: 0.7em;
+}
+
+.invisible {
+    display: none;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+.tooltip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 90%;
+  left: 50%;
+  transform: translateX(-40%);
+  background-color: #363636; /* dark background */
+  color: #fff;
+  padding: 0.5em 0.75em;
+  border-radius: 4px;
+  white-space: nowrap;
+  font-size: 0.875rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-in-out;
+  z-index: 10;
+}
+.tooltip:hover::after {
+  opacity: 1;
+}

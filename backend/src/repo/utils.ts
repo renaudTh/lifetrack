@@ -40,6 +40,6 @@ export function recordToSaveDBO(record: ActivityRecord, userId: string): RecordS
         activity: activityToSaveDbo(record.activity, userId),
         count: record.number,
         date: record.date.format("YYYY-MM-DD"),
-        userId
+        userId: userId,
     }
 }
