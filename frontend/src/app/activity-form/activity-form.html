@@ -4,36 +4,41 @@
             <div class="card-header-title">New activity</div>
         </div>
         <div class="card-content ">
-            <div class="field">
-                <label class="label">Representation</label>
-                <div class="control">
-                    <input class="input" type="text" placeholder="🚀">
+            <form [formGroup]="activityForm">
+                <div class="field">
+                    <label class="label">Representation</label>
+                    <div class="control">
+                        <input class="input" formControlName="representation" type="input" type="text" placeholder="🚀">
+                    </div>
                 </div>
-            </div>
-            <div class="field">
-                <label class="label">Description</label>
-                <div class="control">
-                    <input class="input" type="Text" placeholder="Launch skyrocket">
+                <div class="field">
+                    <label class="label">Description</label>
+                    <div class="control">
+                        <input formControlName="description" class="input" type="Text" placeholder="Launch skyrocket">
+                    </div>
                 </div>
-            </div>
-            <div class="field">
-                <label class="label">Base amount</label>
-                <div class="control">
-                    <input class="input" type="number" placeholder="1200">
+                <div class="field">
+                    <label class="label">Base amount</label>
+                    <div class="control">
+                        <input formControlName="base_amount" class="input" type="number" placeholder="1200">
+                    </div>
                 </div>
-            </div>
-            <div class="field">
-                <label class="label">Unit</label>
-                <div class="control">
-                    <input class="input" type="Text" placeholder="kph">
+                <div class="field">
+                    <label class="label">Unit</label>
+                    <div class="control">
+                        <input formControlName="unit" class="input" type="Text" placeholder="kph">
+                    </div>
                 </div>
-            </div>
-
+                <div class="field is-grouped is-grouped-centered">
+                    <div class="control">
+                        <button class="button is-primary" (click)="addActivity()"
+                            [disabled]="activityForm.invalid">Add</button>
+                    </div>
+                    <div class="control">
+                        <button class="button" (click)="close()">Cancel</button>
+                    </div>
+                </div>
+            </form>
         </div>
-
-        <footer class="card-footer">
-            <a class="card-footer-item" (click)="close()">Cancel</a>
-            <a class="card-footer-item">Save</a>
-        </footer>
     </div>
 </app-modal-component>

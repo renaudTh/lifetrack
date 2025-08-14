@@ -14,12 +14,12 @@
 <app-modal-component [(visible)]="openOtherSignal">
     <div class="card">
         <div class="card-header">
-            <div class="card-header-title">Pick an activity</div>
+            <div class="card-header-title">{{dialogTitle()}}</div>
         </div>
         <div class="card-content ">
             <div class="block is-flex is-gap-2 is-flex-wrap-wrap">
                 @for (entry of activities | keyvalue; track entry.value.id) {
-                <div class="button is-medium" (click)="upsertActivity(entry.value)">{{entry.value.representation}}
+                <div [class]="buttonClass()!" (click)="upsertActivity(entry.value)">{{entry.value.representation}}
                 </div>
                 }
             </div>
@@ -27,7 +27,7 @@
         </div>
         <footer class="card-footer">
             <a class="card-footer-item">Edit</a>
-            <a class="card-footer-item">Delete</a>
+            <a class="card-footer-item" (click)="onDelete()">Delete</a>
         </footer>
     </div>
 </app-modal-component>
