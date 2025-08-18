@@ -15,6 +15,11 @@ export class ApiProvider implements ILifetrackApi {
         const request = this.http.get<Activity[]>(`api://activities`);
         return firstValueFrom(request);
     }
+    public getTopActivities(): Promise<Activity[]> {
+        const request = this.http.get<Activity[]>(`api://activities/top`);
+        return firstValueFrom(request);
+    }
+
     public async addActivity(dto: ActivityDto): Promise<Activity> {
         const request = this.http.post<Activity>(`api://activity`, dto);
         return firstValueFrom(request);

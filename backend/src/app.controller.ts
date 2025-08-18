@@ -18,7 +18,10 @@ export class AppController {
   async getActivities(@CallingContext() ctx: CC): Promise<Activity[]> {
     return this.appService.getActivities(ctx);
   }
-
+  @Get("/activities/top")
+  async getTopActivities(@CallingContext() ctx: CC): Promise<Activity[]> {
+    return this.appService.getTopActivities(ctx, 5);
+  }
   @Post("/activity")
   async addActivity(@CallingContext() ctx: CC, @Body() dto: ActivityDto): Promise<Activity> {
     return this.appService.addActivity(ctx, dto);

@@ -11,6 +11,49 @@ export class RepoService implements IRepoService {
     constructor(@InjectDataSource() private dataSource: DataSource) {
 
     }
+
+    async getTopActivities(userId: string, count: number): Promise<Activity[]> {
+
+        const topActivities: { activityId: string, count: number }[] = await this.dataSource
+            .getRepository(RecordDBO)
+            .createQueryBuilder("record")
+            .where("record.userId = :id", { id: userId })
+            .select("record.activityId", "activityId")
+            .addSelect("COUNT(*)", "count")
+            .groupBy("record.activityId")
+            .orderBy("count", "DESC")
+            .limit(count)
+            .getRawMany();
+        const topIds = topActivities.map((a) => a.activityId);
+        const activityEntities = await this.dataSource
+            .getRepository(ActivityDBO)
+            .createQueryBuilder("activity")
+            .where("activity.id IN (:...ids)", {
+                ids: topIds,
+            })
+            .getMany();
+        const activityMap = new Map(
+            activityEntities.map(a => [a.id, a])
+        );
+        const sortedActivities = topActivities.flatMap(r => {
+            const id = activityMap.get(r.activityId)
+            return (id === undefined) ? [] : [id];
+        }
+        )
+        if (sortedActivities.length < count) {
+            const missingCount = count - sortedActivities.length;
+
+            const additional = await this.dataSource
+                .getRepository(ActivityDBO)
+                .createQueryBuilder("activity")
+                .where("activity.id NOT IN (:...ids)", { ids: topIds })
+                .limit(missingCount)
+                .getMany();
+
+            sortedActivities.push(...additional);
+        }
+        return sortedActivities.map((a) => dboToActivity(a))
+    }
     async updateActivity(userId: string, activity: Activity): Promise<Activity> {
         const repo = this.dataSource.getRepository(ActivityDBO);
         const dbo = activityToSaveDbo(activity, userId);
@@ -21,8 +64,6 @@ export class RepoService implements IRepoService {
         const repo = this.dataSource.getRepository(ActivityDBO);
         await repo.softDelete({ owner_id: userId, id: activityId });
     }
-
-
     async saveActivity(userId: string, activity: Activity): Promise<Activity> {
         const repo = this.dataSource.getRepository(ActivityDBO);
         const dbo = activityToSaveDbo(activity, userId);

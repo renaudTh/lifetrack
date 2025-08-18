@@ -10,7 +10,8 @@ export class AppService {
 
   constructor(@Inject(REPO_SERVICE) private readonly repo: IRepoService) { }
 
-  getActivities(ctx: CallingContext): Promise<Activity[]> {
+  async getActivities(ctx: CallingContext): Promise<Activity[]> {
+    await this.repo.getTopActivities(ctx.userId, 5);
     return this.repo.getActivities(ctx.userId);
   }
   public async addActivity(ctx: CallingContext, dto: ActivityDto): Promise<Activity> {
@@ -21,6 +22,9 @@ export class AppService {
     }
     const saved = await this.repo.saveActivity(ctx.userId, toSave);
     return saved;
+  }
+  public async getTopActivities(ctx: CallingContext, count: number): Promise<Activity[]> {
+    return this.repo.getTopActivities(ctx.userId, count);
   }
 
   public async updateActivity(ctx: CallingContext, dto: ActivityUpdateDto): Promise<Activity> {

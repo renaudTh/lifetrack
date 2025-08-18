@@ -9,12 +9,14 @@ export interface LifetrackState {
     loading: boolean,
     records: Record<string, ActivityRecord>
     activities: Record<string, Activity>;
+    top: Record<string, Activity>;
 }
 
 const initialState: LifetrackState = {
     loading: true,
     records: {},
-    activities: {}
+    activities: {},
+    top: {}
 }
 
 @Injectable()
@@ -35,6 +37,11 @@ export class StateService {
     public readonly selectActivities = computed(() => {
         return this.store().activities
     })
+
+    public readonly selectTopActivities = computed(() => {
+        return this.store().top
+    })
+
     addActivity(dto: ActivityDto) {
         this.api.addActivity(dto).then((newActivity) => {
             const store = this.store();
@@ -63,6 +70,12 @@ export class StateService {
         })
     }
     loadActivities() {
+        this.api.getTopActivities().then((list) => {
+            this.store.set({
+                ...this.store(),
+                top: list.reduce((acc, item) => ({ ...acc, [item.id]: item }), {})
+            })
+        });
         this.api.getActivities().then((list) => {
             this.store.set({
                 ...this.store(),

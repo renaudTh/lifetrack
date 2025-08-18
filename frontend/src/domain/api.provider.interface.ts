@@ -12,6 +12,7 @@ export interface ILifetrackApi {
     getActivities(): Promise<Activity[]>;
     deleteActivity(id: string): Promise<void>
     updateActivity(activity: Activity): Promise<Activity>
+    getTopActivities(): Promise<Activity[]>;
     addActivity(dto: ActivityDto): Promise<Activity>
     recordActivity(activity: Activity, date: DjsDate): Promise<ActivityRecord>;
     downsertRecord(record: ActivityRecord): Promise<ActivityRecord | null>;
