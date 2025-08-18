@@ -1,3 +1,29 @@
 /* You can add global styles to this file, and also import other style files */
 @import "https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css";
 @import "primeicons/primeicons.css";
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+.tooltip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 90%;
+  left: 50%;
+  transform: translateX(-40%);
+  background-color: #363636; /* dark background */
+  color: #fff;
+  padding: 0.5em 0.75em;
+  border-radius: 4px;
+  white-space: nowrap;
+  font-size: 0.875rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-in-out;
+  z-index: 10;
+}
+.tooltip:hover::after {
+  opacity: 1;
+}

@@ -3,14 +3,15 @@ import { Inject, Injectable } from '@nestjs/common';
 import { CallingContext } from './domain/calling.context';
 import type { IRepoService } from './domain/repo.service.interface';
 import { REPO_SERVICE } from './domain/repo.service.interface';
-import { ActivityDto } from './dto/activity.dto';
+import { ActivityDeleteDto, ActivityDto, ActivityUpdateDto } from './dto/activity.dto';
 @Injectable()
 export class AppService {
 
 
   constructor(@Inject(REPO_SERVICE) private readonly repo: IRepoService) { }
 
-  getActivities(ctx: CallingContext): Promise<Activity[]> {
+  async getActivities(ctx: CallingContext): Promise<Activity[]> {
+    await this.repo.getTopActivities(ctx.userId, 5);
     return this.repo.getActivities(ctx.userId);
   }
   public async addActivity(ctx: CallingContext, dto: ActivityDto): Promise<Activity> {
@@ -22,7 +23,21 @@ export class AppService {
     const saved = await this.repo.saveActivity(ctx.userId, toSave);
     return saved;
   }
+  public async getTopActivities(ctx: CallingContext, count: number): Promise<Activity[]> {
+    return this.repo.getTopActivities(ctx.userId, count);
+  }
 
+  public async updateActivity(ctx: CallingContext, dto: ActivityUpdateDto): Promise<Activity> {
+    const toUpdate = await this.repo.getActivity(ctx.userId, dto.id);
+    if (toUpdate === null) {
+      throw new Error("Activity not found!")
+    }
+    const newVersion: Activity = { ...toUpdate, ...dto };
+    return await this.repo.updateActivity(ctx.userId, newVersion);
+  }
+  public async deleteActivity(ctx: CallingContext, dto: ActivityDeleteDto): Promise<void> {
+    return await this.repo.deleteActivity(ctx.userId, dto.id);
+  }
   async getRecords(ctx: CallingContext, start: DjsDate, end: DjsDate) {
     return this.repo.getHistory(ctx.userId, start.format("YYYY-MM-DD"), end.format("YYYY-MM-DD"));
   }

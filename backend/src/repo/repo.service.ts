@@ -12,7 +12,58 @@ export class RepoService implements IRepoService {
 
     }
 
+    async getTopActivities(userId: string, count: number): Promise<Activity[]> {
 
+        const topActivities: { activityId: string, count: number }[] = await this.dataSource
+            .getRepository(RecordDBO)
+            .createQueryBuilder("record")
+            .where("record.userId = :id", { id: userId })
+            .select("record.activityId", "activityId")
+            .addSelect("COUNT(*)", "count")
+            .groupBy("record.activityId")
+            .orderBy("count", "DESC")
+            .limit(count)
+            .getRawMany();
+        const topIds = topActivities.map((a) => a.activityId);
+        const activityEntities = await this.dataSource
+            .getRepository(ActivityDBO)
+            .createQueryBuilder("activity")
+            .where("activity.id IN (:...ids)", {
+                ids: topIds,
+            })
+            .getMany();
+        const activityMap = new Map(
+            activityEntities.map(a => [a.id, a])
+        );
+        const sortedActivities = topActivities.flatMap(r => {
+            const id = activityMap.get(r.activityId)
+            return (id === undefined) ? [] : [id];
+        }
+        )
+        if (sortedActivities.length < count) {
+            const missingCount = count - sortedActivities.length;
+
+            const additional = await this.dataSource
+                .getRepository(ActivityDBO)
+                .createQueryBuilder("activity")
+                .where("activity.id NOT IN (:...ids)", { ids: topIds })
+                .limit(missingCount)
+                .getMany();
+
+            sortedActivities.push(...additional);
+        }
+        return sortedActivities.map((a) => dboToActivity(a))
+    }
+    async updateActivity(userId: string, activity: Activity): Promise<Activity> {
+        const repo = this.dataSource.getRepository(ActivityDBO);
+        const dbo = activityToSaveDbo(activity, userId);
+        await repo.save(dbo);
+        return activity
+    }
+    async deleteActivity(userId: string, activityId: string): Promise<void> {
+        const repo = this.dataSource.getRepository(ActivityDBO);
+        await repo.softDelete({ owner_id: userId, id: activityId });
+    }
     async saveActivity(userId: string, activity: Activity): Promise<Activity> {
         const repo = this.dataSource.getRepository(ActivityDBO);
         const dbo = activityToSaveDbo(activity, userId);
@@ -26,7 +77,7 @@ export class RepoService implements IRepoService {
     }
     async getRecordById(userId: string, recordId: string): Promise<ActivityRecord | null> {
         const repo = this.dataSource.getRepository(RecordDBO);
-        const dbo = await repo.findOne({ where: { userId: userId, id: recordId }, relations: ['activity'] });
+        const dbo = await repo.findOne({ where: { userId: userId, id: recordId }, relations: ['activity'], withDeleted: true });
         return dbo ? dboToRecord(dbo) : null;
     }
     async getActivity(userId: string, activityId: string): Promise<Activity | null> {
@@ -58,7 +109,7 @@ export class RepoService implements IRepoService {
 
     async getHistory(userId: string, start: string, end: string): Promise<ActivityRecord[]> {
         const repo = this.dataSource.getRepository(RecordDBO);
-        const dbos = await repo.find({ where: { userId: userId, date: Between(start, end) }, relations: ['activity'] })
+        const dbos = await repo.find({ where: { userId: userId, date: Between(start, end) }, relations: ['activity'], withDeleted: true })
         return dbos.map((dbo) => dboToRecord(dbo));
     }
 
