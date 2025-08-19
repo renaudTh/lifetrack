@@ -11,7 +11,6 @@ export class AppService {
   constructor(@Inject(REPO_SERVICE) private readonly repo: IRepoService) { }
 
   async getActivities(ctx: CallingContext): Promise<Activity[]> {
-    await this.repo.getTopActivities(ctx.userId, 5);
     return this.repo.getActivities(ctx.userId);
   }
   public async addActivity(ctx: CallingContext, dto: ActivityDto): Promise<Activity> {

@@ -1,7 +1,7 @@
 import { Activity, ActivityRecord, DjsDate } from "@lifetrack/lib";
 import { InjectDataSource } from "@nestjs/typeorm";
 import { RecordDBO } from "src/entities/record.entity";
-import { Between, DataSource } from "typeorm";
+import { Between, DataSource, In, Not } from "typeorm";
 import { IRepoService } from "../domain/repo.service.interface";
 import { ActivityDBO } from "../entities/activity.entity";
 import { activityToSaveDbo, dboToActivity, dboToRecord, recordToSaveDBO } from "./utils";
@@ -14,24 +14,20 @@ export class RepoService implements IRepoService {
 
     async getTopActivities(userId: string, count: number): Promise<Activity[]> {
 
-        const topActivities: { activityId: string, count: number }[] = await this.dataSource
-            .getRepository(RecordDBO)
-            .createQueryBuilder("record")
-            .where("record.userId = :id", { id: userId })
-            .select("record.activityId", "activityId")
-            .addSelect("COUNT(*)", "count")
-            .groupBy("record.activityId")
-            .orderBy("count", "DESC")
-            .limit(count)
-            .getRawMany();
+        const repo = this.dataSource.getRepository(ActivityDBO);
+
+        const query = `SELECT "activityId", SUM("count") AS "total_count" FROM public."Records"
+                        WHERE "userId" = $1 
+                        GROUP BY "activityId"
+                        ORDER BY total_count DESC
+                        LIMIT $2`
+
+        const topActivities: { activityId: string, total_count: number }[] = await this.dataSource.query(query, [userId, count]);
+
         const topIds = topActivities.map((a) => a.activityId);
-        const activityEntities = await this.dataSource
-            .getRepository(ActivityDBO)
-            .createQueryBuilder("activity")
-            .where("activity.id IN (:...ids)", {
-                ids: topIds,
-            })
-            .getMany();
+        const activityEntities = await repo
+            .find({ where: { id: In(topIds), owner_id: userId }, relations: [] })
+
         const activityMap = new Map(
             activityEntities.map(a => [a.id, a])
         );
@@ -42,14 +38,7 @@ export class RepoService implements IRepoService {
         )
         if (sortedActivities.length < count) {
             const missingCount = count - sortedActivities.length;
-
-            const additional = await this.dataSource
-                .getRepository(ActivityDBO)
-                .createQueryBuilder("activity")
-                .where("activity.id NOT IN (:...ids)", { ids: topIds })
-                .limit(missingCount)
-                .getMany();
-
+            const additional = await repo.find({ where: { id: Not(In(topIds)), owner_id: userId }, take: missingCount })
             sortedActivities.push(...additional);
         }
         return sortedActivities.map((a) => dboToActivity(a))
