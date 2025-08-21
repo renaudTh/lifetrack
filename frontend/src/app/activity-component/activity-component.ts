@@ -1,11 +1,12 @@
-import { Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { Activity } from '@lifetrack/lib';
 
 @Component({
   selector: 'app-activity-component',
   imports: [],
   templateUrl: './activity-component.html',
-  styleUrl: './activity-component.scss'
+  styleUrl: './activity-component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ActivityComponent {
 

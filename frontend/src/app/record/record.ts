@@ -1,11 +1,13 @@
-import { Component, computed, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { ActivityRecord } from '@lifetrack/lib';
 
 @Component({
   selector: 'app-record',
   imports: [],
   templateUrl: './record.html',
-  styleUrl: './record.scss'
+  styleUrl: './record.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
+
 })
 export class Record {
 

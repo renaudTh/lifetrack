@@ -1,5 +1,5 @@
 import { KeyValuePipe } from '@angular/common';
-import { Component, computed, inject, model, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, model, output, signal } from '@angular/core';
 import { Activity } from '@lifetrack/lib';
 import { StateService } from '../../domain/state.service';
 import { ActivityComponent } from '../activity-component/activity-component';
@@ -9,7 +9,9 @@ import { ModalComponent } from '../modal-component/modal-component';
   selector: 'app-activity-picker',
   imports: [ModalComponent, ActivityComponent, KeyValuePipe],
   templateUrl: './activity-picker.html',
-  styleUrl: './activity-picker.scss'
+  styleUrl: './activity-picker.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
+
 })
 export class ActivityPicker {
 

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Activity } from '@lifetrack/lib';
 import { StateService } from '../../domain/state.service';
 import { ActivityComponent } from '../activity-component/activity-component';
@@ -7,7 +7,9 @@ import { ActivityComponent } from '../activity-component/activity-component';
   selector: 'app-recent-activities',
   imports: [ActivityComponent],
   templateUrl: './recent-activities.html',
-  styleUrl: './recent-activities.scss'
+  styleUrl: './recent-activities.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
+
 })
 export class RecentActivities {
 

@@ -1,12 +1,14 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { AuthService } from '@auth0/auth0-angular';
 
 @Component({
   selector: 'app-menu',
   imports: [AsyncPipe],
   templateUrl: './menu.html',
-  styleUrl: './menu.scss'
+  styleUrl: './menu.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
+
 })
 export class Menu {
 

@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { ActivityRecord } from '@lifetrack/lib';
 import dayjs from 'dayjs';
 import { DateService } from '../../domain/date.service';
@@ -8,7 +8,8 @@ import { Record } from "../record/record";
   selector: 'app-daily',
   imports: [Record],
   templateUrl: './daily.html',
-  styleUrl: './daily.scss'
+  styleUrl: './daily.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Daily {
 

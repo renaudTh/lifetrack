@@ -1,4 +1,4 @@
-import { Component, inject, model, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, model, OnInit, signal } from '@angular/core';
 import { AuthService } from '@auth0/auth0-angular';
 import { Activity } from '@lifetrack/lib';
 import { DateService } from '../../domain/date.service';
@@ -13,7 +13,9 @@ import { RecentActivities } from "../recent-activities/recent-activities";
   selector: 'app-home',
   imports: [Calendar, Daily, RecentActivities, ActivityPicker, ActivityForm],
   templateUrl: './home.html',
-  styleUrl: './home.scss'
+  styleUrl: './home.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
+
 })
 export class Home implements OnInit {
 

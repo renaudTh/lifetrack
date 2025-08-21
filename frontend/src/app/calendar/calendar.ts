@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Day, DjsDate } from '@lifetrack/lib';
 import { DateService } from '../../domain/date.service';
 import { StateService } from '../../domain/state.service';
@@ -8,7 +8,9 @@ import { StateService } from '../../domain/state.service';
   selector: 'app-calendar',
   imports: [CommonModule],
   templateUrl: './calendar.html',
-  styleUrl: './calendar.scss'
+  styleUrl: './calendar.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
+
 })
 export class Calendar {
 
