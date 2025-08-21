@@ -3,7 +3,7 @@ import { inject } from "@angular/core";
 import { Activity, ActivityRecord, ActivityRecordDTO, DjsDate } from "@lifetrack/lib";
 import dayjs from "dayjs";
 import { firstValueFrom } from "rxjs";
-import { ActivityDto } from "../domain/activities";
+import { ActivityDto, TopActivity } from "../domain/activities";
 import { ILifetrackApi } from "../domain/api.provider.interface";
 
 export class ApiProvider implements ILifetrackApi {
@@ -15,8 +15,8 @@ export class ApiProvider implements ILifetrackApi {
         const request = this.http.get<Activity[]>(`api://activities`);
         return firstValueFrom(request);
     }
-    public getTopActivities(): Promise<Activity[]> {
-        const request = this.http.get<Activity[]>(`api://activities/top`);
+    public getTopActivities(): Promise<TopActivity[]> {
+        const request = this.http.get<TopActivity[]>(`api://activities/top`);
         return firstValueFrom(request);
     }
 

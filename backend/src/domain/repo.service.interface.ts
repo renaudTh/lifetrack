@@ -1,4 +1,5 @@
 import { Activity, ActivityRecord, DjsDate } from "@lifetrack/lib";
+import { TopActivity } from "src/dto/activity.dto";
 
 export const REPO_SERVICE = "repo.service.interface"
 export interface IRepoService {
@@ -8,7 +9,7 @@ export interface IRepoService {
     saveActivity(userId: string, activity: Activity): Promise<Activity>;
     deleteActivity(userId: string, activityId: string): Promise<void>;
     updateActivity(userId: string, activity: Activity): Promise<Activity>;
-    getTopActivities(userId: string, count: number): Promise<Activity[]>;
+    getTopActivities(userId: string, count: number): Promise<TopActivity[]>;
     getHistory(userId: string, start: string, end: string): Promise<ActivityRecord[]>
     getRecordByActivityAndDate(userId: string, date: DjsDate, activityId: string): Promise<ActivityRecord | null>
     getRecordById(userId: string, recordId: string): Promise<ActivityRecord | null>;

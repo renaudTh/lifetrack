@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { CallingContext } from './domain/calling.context';
 import type { IRepoService } from './domain/repo.service.interface';
 import { REPO_SERVICE } from './domain/repo.service.interface';
-import { ActivityDeleteDto, ActivityDto, ActivityUpdateDto } from './dto/activity.dto';
+import { ActivityDeleteDto, ActivityDto, ActivityUpdateDto, TopActivity } from './dto/activity.dto';
 @Injectable()
 export class AppService {
 
@@ -22,7 +22,7 @@ export class AppService {
     const saved = await this.repo.saveActivity(ctx.userId, toSave);
     return saved;
   }
-  public async getTopActivities(ctx: CallingContext, count: number): Promise<Activity[]> {
+  public async getTopActivities(ctx: CallingContext, count: number): Promise<TopActivity[]> {
     return this.repo.getTopActivities(ctx.userId, count);
   }
 

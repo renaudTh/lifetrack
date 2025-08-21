@@ -2,7 +2,7 @@
 
 
 <div class="is-flex is-gap-1 is-flex-wrap-nowrap is-overflow-auto">
-    @for (entry of activities | keyvalue; track entry.value.id) {
-    <app-activity-component [activity]="entry.value" (onClick)="upsertActivity($event)"></app-activity-component>
+    @for (activity of activities; track activity.id) {
+    <app-activity-component [activity]="activity" (onClick)="upsertActivity($event)"></app-activity-component>
     }
 </div>

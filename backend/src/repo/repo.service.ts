@@ -4,7 +4,7 @@ import { RecordDBO } from "src/entities/record.entity";
 import { Between, DataSource, In, Not } from "typeorm";
 import { IRepoService } from "../domain/repo.service.interface";
 import { ActivityDBO } from "../entities/activity.entity";
-import { activityToSaveDbo, dboToActivity, dboToRecord, recordToSaveDBO } from "./utils";
+import { activityToSaveDbo, dboToActivity, dboToRecord, recordToSaveDBO, TopActivity, TopActivityDBO } from "./utils";
 
 export class RepoService implements IRepoService {
 
@@ -12,7 +12,7 @@ export class RepoService implements IRepoService {
 
     }
 
-    async getTopActivities(userId: string, count: number): Promise<Activity[]> {
+    async getTopActivities(userId: string, count: number): Promise<TopActivity[]> {
 
         const repo = this.dataSource.getRepository(ActivityDBO);
 
@@ -31,17 +31,17 @@ export class RepoService implements IRepoService {
         const activityMap = new Map(
             activityEntities.map(a => [a.id, a])
         );
-        const sortedActivities = topActivities.flatMap(r => {
-            const id = activityMap.get(r.activityId)
-            return (id === undefined) ? [] : [id];
+        const sortedActivities: TopActivityDBO[] = topActivities.flatMap(r => {
+            const a = activityMap.get(r.activityId)
+            return (a === undefined) ? [] : [{ ...a, score: r.total_count }];
         }
         )
         if (sortedActivities.length < count) {
             const missingCount = count - sortedActivities.length;
             const additional = await repo.find({ where: { id: Not(In(topIds)), owner_id: userId }, take: missingCount })
-            sortedActivities.push(...additional);
+            sortedActivities.push(...additional.map((dbo) => ({ ...dbo, score: 0 })));
         }
-        return sortedActivities.map((a) => dboToActivity(a))
+        return sortedActivities.map((a) => ({ ...dboToActivity(a), score: a.score }))
     }
     async updateActivity(userId: string, activity: Activity): Promise<Activity> {
         const repo = this.dataSource.getRepository(ActivityDBO);

@@ -1,6 +1,6 @@
 import { InjectionToken } from "@angular/core";
 import { Activity, ActivityRecord, DjsDate } from "@lifetrack/lib";
-import { ActivityDto } from "./activities";
+import { ActivityDto, TopActivity } from "./activities";
 
 
 export const API_PROVIDER = new InjectionToken<ILifetrackApi>("lifetrack.api.provider");
@@ -12,7 +12,7 @@ export interface ILifetrackApi {
     getActivities(): Promise<Activity[]>;
     deleteActivity(id: string): Promise<void>
     updateActivity(activity: Activity): Promise<Activity>
-    getTopActivities(): Promise<Activity[]>;
+    getTopActivities(): Promise<TopActivity[]>;
     addActivity(dto: ActivityDto): Promise<Activity>
     recordActivity(activity: Activity, date: DjsDate): Promise<ActivityRecord>;
     downsertRecord(record: ActivityRecord): Promise<ActivityRecord | null>;

@@ -13,6 +13,8 @@ export function dboToActivity(dbo: ActivityDBO): Activity {
     }
 }
 export type ActivitySaveDBO = Omit<ActivityDBO, "records" | "deleted_date">
+export type TopActivityDBO = ActivityDBO & { score: number }
+export type TopActivity = Activity & { score: number }
 
 export function activityToSaveDbo(activity: Activity, userId: string): ActivitySaveDBO {
     return {

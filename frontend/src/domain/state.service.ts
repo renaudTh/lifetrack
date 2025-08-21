@@ -1,6 +1,6 @@
 import { computed, inject, Injectable, signal } from "@angular/core";
 import { Activity, ActivityRecord, DjsDate } from "@lifetrack/lib";
-import { ActivityDto } from "./activities";
+import { ActivityDto, TopActivity } from "./activities";
 import { API_PROVIDER } from "./api.provider.interface";
 import { DateService } from "./date.service";
 
@@ -9,14 +9,14 @@ export interface LifetrackState {
     loading: boolean,
     records: Record<string, ActivityRecord>
     activities: Record<string, Activity>;
-    top: Record<string, Activity>;
+    top: TopActivity[];
 }
 
 const initialState: LifetrackState = {
     loading: true,
     records: {},
     activities: {},
-    top: {}
+    top: []
 }
 
 @Injectable()
@@ -73,7 +73,7 @@ export class StateService {
         this.api.getTopActivities().then((list) => {
             this.store.set({
                 ...this.store(),
-                top: list.reduce((acc, item) => ({ ...acc, [item.id]: item }), {})
+                top: list.sort((a, b) => b.score - a.score)
             })
         });
         this.api.getActivities().then((list) => {
