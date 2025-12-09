@@ -1,16 +1,17 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryColumn } from "typeorm";
+import { Column, Entity, Index, ManyToOne, PrimaryColumn } from "typeorm";
 import { ActivityDBO } from "./activity.entity";
 
-@Entity({name: "Records"})
+@Entity({ name: "Records" })
+@Index(["userId", "activity", "date"], { unique: true })
 export class RecordDBO {
-    
-    @PrimaryColumn({type: "uuid"})
+
+    @PrimaryColumn({ type: "uuid" })
     id!: string;
-    @Column({type: "text"})
+    @Column({ type: "text" })
     userId!: string;
-    @Column({type: "date"})
+    @Column({ type: "date" })
     date!: string;
-    @Column({type: "int"})
+    @Column({ type: "int" })
     count!: number
     @ManyToOne(() => ActivityDBO, (activity) => activity.records, { onDelete: "NO ACTION" })
     activity: ActivityDBO;
