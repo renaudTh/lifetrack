@@ -1,8 +1,8 @@
 export interface RecordUpsertDto {
-    date: string;
-    activityId: string;
+  date: string;
+  activityId: string;
 }
 
 export interface RecordDownsertDto {
-    recordId: string;
+  recordId: string;
 }
