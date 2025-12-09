@@ -4,10 +4,10 @@ import { Home } from './home/home';
 import { PickerService } from './picker.service';
 
 export const routes: Routes = [
-    {
-        path: "",
-        component: Home,
-        canActivate: [AuthGuard],
-        providers: [PickerService]
-    }
+  {
+    path: '',
+    component: Home,
+    canActivate: [AuthGuard],
+    providers: [PickerService],
+  },
 ];

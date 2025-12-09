@@ -1,11 +1,10 @@
-@let a = activity();
-@let e = edition();
+@let a = activity(); @let e = edition();
 
 <div class="tags has-addons are-large">
-    <div class="tag is-hoverable" (click)="click()">
-        {{ a.representation}}
-    </div>
-    @if(e){
-    <div class="tag is-link is-hoverable" (click)="edit()"><i class="pi pi-pencil"></i></div>
-    }
+  <div class="tag is-hoverable" (click)="click()">{{ a.representation}}</div>
+  @if(e){
+  <div class="tag is-link is-hoverable" (click)="edit()">
+    <i class="pi pi-pencil"></i>
+  </div>
+  }
 </div>

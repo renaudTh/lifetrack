@@ -1,9 +1,9 @@
 @let user = user$ | async;
 
 <div class="is-flex is-gap-3 p-5">
-    <div class="item is-link is-clickable" (click)="logout()">Logout</div>
-    <div class="item">Home</div>
-    @if(user){
-    <div class="item"> 🙋‍♂️ Hi {{user.name}}</div>
-    }
+  <div class="item is-link is-clickable" (click)="logout()">Logout</div>
+  <div class="item">Home</div>
+  @if(user){
+  <div class="item">🙋‍♂️ Hi {{user.name}}</div>
+  }
 </div>

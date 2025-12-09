@@ -1,20 +1,23 @@
 @let activities = activitiesSignal();
 
 <app-modal-component [(visible)]="visible">
-    <div class="card">
-        <div class="card-header">
-            <div class="card-header-title">{{dialogTitle()}}</div>
-        </div>
-        <div class="card-content ">
-            <div class="block is-flex is-gap-2 is-flex-wrap-wrap">
-                @for (entry of activities | keyvalue; track entry.value.id) {
-                <app-activity-component [activity]="entry.value" [edition]="editMode()"
-                    (onClick)="upsertActivity($event)" (onEdit)="editActivity($event)"></app-activity-component>
-                }
-            </div>
-        </div>
-        <footer class="card-footer">
-            <a class="card-footer-item" (click)="onEdit()">{{ editButton()}} </a>
-        </footer>
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-title">{{dialogTitle()}}</div>
     </div>
+    <div class="card-content">
+      <div class="block is-flex is-gap-2 is-flex-wrap-wrap">
+        @for (entry of activities | keyvalue; track entry.value.id) {
+        <app-activity-component
+          [activity]="entry.value"
+          [edition]="editMode()"
+          (onClick)="upsertActivity($event)"
+          (onEdit)="editActivity($event)"></app-activity-component>
+        }
+      </div>
+    </div>
+    <footer class="card-footer">
+      <a class="card-footer-item" (click)="onEdit()">{{ editButton()}}</a>
+    </footer>
+  </div>
 </app-modal-component>

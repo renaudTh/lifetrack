@@ -1,4 +1,9 @@
-import { ApplicationConfig, isDevMode, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection } from '@angular/core';
+import {
+  ApplicationConfig,
+  isDevMode,
+  provideBrowserGlobalErrorListeners,
+  provideZonelessChangeDetection,
+} from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
@@ -35,23 +40,27 @@ export const appConfig: ApplicationConfig = {
             tokenOptions: {
               authorizationParams: {
                 audience: environment.auth0.audience,
-              }
-            }
-          }
-        ]
-      }
+              },
+            },
+          },
+        ],
+      },
     }),
-    provideHttpClient(withInterceptors([apiInterceptorFn, authHttpInterceptorFn])),
+    provideHttpClient(
+      withInterceptors([apiInterceptorFn, authHttpInterceptorFn]),
+    ),
     {
       provide: API_PROVIDER,
-      useClass: ApiProvider
+      useClass: ApiProvider,
     },
-    StateService, provideServiceWorker('ngsw-worker.js', {
+    StateService,
+    provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
-      registrationStrategy: 'registerWhenStable:30000'
-    }), provideServiceWorker('ngsw-worker.js', {
-      enabled: !isDevMode(),
-      registrationStrategy: 'registerWhenStable:30000'
+      registrationStrategy: 'registerWhenStable:30000',
     }),
-  ]
+    provideServiceWorker('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:30000',
+    }),
+  ],
 };

@@ -1,52 +1,73 @@
 @let formGroup = activityForm();
 
 <app-modal-component [(visible)]="visible">
-    <div class="card">
-        <div class="card-header">
-            <div class="card-header-title">{{dialogTitle()}}</div>
-        </div>
-        <div class="card-content ">
-            <form [formGroup]="formGroup">
-                <div class="field">
-                    <label class="label">Representation</label>
-                    <div class="control">
-                        <input class="input" formControlName="representation" type="input" type="text" placeholder="🚀">
-                    </div>
-                </div>
-                <div class="field">
-                    <label class="label">Description</label>
-                    <div class="control">
-                        <input formControlName="description" class="input" type="Text" placeholder="Launch skyrocket">
-                    </div>
-                </div>
-                <div class="field">
-                    <label class="label">Base amount</label>
-                    <div class="control">
-                        <input formControlName="base_amount" class="input" type="number" placeholder="1200">
-                    </div>
-                </div>
-                <div class="field">
-                    <label class="label">Unit</label>
-                    <div class="control">
-                        <input formControlName="unit" class="input" type="Text" placeholder="kph">
-                    </div>
-                </div>
-                <div class="field is-grouped is-grouped-centered">
-                    <div class="control">
-                        <button class="button is-primary" (click)="addOrUpdate()"
-                            [disabled]="formGroup.invalid">{{submitLabel()}}</button>
-                    </div>
-                    @if(displayDelete()){
-                    <div class="control">
-                        <button class="button is-danger" (click)="delete()">Delete</button>
-                    </div>
-                    }
-
-                    <div class="control">
-                        <button class="button" (click)="close()">Cancel</button>
-                    </div>
-                </div>
-            </form>
-        </div>
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-title">{{dialogTitle()}}</div>
     </div>
+    <div class="card-content">
+      <form [formGroup]="formGroup">
+        <div class="field">
+          <label class="label">Representation</label>
+          <div class="control">
+            <input
+              class="input"
+              formControlName="representation"
+              type="input"
+              type="text"
+              placeholder="🚀" />
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Description</label>
+          <div class="control">
+            <input
+              formControlName="description"
+              class="input"
+              type="Text"
+              placeholder="Launch skyrocket" />
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Base amount</label>
+          <div class="control">
+            <input
+              formControlName="base_amount"
+              class="input"
+              type="number"
+              placeholder="1200" />
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Unit</label>
+          <div class="control">
+            <input
+              formControlName="unit"
+              class="input"
+              type="Text"
+              placeholder="kph" />
+          </div>
+        </div>
+        <div class="field is-grouped is-grouped-centered">
+          <div class="control">
+            <button
+              class="button is-primary"
+              (click)="addOrUpdate()"
+              [disabled]="formGroup.invalid">
+              {{submitLabel()}}
+            </button>
+          </div>
+          @if(displayDelete()){
+          <div class="control">
+            <button class="button is-danger" (click)="delete()">Delete</button>
+          </div>
+          }
+
+          <div class="control">
+            <button class="button" (click)="close()">Cancel</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
 </app-modal-component>

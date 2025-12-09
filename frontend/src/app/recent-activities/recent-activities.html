@@ -1,8 +1,9 @@
 @let activities = activitiesSignal();
 
-
 <div class="is-flex is-gap-1 is-flex-wrap-nowrap is-overflow-auto">
-    @for (entry of activities | keyvalue; track entry.value.id) {
-    <app-activity-component [activity]="entry.value" (onClick)="upsertActivity($event)"></app-activity-component>
-    }
+  @for (entry of activities | keyvalue; track entry.value.id) {
+  <app-activity-component
+    [activity]="entry.value"
+    (onClick)="upsertActivity($event)"></app-activity-component>
+  }
 </div>

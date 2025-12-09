@@ -8,9 +8,8 @@ describe('ActivityPicker', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ActivityPicker]
-    })
-    .compileComponents();
+      imports: [ActivityPicker],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ActivityPicker);
     component = fixture.componentInstance;

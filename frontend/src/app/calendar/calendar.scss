@@ -1,21 +1,21 @@
 .grid {
-    aspect-ratio: 3/2;
+  aspect-ratio: 3/2;
 }
 .cell {
-    display:flex;
-    justify-content: center;
-    align-items: center;  
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-.cell:hover{
-    cursor: pointer;
+.cell:hover {
+  cursor: pointer;
 }
-.current-date{
-    background-color: rgba(var(--bulma-primary-rgb), 0.2)
+.current-date {
+  background-color: rgba(var(--bulma-primary-rgb), 0.2);
 }
-.selected{
-    background-color: var(--bulma-primary);
-    color:var(--bulma-primary-bold)
+.selected {
+  background-color: var(--bulma-primary);
+  color: var(--bulma-primary-bold);
 }
-.in-current-month{
-    background-color: var(--bulma-primary-soft)
+.in-current-month {
+  background-color: var(--bulma-primary-soft);
 }

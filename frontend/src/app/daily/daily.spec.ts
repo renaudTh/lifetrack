@@ -8,9 +8,8 @@ describe('Daily', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Daily]
-    })
-    .compileComponents();
+      imports: [Daily],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(Daily);
     component = fixture.componentInstance;

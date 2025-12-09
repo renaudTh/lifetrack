@@ -1,10 +1,19 @@
 <app-calendar></app-calendar>
-<div class="content is-flex is-gap-1 is-flex-wrap-nowrap is-justify-content-center mt-5">
-    <button class="button is-primary" (click)="openActivityForm()"><i class="pi pi-plus"></i></button>
-    <app-recent-activities></app-recent-activities>
-    <button class="button is-primary is-normal" (click)="openActivityPicker()"><i class="pi pi-ellipsis-h"></i></button>
+<div
+  class="content is-flex is-gap-1 is-flex-wrap-nowrap is-justify-content-center mt-5">
+  <button class="button is-primary" (click)="openActivityForm()">
+    <i class="pi pi-plus"></i>
+  </button>
+  <app-recent-activities></app-recent-activities>
+  <button class="button is-primary is-normal" (click)="openActivityPicker()">
+    <i class="pi pi-ellipsis-h"></i>
+  </button>
 </div>
 <app-daily></app-daily>
 
-<app-activity-picker [(visible)]="displayPicker" (edit)="editActivity($event)"></app-activity-picker>
-<app-activity-form [(visible)]="displayForm" [activity]="activityToEdit()"></app-activity-form>
+<app-activity-picker
+  [(visible)]="displayPicker"
+  (edit)="editActivity($event)"></app-activity-picker>
+<app-activity-form
+  [(visible)]="displayForm"
+  [activity]="activityToEdit()"></app-activity-form>

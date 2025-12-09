@@ -1,12 +1,12 @@
-import { InjectionToken } from "@angular/core"
+import { InjectionToken } from '@angular/core';
 
 export interface EnvironmentInterface {
-    auth0: {
-        clientId: string,
-        domain: string,
-        audience: string
-    }
-    apiUrl: string
-};
+  auth0: {
+    clientId: string;
+    domain: string;
+    audience: string;
+  };
+  apiUrl: string;
+}
 
-export const API_URL = new InjectionToken<string>("api.url")
+export const API_URL = new InjectionToken<string>('api.url');

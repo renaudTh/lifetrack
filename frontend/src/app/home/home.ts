@@ -3,23 +3,22 @@ import { AuthService } from '@auth0/auth0-angular';
 import { Activity } from '@lifetrack/lib';
 import { DateService } from '../../domain/date.service';
 import { StateService } from '../../domain/state.service';
-import { ActivityForm } from "../activity-form/activity-form";
-import { ActivityPicker } from "../activity-picker/activity-picker";
-import { Calendar } from "../calendar/calendar";
-import { Daily } from "../daily/daily";
-import { RecentActivities } from "../recent-activities/recent-activities";
+import { ActivityForm } from '../activity-form/activity-form';
+import { ActivityPicker } from '../activity-picker/activity-picker';
+import { Calendar } from '../calendar/calendar';
+import { Daily } from '../daily/daily';
+import { RecentActivities } from '../recent-activities/recent-activities';
 
 @Component({
   selector: 'app-home',
   imports: [Calendar, Daily, RecentActivities, ActivityPicker, ActivityForm],
   templateUrl: './home.html',
-  styleUrl: './home.scss'
+  styleUrl: './home.scss',
 })
 export class Home implements OnInit {
-
-  private readonly authService = inject(AuthService)
-  private readonly state = inject(StateService)
-  private readonly dateService = inject(DateService)
+  private readonly authService = inject(AuthService);
+  private readonly state = inject(StateService);
+  private readonly dateService = inject(DateService);
 
   public activitiesSignal = this.state.selectActivities;
 
@@ -31,10 +30,13 @@ export class Home implements OnInit {
       if (!v) {
         this.activityToEdit.set(null);
       }
-    })
+    });
   }
   ngOnInit(): void {
-    const sortedDisplayed = this.dateService.daysOfCurrentMonth().map((d) => d.date).sort((a, b) => a.isBefore(b) ? -1 : 1);
+    const sortedDisplayed = this.dateService
+      .daysOfCurrentMonth()
+      .map((d) => d.date)
+      .sort((a, b) => (a.isBefore(b) ? -1 : 1));
     const start = sortedDisplayed[0];
     const end = sortedDisplayed[sortedDisplayed.length - 1];
     this.state.loadHistory(start, end);
@@ -49,11 +51,9 @@ export class Home implements OnInit {
   }
   openActivityPicker() {
     this.displayPicker.set(true);
-
   }
   editActivity(a: Activity) {
     this.displayForm.set(true);
     this.activityToEdit.set(a);
   }
-
 }

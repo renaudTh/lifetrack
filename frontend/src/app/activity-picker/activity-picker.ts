@@ -1,5 +1,12 @@
 import { KeyValuePipe } from '@angular/common';
-import { Component, computed, inject, model, output, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  model,
+  output,
+  signal,
+} from '@angular/core';
 import { Activity } from '@lifetrack/lib';
 import { StateService } from '../../domain/state.service';
 import { ActivityComponent } from '../activity-component/activity-component';
@@ -9,11 +16,10 @@ import { ModalComponent } from '../modal-component/modal-component';
   selector: 'app-activity-picker',
   imports: [ModalComponent, ActivityComponent, KeyValuePipe],
   templateUrl: './activity-picker.html',
-  styleUrl: './activity-picker.scss'
+  styleUrl: './activity-picker.scss',
 })
 export class ActivityPicker {
-
-  private readonly state = inject(StateService)
+  private readonly state = inject(StateService);
   protected activitiesSignal = this.state.selectActivities;
 
   protected editMode = signal<boolean>(false);
@@ -22,20 +28,20 @@ export class ActivityPicker {
 
   constructor() {
     this.visible.subscribe((v) => {
-      if (!v) this.editMode.set(false)
-    })
+      if (!v) this.editMode.set(false);
+    });
   }
 
   protected dialogTitle = computed(() => {
     const e = this.editMode();
-    const base = "Pick an activity"
+    const base = 'Pick an activity';
     return e ? `${base} to edit` : `${base} to record`;
-  })
+  });
 
   protected editButton = computed(() => {
     const e = this.editMode();
-    return e ? "Cancel" : "Edit"
-  })
+    return e ? 'Cancel' : 'Edit';
+  });
 
   protected onEdit() {
     const e = this.editMode();
@@ -43,7 +49,6 @@ export class ActivityPicker {
   }
   protected upsertActivity(activity: Activity) {
     this.state.recordActivity(activity);
-
   }
 
   protected editActivity(a: Activity) {
