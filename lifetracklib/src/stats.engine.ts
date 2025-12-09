@@ -1,4 +1,3 @@
-
 import weekOfYear from 'dayjs/plugin/weekOfYear';
 import dayjs from 'dayjs';
 import { DateSampling, DjsDate } from './models/date.model';
@@ -8,7 +7,7 @@ export class StatsEngine {
   constructor(
     private start: DjsDate,
     private end: DjsDate,
-    private sampling: DateSampling
+    private sampling: DateSampling,
   ) {
     dayjs.extend(weekOfYear);
   }
