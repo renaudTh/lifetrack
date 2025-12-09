@@ -1,5 +1,6 @@
 import { Activity, ActivityRecord, DjsDate } from '@lifetrack/lib';
 import { Inject, Injectable } from '@nestjs/common';
+import { v7 } from 'uuid';
 import { CallingContext } from './domain/calling.context';
 import type { IRepoService } from './domain/repo.service.interface';
 import { REPO_SERVICE } from './domain/repo.service.interface';
@@ -21,7 +22,7 @@ export class AppService {
   ): Promise<Activity> {
     const toSave: Activity = {
       ...dto,
-      id: crypto.randomUUID(),
+      id: v7(),
     };
     const saved = await this.repo.saveActivity(ctx.userId, toSave);
     return saved;
@@ -75,7 +76,7 @@ export class AppService {
       recordExists !== null
         ? { ...recordExists, number: recordExists.number + 1 }
         : {
-            id: crypto.randomUUID(),
+            id: v7(),
             activity: activityExists,
             date,
             number: 1,
