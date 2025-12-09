@@ -6,9 +6,8 @@ on:
       - main
 
   push:
-    tags:
-      -'*'
-     
+    tags: -'*'
+
 jobs:
   build:
     name: Build Library and App
@@ -37,13 +36,13 @@ jobs:
           cd frontend
           npm ci
           npm run build
-      
+
       - name: Build backend
         run: |
           cd backend
           npm ci
           npm run build
-  
+
   test:
     name: Test Library
     runs-on: ubuntu-latest
