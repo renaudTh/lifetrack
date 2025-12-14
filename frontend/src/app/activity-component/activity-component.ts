@@ -5,15 +5,13 @@ import { Activity } from '@lifetrack/lib';
   selector: 'app-activity-component',
   imports: [],
   templateUrl: './activity-component.html',
-  styleUrl: './activity-component.scss'
+  styleUrl: './activity-component.scss',
 })
 export class ActivityComponent {
-
-  public activity = input.required<Activity>()
+  public activity = input.required<Activity>();
   public edition = input<boolean>(false);
-  public onEdit = output<Activity>()
-  public onClick = output<Activity>()
-
+  public onEdit = output<Activity>();
+  public onClick = output<Activity>();
 
   click() {
     this.onClick.emit(this.activity());
@@ -22,5 +20,4 @@ export class ActivityComponent {
   edit() {
     this.onEdit.emit(this.activity());
   }
-
 }

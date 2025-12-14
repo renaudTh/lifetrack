@@ -1,0 +1,33 @@
+{
+  "terminal.integrated.allowChords": false,
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/node_modules": true
+  },
+
+  // General editor settings
+  "editor.formatOnSave": true,
+  "editor.tabSize": 2,
+  "editor.detectIndentation": false,
+  "editor.bracketPairColorization.enabled": true,
+  "editor.wordWrapColumn": 160,
+  "explorer.confirmDragAndDrop": false,
+  // Port forwarding:
+  "remote.autoForwardPorts": false,
+  // Formatting
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "prettier.configPath": "./.prettierrc",
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.quickSuggestions": {
+      "strings": true
+    },
+    "editor.suggest.insertMode": "replace",
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
+}

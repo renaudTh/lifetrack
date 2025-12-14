@@ -19,30 +19,28 @@ import { HealthController } from './health.controller';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         type: 'postgres',
-        host: config.get<string>("DB_HOST"),
-        username: config.get<string>("DB_USERNAME"),
-        database: config.get<string>("DB_NAME"),
-        port: config.get<number>("DB_PORT"),
-        password: config.get<string>("DB_PASSWORD"),
+        host: config.get<string>('DB_HOST'),
+        username: config.get<string>('DB_USERNAME'),
+        database: config.get<string>('DB_NAME'),
+        port: config.get<number>('DB_PORT'),
+        password: config.get<string>('DB_PASSWORD'),
         entities: [ActivityDBO, RecordDBO],
-        synchronize: true
+        synchronize: true,
       }),
-    }), AuthModule],
+    }),
+    AuthModule,
+  ],
   controllers: [AppController, HealthController],
   providers: [
     {
       provide: REPO_SERVICE,
-      useClass: RepoService
+      useClass: RepoService,
     },
-    AppService]
-  ,
+    AppService,
+  ],
 })
 export class AppModule {
-
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(AppLoggerMiddleware)
-      .forRoutes('*');
+    consumer.apply(AppLoggerMiddleware).forRoutes('*');
   }
-
 }

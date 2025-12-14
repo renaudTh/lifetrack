@@ -8,13 +8,11 @@ import { ActivityComponent } from '../activity-component/activity-component';
   selector: 'app-recent-activities',
   imports: [KeyValuePipe, ActivityComponent],
   templateUrl: './recent-activities.html',
-  styleUrl: './recent-activities.scss'
+  styleUrl: './recent-activities.scss',
 })
 export class RecentActivities {
-
   private readonly state = inject(StateService);
-  activitiesSignal = this.state.selectTopActivities
-
+  activitiesSignal = this.state.selectTopActivities;
 
   upsertActivity(a: Activity) {
     this.state.recordActivity(a);

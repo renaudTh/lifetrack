@@ -8,9 +8,8 @@ describe('RecentActivities', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RecentActivities]
-    })
-    .compileComponents();
+      imports: [RecentActivities],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(RecentActivities);
     component = fixture.componentInstance;

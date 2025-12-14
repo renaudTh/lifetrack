@@ -1,19 +1,19 @@
 .number {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    background-color: var(--bulma-primary-soft);
-    padding: 0.4em;
-    border-radius: 50%;
-    width: 1.2rem;
-    height: 1.2rem;
-    font-size: small;
-    top: 0.7em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background-color: var(--bulma-primary-soft);
+  padding: 0.4em;
+  border-radius: 50%;
+  width: 1.2rem;
+  height: 1.2rem;
+  font-size: small;
+  top: 0.7em;
 }
 
 .invisible {
-    display: none;
+  display: none;
 }
 
 .tooltip {
