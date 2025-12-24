@@ -16,8 +16,3 @@ export interface ActivityRecord {
 }
 
 export type ActivityRecordDTO = Omit<ActivityRecord, 'date'> & { date: string };
-
-export interface ActivityStats {
-  activityId: string;
-  data: number[];
-}
