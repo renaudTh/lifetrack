@@ -1,4 +1,4 @@
-import { Activity, ActivityRecordDTO } from '@lifetrack/lib';
+import { Activity, ActivityRecordDTO, StatsEngine } from '@lifetrack/lib';
 import {
   Body,
   Controller,
@@ -70,6 +70,22 @@ export class AppController {
       ...record,
       date: record.date.format('YYYY-MM-DD'),
     }));
+  }
+
+  @Get('/stats')
+  async getStats(
+    @CallingContext() ctx: CC,
+    @Query('start') startParam?: string,
+    @Query('end') endParam?: string,
+  ) {
+    const start = !startParam ? `${dayjs().year()}-08-01` : startParam;
+    const end = !endParam ? `${dayjs().year()}-12-31` : endParam;
+    const list = await this.appService.getRecords(
+      ctx,
+      dayjs(start),
+      dayjs(end),
+    );
+    return new StatsEngine(dayjs(start), dayjs(end), list).computeStats();
   }
 
   @Post('/record')

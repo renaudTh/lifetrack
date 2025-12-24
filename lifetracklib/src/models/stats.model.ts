@@ -1,13 +1,25 @@
 import { Activity } from './activity.model';
-import { DjsDate } from './date.model';
+import { DateSampling, DjsDate } from './date.model';
+
+export type HistoryStats = {
+  start: DjsDate;
+  end: DjsDate;
+  samplings: {
+    day: number;
+    week: number;
+    month: number;
+    year: number;
+  };
+  stats: ActivityStats[];
+};
 
 export interface ActivityStats {
   activity: Activity;
-  averages: {
-    day: number;
-    month: number;
-    week: number;
-    year: number;
-  };
+  cumsum: number;
   last: DjsDate;
 }
+
+export type GraphData = {
+  samplig: DateSampling;
+  data: Record<string, number>;
+};

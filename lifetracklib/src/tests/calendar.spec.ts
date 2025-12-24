@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import { Calendar } from '../calendar';
 import { Day } from '../models/date.model';
+import { describe, it, expect } from 'vitest';
 
 describe('Calendar', () => {
   describe('constructor', () => {
