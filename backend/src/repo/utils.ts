@@ -6,7 +6,7 @@ import { RecordDBO } from 'src/entities/record.entity';
 export function dboToActivity(dbo: ActivityDBO): Activity {
   return {
     id: dbo.id,
-    amount: dbo.base_amount,
+    amount: +dbo.base_amount,
     description: dbo.description,
     representation: dbo.representation,
     unit: dbo.unit,
