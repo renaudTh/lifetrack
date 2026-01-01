@@ -1,0 +1,39 @@
+@if (!loading()) {
+  <table class="table is-striped">
+    <thead>
+      <tr>
+        <th><abbr title="Activity">Activity</abbr></th>
+        <th><abbr title="Cumulative">Sum</abbr></th>
+        <th><abbr title="Day average">D</abbr></th>
+        <th><abbr title="Week average">W</abbr></th>
+        <th><abbr title="Month average">M</abbr></th>
+        <th><abbr title="Year average">Y</abbr></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of lines; track $index) {
+        <tr>
+          <td>
+            <app-activity-component
+              [activity]="item.activity"></app-activity-component>
+          </td>
+          <td>
+            {{ item.cumsum }}
+          </td>
+          <td>
+            {{ item.dayAvg }}
+          </td>
+          <td>
+            {{ item.weekAvg }}
+          </td>
+          <td>
+            {{ item.monthAvg }}
+          </td>
+          <td>
+            {{ item.yearAvg }}
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}

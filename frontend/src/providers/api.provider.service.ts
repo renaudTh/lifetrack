@@ -5,6 +5,7 @@ import {
   ActivityRecord,
   ActivityRecordDTO,
   DjsDate,
+  HistoryStats,
 } from '@lifetrack/lib';
 import dayjs from 'dayjs';
 import { firstValueFrom } from 'rxjs';
@@ -31,7 +32,7 @@ export class ApiProvider implements ILifetrackApi {
     const request = this.http.delete<void>(`api://activity/${id}`);
     return firstValueFrom(request);
   }
-  updateActivity(activity: Activity): Promise<Activity> {
+  public async updateActivity(activity: Activity): Promise<Activity> {
     const req = this.http.patch<Activity>(`api://activity`, activity);
     return firstValueFrom(req);
   }
@@ -70,5 +71,18 @@ export class ApiProvider implements ILifetrackApi {
     );
     const maybe = await firstValueFrom(request);
     return maybe ? { ...maybe, date: dayjs(maybe.date) } : null;
+  }
+
+  public async getHistoryStats(
+    start: DjsDate,
+    end: DjsDate,
+  ): Promise<HistoryStats> {
+    const sp = start.format('YYYY-MM-DD');
+    const ep = end.format('YYYY-MM-DD');
+    const request = this.http.get<HistoryStats>(
+      `api://stats?start=${sp}&end=${ep}`,
+    );
+    const response = await firstValueFrom(request);
+    return response;
   }
 }
