@@ -3,20 +3,15 @@ FROM node:24.5-alpine AS build
 
 WORKDIR /app
 
-# 1. Copier package.json pour chaque projet
-COPY package*.json ./
 COPY backend/package*.json ./backend/
 COPY lifetracklib/package*.json ./lifetracklib/
 
-# 2. Installer dépendances backend
-RUN cd backend && npm install
-RUN cd lifetracklib && npm install
+RUN cd lifetracklib && npm ci
+RUN cd backend && npm ci
 
-# 3. Copier le code complet
-COPY backend ./backend
 COPY lifetracklib ./lifetracklib
+COPY backend ./backend
 
-# 4. Build NestJS
 RUN cd lifetracklib && npm run build
 RUN cd backend && npm run build
 
@@ -25,9 +20,16 @@ FROM node:24.5-alpine
 
 WORKDIR /app
 
-COPY --from=build /app/backend/dist ./dist
-COPY --from=build /app/backend/package*.json ./
+# La lib est resolue par `file:../lifetracklib` depuis backend/package.json : elle doit
+# exister a ce chemin relatif au moment du npm ci.
+COPY --from=build /app/lifetracklib/package.json /lifetracklib/package.json
+COPY --from=build /app/lifetracklib/dist /lifetracklib/dist
 
-RUN npm install --omit=dev
+COPY --from=build /app/backend/package*.json ./
+# --install-links copie la lib dans node_modules/ au lieu de la symlinker vers
+# /lifetracklib, d'ou ses propres imports (dayjs) ne remonteraient pas jusqu'ici.
+RUN npm ci --omit=dev --install-links
+
+COPY --from=build /app/backend/dist ./dist
 
 CMD ["node", "dist/main.js"]

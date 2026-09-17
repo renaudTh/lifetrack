@@ -9,6 +9,7 @@ import {
   ActivityDto,
   ActivityUpdateDto,
 } from './dto/activity.dto';
+
 @Injectable()
 export class AppService {
   constructor(@Inject(REPO_SERVICE) private readonly repo: IRepoService) {}

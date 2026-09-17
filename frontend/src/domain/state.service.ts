@@ -1,14 +1,30 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { Activity, ActivityRecord, DjsDate } from '@lifetrack/lib';
+import {
+  Activity,
+  ActivityRecord,
+  DateSampling,
+  DjsDate,
+  HistoryStats,
+} from '@lifetrack/lib';
 import { ActivityDto } from './activities';
 import { API_PROVIDER } from './api.provider.interface';
 import { DateService } from './date.service';
+
+export type StatsSlice =
+  | { status: 'idle' }
+  | { status: 'loading' }
+  | { status: 'ready'; history: HistoryStats }
+  | { status: 'error'; message: string };
 
 export interface LifetrackState {
   loading: boolean;
   records: Record<string, ActivityRecord>;
   activities: Record<string, Activity>;
   top: Record<string, Activity>;
+  // Tranche distincte de `records` : celui-ci est reecrit par la navigation du
+  // calendrier, ce qui tronquerait silencieusement la plage des statistiques.
+  stats: StatsSlice;
 }
 
 const initialState: LifetrackState = {
@@ -16,6 +32,7 @@ const initialState: LifetrackState = {
   records: {},
   activities: {},
   top: {},
+  stats: { status: 'idle' },
 };
 
 @Injectable()
@@ -40,6 +57,22 @@ export class StateService {
   public readonly selectTopActivities = computed(() => {
     return this.store().top;
   });
+
+  public readonly selectStats = computed(() => this.store().stats);
+
+  loadStats(start: DjsDate, end: DjsDate, sampling: DateSampling): void {
+    this.setStats({ status: 'loading' });
+    this.api
+      .getHistoryStats(start, end, sampling)
+      .then((history) => this.setStats({ status: 'ready', history }))
+      .catch((error: unknown) =>
+        this.setStats({ status: 'error', message: messageOf(error) }),
+      );
+  }
+
+  private setStats(stats: StatsSlice): void {
+    this.store.set({ ...this.store(), stats });
+  }
 
   addActivity(dto: ActivityDto) {
     this.api.addActivity(dto).then((newActivity) => {
@@ -126,4 +159,13 @@ export class StateService {
       }
     });
   }
+}
+
+function messageOf(error: unknown): string {
+  if (error instanceof HttpErrorResponse) {
+    return error.status === 0
+      ? 'Server unreachable'
+      : `Server answered ${error.status}`;
+  }
+  return 'Unexpected error';
 }
