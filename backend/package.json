@@ -18,7 +18,11 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "typeorm": "typeorm-ts-node-commonjs"
+    "typeorm": "typeorm-ts-node-commonjs",
+    "migration:generate": "node --env-file=.env.local ./node_modules/.bin/typeorm-ts-node-commonjs migration:generate -d src/datasource.ts",
+    "migration:run": "node --env-file=.env.local ./node_modules/.bin/typeorm-ts-node-commonjs migration:run -d src/datasource.ts",
+    "migration:show": "node --env-file=.env.local ./node_modules/.bin/typeorm-ts-node-commonjs migration:show -d src/datasource.ts",
+    "schema:drop": "node --env-file=.env.local ./node_modules/.bin/typeorm-ts-node-commonjs schema:drop -d src/datasource.ts"
   },
   "dependencies": {
     "@lifetrack/lib": "file:../lifetracklib",

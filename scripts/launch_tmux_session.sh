@@ -2,7 +2,7 @@
 
 set -ue
 
-readonly RootPath="/workspaces/lifetrack"
+readonly RootPath="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 cd "${RootPath}"
 

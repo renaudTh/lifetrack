@@ -1,29 +1,39 @@
+name: lifetrack
+
 services:
   frontend:
     build:
       context: .
       dockerfile: frontend/Dockerfile
-    ports: ["8080:80"]
-    container_name: frontend
+      args:
+        API_URL: ${API_URL}
+    ports:
+      - '127.0.0.1:8080:80'
     restart: unless-stopped
 
   backend:
     build:
       context: .
       dockerfile: backend/Dockerfile
-    ports: 
-      - "5556:5556"
+    ports:
+      - '127.0.0.1:5556:5556'
     env_file:
-      - backend/.env
+      - .env
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     restart: unless-stopped
 
   db:
     image: postgres:17-alpine
-    container_name: postgres
-    env_file:
-      - postgres/.env
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB']
+      interval: 5s
+      retries: 10
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped

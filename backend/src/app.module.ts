@@ -11,9 +11,34 @@ import { RepoService } from './repo/repo.service';
 import { AppLoggerMiddleware } from './utils/logger.middleware';
 import { HealthController } from './health.controller';
 
+const REQUIRED_ENV = [
+  'DB_HOST',
+  'DB_USERNAME',
+  'DB_NAME',
+  'DB_PORT',
+  'DB_PASSWORD',
+  'AUTH0_AUDIENCE',
+  'AUTH0_TENANT',
+] as const;
+
+// Sans ce garde-fou, une variable manquante degenere silencieusement : pg
+// retombe sur l'utilisateur OS (`root`), et jwks-rsa interroge une URL
+// `undefined...` qui renvoie 401 sur toutes les routes.
+const validateEnv = (env: Record<string, unknown>): Record<string, unknown> => {
+  const missing = REQUIRED_ENV.filter((key) => !env[key]);
+  if (missing.length > 0) {
+    throw new Error(`Configuration incomplete : ${missing.join(', ')}`);
+  }
+  return env;
+};
+
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: ['.env.local', '.env'],
+      validate: validateEnv,
+    }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -22,10 +47,14 @@ import { HealthController } from './health.controller';
         host: config.get<string>('DB_HOST'),
         username: config.get<string>('DB_USERNAME'),
         database: config.get<string>('DB_NAME'),
-        port: config.get<number>('DB_PORT'),
+        port: Number(config.get<string>('DB_PORT')),
         password: config.get<string>('DB_PASSWORD'),
         entities: [ActivityDBO, RecordDBO],
-        synchronize: true,
+        migrations: [__dirname + '/migrations/*{.ts,.js}'],
+        // Les migrations sont l'unique source de verite du schema, en dev comme en prod :
+        // `synchronize` en dev est ce qui a fait diverger les migrations des entites.
+        migrationsRun: true,
+        synchronize: false,
       }),
     }),
     AuthModule,
