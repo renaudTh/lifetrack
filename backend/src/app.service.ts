@@ -9,12 +9,6 @@ import {
   ActivityDto,
   ActivityUpdateDto,
 } from './dto/activity.dto';
-import dayjs from 'dayjs';
-import weekOfYear from 'dayjs/plugin/weekOfYear';
-import advancedFormat from 'dayjs/plugin/advancedFormat';
-
-dayjs.extend(weekOfYear);
-dayjs.extend(advancedFormat);
 
 @Injectable()
 export class AppService {
