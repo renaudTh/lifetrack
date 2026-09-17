@@ -17,6 +17,7 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@vitest/coverage-v8": "^4.0.16",
     "dayjs": "^1.11.13",
     "prettier": "^3.7.4",
     "ts-jest": "^29.2.5",
