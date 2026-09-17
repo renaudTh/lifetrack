@@ -1,55 +1,81 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { API_PROVIDER } from '../../domain/api.provider.interface';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
+import { DateSampling } from '@lifetrack/lib';
 import dayjs from 'dayjs';
+import { StateService } from '../../domain/state.service';
 import { ActivityComponent } from '../activity-component/activity-component';
+import { StatsChart } from '../stats-chart/stats-chart';
+import { DecimalPipe } from '@angular/common';
+
+const SAMPLINGS: readonly DateSampling[] = ['day', 'week', 'month', 'year'];
+
+const DATE_FORMAT = 'YYYY-MM-DD';
 
 @Component({
   selector: 'app-statistics-page',
-  imports: [ActivityComponent],
+  imports: [ActivityComponent, DecimalPipe, StatsChart],
   templateUrl: './statistics-page.html',
   styleUrl: './statistics-page.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StatisticsPage implements OnInit {
-  private api = inject(API_PROVIDER);
-  public loading = signal<boolean>(true);
-  public lines: any[] = [];
-  async ngOnInit(): Promise<void> {
-    const end = dayjs();
-    const start = end.subtract(1, 'year');
-    const stats = await this.api.getHistoryStats(start, end);
+  private state = inject(StateService);
 
-    const samples = stats.samplings;
+  public readonly samplings = SAMPLINGS;
+  public readonly stats = this.state.selectStats;
 
-    this.lines = stats.stats
-      .map((stat) => {
-        const activity = stat.activity;
-        const dm =
-          samples.day !== 0
-            ? `${((stat.cumsum * activity.amount) / samples.day).toFixed(1)}`
-            : ' - ';
-        const wm =
-          samples.week !== 0
-            ? `${((stat.cumsum * activity.amount) / samples.week).toFixed(1)}`
-            : ' - ';
-        const mm =
-          samples.month !== 0
-            ? `${((stat.cumsum * activity.amount) / samples.month).toFixed(1)}`
-            : ' - ';
-        const ym =
-          samples.year !== 0
-            ? `${((stat.cumsum * activity.amount) / samples.year).toFixed(1)}`
-            : ' - ';
+  public readonly start = signal(
+    dayjs().subtract(1, 'year').format(DATE_FORMAT),
+  );
+  public readonly end = signal(dayjs().format(DATE_FORMAT));
+  public readonly sampling = signal<DateSampling>('month');
 
-        return {
-          activity: stat.activity,
-          cumsum: stat.cumsum * activity.amount,
-          dayAvg: dm,
-          weekAvg: wm,
-          monthAvg: mm,
-          yearAvg: ym,
-        };
-      })
-      .sort((a, b) => b.cumsum - a.cumsum);
-    this.loading.set(false);
+  public readonly rangeIsValid = computed(
+    () => !dayjs(this.end()).isBefore(dayjs(this.start())),
+  );
+
+  ngOnInit(): void {
+    this.reload();
   }
+
+  changeStart(event: Event): void {
+    const value = valueOf(event);
+    if (value !== undefined) this.start.set(value);
+  }
+
+  changeEnd(event: Event): void {
+    const value = valueOf(event);
+    if (value !== undefined) this.end.set(value);
+  }
+
+  changeSampling(event: Event): void {
+    const sampling = SAMPLINGS.find(
+      (candidate) => candidate === valueOf(event),
+    );
+    if (sampling === undefined) return;
+    this.sampling.set(sampling);
+    this.reload();
+  }
+
+  reload(): void {
+    if (!this.rangeIsValid()) return;
+    this.state.loadStats(
+      dayjs(this.start()),
+      dayjs(this.end()),
+      this.sampling(),
+    );
+  }
+}
+
+function valueOf(event: Event): string | undefined {
+  const target = event.target;
+  if (target instanceof HTMLInputElement) return target.value;
+  if (target instanceof HTMLSelectElement) return target.value;
+  return undefined;
 }

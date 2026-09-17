@@ -1,19 +1,17 @@
-import dayjs from 'dayjs';
-import weekOfYear from 'dayjs/plugin/weekOfYear';
-import advancedFormat from 'dayjs/plugin/advancedFormat';
 import { ActivityRecord } from './models/activity.model';
 import { DateSampling, DjsDate } from './models/date.model';
 import { ActivityStats, HistoryStats } from './models/stats.model';
 
-dayjs.extend(weekOfYear);
-dayjs.extend(advancedFormat);
+const SAMPLINGS: readonly DateSampling[] = ['day', 'week', 'month', 'year'];
 
 export function getSampleKey(date: DjsDate, sampling: DateSampling): string {
   switch (sampling) {
     case 'day':
       return date.format('YYYY-MM-DD');
     case 'week':
-      return `${date.year()}-${date.format('ww')}`;
+      // Uniquement du dayjs "core" : un plugin etendu ici porterait sur la copie
+      // de dayjs de la lib, pas sur celle qui a cree les dates de l'appelant.
+      return date.startOf('week').format('YYYY-MM-DD');
     case 'month':
       return date.format('YYYY-MM');
     case 'year':
@@ -28,6 +26,10 @@ export function generateSampleKeys(
 ): Set<string> {
   const res = new Set<string>();
   let date = start.clone();
+  // Sans ce garde, un sampling inconnu n'avance pas la date et boucle a l'infini.
+  if (!SAMPLINGS.includes(sampling)) {
+    throw new Error(`Unknown sampling: ${String(sampling)}`);
+  }
   res.add(getSampleKey(date, sampling));
   if (end.isBefore(start)) {
     throw new Error('End date is before start date !');
@@ -41,53 +43,59 @@ export function generateSampleKeys(
 
 export class StatsEngine {
   private groupped = new Map<string, ActivityRecord[]>();
-  private samplings: Record<DateSampling, number> = {
-    day: 0,
-    week: 0,
-    year: 0,
-    month: 0,
-  };
   constructor(
     private start: DjsDate,
     private end: DjsDate,
     private records: ActivityRecord[],
   ) {
-    this.samplings = {
-      day: this.end.diff(this.start, 'days'),
-      week: this.end.diff(this.start, 'weeks'),
-      month: this.end.diff(this.start, 'months'),
-      year: this.end.diff(this.start, 'year'),
-    };
     this.records.forEach((record) => {
       const key = record.activity.id;
       const exists = this.groupped.get(key);
-      this.groupped.set(key, exists ? [...exists, record] : []);
+      this.groupped.set(key, exists ? [...exists, record] : [record]);
     });
   }
 
-  public computeStats(): HistoryStats {
+  public computeStats(sampling: DateSampling): HistoryStats {
+    const buckets = [...generateSampleKeys(this.start, this.end, sampling)];
+    const bucketIndexes = new Map(buckets.map((key, index) => [key, index]));
+
     const history = [...this.groupped.values()].flatMap(
       (records): ActivityStats[] => {
-        if (!records || records.length < 1) return [];
+        if (records.length < 1) return [];
         const activity = records[0].activity;
         const last = records.toSorted(
           (a, b) => b.date.unix() - a.date.unix(),
         )[0].date;
         const cumsum = records.reduce((acc, curr) => acc + curr.number, 0);
+        const total = cumsum * activity.amount;
+
+        const series = new Array<number>(buckets.length).fill(0);
+        records.forEach((record) => {
+          const index = bucketIndexes.get(getSampleKey(record.date, sampling));
+          // Un record hors de [start, end] n'appartient a aucun bucket.
+          if (index === undefined) return;
+          series[index] += record.number * activity.amount;
+        });
+
         return [
           {
             activity,
             cumsum,
+            total,
+            average: total / buckets.length,
             last,
+            series,
           },
         ];
       },
     );
+
     return {
       start: this.start,
       end: this.end,
-      samplings: this.samplings,
-      stats: history,
+      sampling,
+      buckets,
+      stats: history.toSorted((a, b) => b.total - a.total),
     };
   }
 }

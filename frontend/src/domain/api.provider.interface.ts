@@ -2,6 +2,7 @@ import { InjectionToken } from '@angular/core';
 import {
   Activity,
   ActivityRecord,
+  DateSampling,
   DjsDate,
   HistoryStats,
 } from '@lifetrack/lib';
@@ -20,5 +21,9 @@ export interface ILifetrackApi {
   addActivity(dto: ActivityDto): Promise<Activity>;
   recordActivity(activity: Activity, date: DjsDate): Promise<ActivityRecord>;
   downsertRecord(record: ActivityRecord): Promise<ActivityRecord | null>;
-  getHistoryStats(start: DjsDate, end: DjsDate): Promise<HistoryStats>;
+  getHistoryStats(
+    start: DjsDate,
+    end: DjsDate,
+    sampling: DateSampling,
+  ): Promise<HistoryStats>;
 }

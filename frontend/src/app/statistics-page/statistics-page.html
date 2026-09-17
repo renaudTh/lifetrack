@@ -1,39 +1,88 @@
-@if (!loading()) {
-  <table class="table is-striped">
-    <thead>
-      <tr>
-        <th><abbr title="Activity">Activity</abbr></th>
-        <th><abbr title="Cumulative">Sum</abbr></th>
-        <th><abbr title="Day average">D</abbr></th>
-        <th><abbr title="Week average">W</abbr></th>
-        <th><abbr title="Month average">M</abbr></th>
-        <th><abbr title="Year average">Y</abbr></th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (item of lines; track $index) {
-        <tr>
-          <td>
-            <app-activity-component
-              [activity]="item.activity"></app-activity-component>
-          </td>
-          <td>
-            {{ item.cumsum }}
-          </td>
-          <td>
-            {{ item.dayAvg }}
-          </td>
-          <td>
-            {{ item.weekAvg }}
-          </td>
-          <td>
-            {{ item.monthAvg }}
-          </td>
-          <td>
-            {{ item.yearAvg }}
-          </td>
-        </tr>
-      }
-    </tbody>
-  </table>
-}
+@let slice = stats();
+
+<div class="field is-grouped is-grouped-multiline mb-4">
+  <div class="control">
+    <label class="label is-small" for="stats-start">From</label>
+    <input
+      id="stats-start"
+      class="input is-small"
+      type="date"
+      [value]="start()"
+      (change)="changeStart($event)" />
+  </div>
+  <div class="control">
+    <label class="label is-small" for="stats-end">To</label>
+    <input
+      id="stats-end"
+      class="input is-small"
+      type="date"
+      [value]="end()"
+      (change)="changeEnd($event)" />
+  </div>
+  <div class="control">
+    <label class="label is-small" for="stats-sampling">Per</label>
+    <div class="select is-small">
+      <select id="stats-sampling" (change)="changeSampling($event)">
+        @for (option of samplings; track option) {
+        <option [value]="option" [selected]="option === sampling()">
+          {{ option }}
+        </option>
+        }
+      </select>
+    </div>
+  </div>
+  <div class="control is-align-self-flex-end">
+    <button
+      class="button is-small is-primary"
+      [disabled]="!rangeIsValid()"
+      (click)="reload()">
+      Apply
+    </button>
+  </div>
+</div>
+
+@if (!rangeIsValid()) {
+<div class="notification is-warning is-light">
+  The end date must not be before the start date.
+</div>
+} @switch (slice.status) { @case ('loading') {
+<progress class="progress is-small is-primary" max="100"></progress>
+} @case ('error') {
+<div class="notification is-danger is-light">
+  Statistics could not be loaded. {{ slice.message }}
+  <button class="button is-small ml-3" (click)="reload()">Retry</button>
+</div>
+} @case ('ready') { @if (slice.history.stats.length > 0) {
+<div class="stats-chart mb-4">
+  <app-stats-chart
+    [buckets]="slice.history.buckets"
+    [stats]="slice.history.stats"></app-stats-chart>
+</div>
+<table class="table is-striped">
+  <thead>
+    <tr>
+      <th><abbr title="Activity">Activity</abbr></th>
+      <th><abbr title="Cumulated over the period">Total</abbr></th>
+      <th>
+        <abbr title="Average per period">Avg / {{ sampling() }}</abbr>
+      </th>
+      <th><abbr title="Last record">Last</abbr></th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (stat of slice.history.stats; track stat.activity.id) {
+    <tr>
+      <td>
+        <app-activity-component
+          [activity]="stat.activity"></app-activity-component>
+      </td>
+      <td>{{ stat.total }} {{ stat.activity.unit }}</td>
+      <td>{{ stat.average | number: '1.0-1' }}</td>
+      <td>{{ stat.last.format('YYYY-MM-DD') }}</td>
+    </tr>
+    }
+  </tbody>
+</table>
+} @else {
+<div class="block is-size-6 is-italic">No records over the selected period</div>
+} } }

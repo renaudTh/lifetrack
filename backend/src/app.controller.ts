@@ -1,4 +1,10 @@
-import { Activity, ActivityRecordDTO, StatsEngine } from '@lifetrack/lib';
+import {
+  Activity,
+  ActivityRecordDTO,
+  HistoryStatsDTO,
+  StatsEngine,
+  toHistoryStatsDTO,
+} from '@lifetrack/lib';
 import {
   Body,
   Controller,
@@ -17,6 +23,11 @@ import { CallingContext } from './auth/calling.context.decorator';
 import { type CallingContext as CC } from './domain/calling.context';
 import { type ActivityDto, type ActivityUpdateDto } from './dto/activity.dto';
 import { type RecordUpsertDto } from './dto/record.dto';
+import {
+  assertOrderedRange,
+  parseDateParam,
+  parseSamplingParam,
+} from './dto/range.query';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller()
@@ -59,13 +70,10 @@ export class AppController {
     @Query('start') startParam?: string,
     @Query('end') endParam?: string,
   ): Promise<ActivityRecordDTO[]> {
-    const start = !startParam ? `${dayjs().year()}-01-01` : startParam;
-    const end = !endParam ? `${dayjs().year()}-12-31` : endParam;
-    const list = await this.appService.getRecords(
-      ctx,
-      dayjs(start),
-      dayjs(end),
-    );
+    const start = parseDateParam(startParam, `${dayjs().year()}-01-01`);
+    const end = parseDateParam(endParam, `${dayjs().year()}-12-31`);
+    assertOrderedRange(start, end);
+    const list = await this.appService.getRecords(ctx, start, end);
     return list.map((record) => ({
       ...record,
       date: record.date.format('YYYY-MM-DD'),
@@ -77,15 +85,15 @@ export class AppController {
     @CallingContext() ctx: CC,
     @Query('start') startParam?: string,
     @Query('end') endParam?: string,
-  ) {
-    const start = !startParam ? `${dayjs().year()}-08-01` : startParam;
-    const end = !endParam ? `${dayjs().year()}-12-31` : endParam;
-    const list = await this.appService.getRecords(
-      ctx,
-      dayjs(start),
-      dayjs(end),
-    );
-    return new StatsEngine(dayjs(start), dayjs(end), list).computeStats();
+    @Query('sampling') samplingParam?: string,
+  ): Promise<HistoryStatsDTO> {
+    const start = parseDateParam(startParam, `${dayjs().year()}-01-01`);
+    const end = parseDateParam(endParam, `${dayjs().year()}-12-31`);
+    assertOrderedRange(start, end);
+    const sampling = parseSamplingParam(samplingParam);
+    const list = await this.appService.getRecords(ctx, start, end);
+    const history = new StatsEngine(start, end, list).computeStats(sampling);
+    return toHistoryStatsDTO(history);
   }
 
   @Post('/record')

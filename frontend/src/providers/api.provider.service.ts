@@ -4,8 +4,11 @@ import {
   Activity,
   ActivityRecord,
   ActivityRecordDTO,
+  DateSampling,
   DjsDate,
+  fromHistoryStatsDTO,
   HistoryStats,
+  HistoryStatsDTO,
 } from '@lifetrack/lib';
 import dayjs from 'dayjs';
 import { firstValueFrom } from 'rxjs';
@@ -76,13 +79,13 @@ export class ApiProvider implements ILifetrackApi {
   public async getHistoryStats(
     start: DjsDate,
     end: DjsDate,
+    sampling: DateSampling,
   ): Promise<HistoryStats> {
     const sp = start.format('YYYY-MM-DD');
     const ep = end.format('YYYY-MM-DD');
-    const request = this.http.get<HistoryStats>(
-      `api://stats?start=${sp}&end=${ep}`,
+    const request = this.http.get<HistoryStatsDTO>(
+      `api://stats?start=${sp}&end=${ep}&sampling=${sampling}`,
     );
-    const response = await firstValueFrom(request);
-    return response;
+    return fromHistoryStatsDTO(await firstValueFrom(request));
   }
 }
