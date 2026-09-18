@@ -38,6 +38,17 @@ describe('Calendar', () => {
     expect(cells()[10]).toBe(before);
   });
 
+  it('keeps the cell class alongside the state class', () => {
+    const selected = TestBed.inject(DateService);
+    selected.selectDate(dayjs().date(15));
+    fixture.detectChanges();
+    const cell = (fixture.nativeElement as HTMLElement).querySelector(
+      '.selected',
+    );
+
+    expect(cell?.classList.contains('cell')).toBe(true);
+  });
+
   it('moves the selected class onto the newly selected day', () => {
     const target = dayjs().date(15);
 

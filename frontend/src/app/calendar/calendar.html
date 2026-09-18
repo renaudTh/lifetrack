@@ -23,23 +23,21 @@
       </span>
     </button>
   </div>
-  } @let daysList = daysOfMonth(); @if (daysList) {
+  }
   <div class="fixed-grid has-7-cols">
     <div class="grid is-gap-0.5" role="grid" [attr.aria-label]="title">
-      @for (day of daysList; track day.date.valueOf()) {
+      @for (entry of days(); track entry.key) {
       <button
-        class="cell"
         type="button"
         role="gridcell"
-        [attr.aria-selected]="day.selected"
-        [attr.aria-current]="day.currentDate ? 'date' : null"
-        [attr.aria-label]="day.date.format('YYYY-MM-DD')"
-        (click)="selectDay(day.date)"
-        [ngClass]="getClassList(day)">
-        {{ day.date.format('D') }}
+        [class]="entry.classes"
+        [attr.aria-selected]="entry.day.selected"
+        [attr.aria-current]="entry.day.currentDate ? 'date' : null"
+        [attr.aria-label]="entry.key"
+        (click)="selectDay(entry.day.date)">
+        {{ entry.label }}
       </button>
       }
     </div>
   </div>
-  }
 </div>
