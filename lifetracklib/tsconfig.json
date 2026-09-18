@@ -9,7 +9,7 @@
     "sourceMap": true,
     "outDir": "./dist",
     "strict": true,
-    "isolatedModules": true, // Obligatoire pour esbuild/tsup
+    "isolatedModules": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,

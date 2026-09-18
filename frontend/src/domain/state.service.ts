@@ -19,16 +19,19 @@ export type StatsSlice =
 
 export interface LifetrackState {
   loading: boolean;
+  /** Last failed action, displayed by the shell. */
+  error: string | null;
   records: Record<string, ActivityRecord>;
   activities: Record<string, Activity>;
   top: Record<string, Activity>;
-  // Tranche distincte de `records` : celui-ci est reecrit par la navigation du
-  // calendrier, ce qui tronquerait silencieusement la plage des statistiques.
+  // Kept apart from `records`, which calendar navigation rewrites: sharing it
+  // would silently truncate the statistics range.
   stats: StatsSlice;
 }
 
 const initialState: LifetrackState = {
   loading: true,
+  error: null,
   records: {},
   activities: {},
   top: {},
@@ -60,6 +63,23 @@ export class StateService {
 
   public readonly selectStats = computed(() => this.store().stats);
 
+  public readonly selectError = computed(() => this.store().error);
+
+  public dismissError(): void {
+    this.store.set({ ...this.store(), error: null });
+  }
+
+  /** Without this report, a failed write stays entirely invisible. */
+  private fail(action: string) {
+    return (error: unknown): false => {
+      this.store.set({
+        ...this.store(),
+        error: `${action} failed. ${messageOf(error)}`,
+      });
+      return false;
+    };
+  }
+
   loadStats(start: DjsDate, end: DjsDate, sampling: DateSampling): void {
     this.setStats({ status: 'loading' });
     this.api
@@ -74,90 +94,120 @@ export class StateService {
     this.store.set({ ...this.store(), stats });
   }
 
-  addActivity(dto: ActivityDto) {
-    this.api.addActivity(dto).then((newActivity) => {
-      const store = this.store();
-      const updated = { ...store.activities, [newActivity.id]: newActivity };
-      this.store.set({ ...store, activities: updated });
-    });
+  addActivity(dto: ActivityDto): Promise<boolean> {
+    return this.api
+      .addActivity(dto)
+      .then((newActivity) => {
+        const store = this.store();
+        const updated = { ...store.activities, [newActivity.id]: newActivity };
+        this.store.set({ ...store, activities: updated });
+        return true;
+      })
+      .catch(this.fail('Adding the activity'));
   }
-  deleteActivity(activity: Activity) {
-    this.api.deleteActivity(activity.id).then((_) => {
-      const { [activity.id]: removed, ...rest } = this.store().activities;
-      this.store.set({
-        ...this.store(),
-        activities: rest,
-      });
-    });
+  deleteActivity(activity: Activity): Promise<boolean> {
+    return this.api
+      .deleteActivity(activity.id)
+      .then((_) => {
+        const { [activity.id]: removed, ...rest } = this.store().activities;
+        this.store.set({
+          ...this.store(),
+          activities: rest,
+        });
+        return true;
+      })
+      .catch(this.fail('Deleting the activity'));
   }
-  updateActivity(activity: Activity) {
-    this.api.updateActivity(activity).then((a) => {
-      const store = this.store();
-      const activitiesUpdated = { ...store.activities, [a.id]: a };
-      const updatedRecords = Object.fromEntries(
-        Object.entries(store.records).map(([key, value]) => {
-          if (value.activity.id === a.id)
-            return [key, { ...value, activity: a }];
-          else return [key, value];
-        }),
-      );
-      this.store.set({
-        ...store,
-        activities: activitiesUpdated,
-        records: updatedRecords,
-      });
-    });
+  updateActivity(activity: Activity): Promise<boolean> {
+    return this.api
+      .updateActivity(activity)
+      .then((a) => {
+        const store = this.store();
+        const activitiesUpdated = { ...store.activities, [a.id]: a };
+        const updatedRecords = Object.fromEntries(
+          Object.entries(store.records).map(([key, value]) => {
+            if (value.activity.id === a.id)
+              return [key, { ...value, activity: a }];
+            else return [key, value];
+          }),
+        );
+        this.store.set({
+          ...store,
+          activities: activitiesUpdated,
+          records: updatedRecords,
+        });
+        return true;
+      })
+      .catch(this.fail('Updating the activity'));
   }
   loadActivities() {
-    this.api.getTopActivities().then((list) => {
-      this.store.set({
-        ...this.store(),
-        top: list.reduce((acc, item) => ({ ...acc, [item.id]: item }), {}),
-      });
-    });
-    this.api.getActivities().then((list) => {
-      this.store.set({
-        ...this.store(),
-        activities: list.reduce(
-          (acc, item) => ({ ...acc, [item.id]: item }),
-          {},
-        ),
-      });
-    });
+    this.api
+      .getTopActivities()
+      .then((list) => {
+        this.store.set({
+          ...this.store(),
+          top: list.reduce((acc, item) => ({ ...acc, [item.id]: item }), {}),
+        });
+      })
+      .catch(this.fail('Loading the activities'));
+    this.api
+      .getActivities()
+      .then((list) => {
+        this.store.set({
+          ...this.store(),
+          activities: list.reduce(
+            (acc, item) => ({ ...acc, [item.id]: item }),
+            {},
+          ),
+        });
+      })
+      .catch(this.fail('Loading the activities'));
   }
   loadHistory(start: DjsDate, end: DjsDate): void {
-    this.api.getHistory(start, end).then((list) => {
-      this.store.set({
-        ...this.store(),
-        records: list.reduce((acc, item) => ({ ...acc, [item.id]: item }), {}),
-      });
-    });
+    this.api
+      .getHistory(start, end)
+      .then((list) => {
+        this.store.set({
+          ...this.store(),
+          records: list.reduce(
+            (acc, item) => ({ ...acc, [item.id]: item }),
+            {},
+          ),
+        });
+      })
+      .catch(this.fail('Loading the history'));
   }
   recordActivity(activity: Activity): void {
     const date = this.dateService.selectedDateSignal();
-    this.api.recordActivity(activity, date).then((updated) => {
-      this.store.set({
-        ...this.store(),
-        records: { ...this.store().records, [updated.id]: updated },
-      });
-    });
-  }
-
-  downRecord(record: ActivityRecord): void {
-    this.api.downsertRecord(record).then((updated) => {
-      if (updated === null) {
-        const { [record.id]: removed, ...rest } = this.store().records;
-        this.store.set({
-          ...this.store(),
-          records: rest,
-        });
-      } else {
+    this.api
+      .recordActivity(activity, date)
+      .then((updated) => {
         this.store.set({
           ...this.store(),
           records: { ...this.store().records, [updated.id]: updated },
         });
-      }
-    });
+      })
+      .catch(this.fail('Recording the activity'));
+  }
+
+  downRecord(record: ActivityRecord): void {
+    this.api
+      .downsertRecord(record)
+      .then((updated) => {
+        if (updated === null) {
+          const { [record.id]: removed, ...rest } = this.store().records;
+          this.store.set({
+            ...this.store(),
+            records: rest,
+          });
+        } else {
+          this.store.set({
+            ...this.store(),
+            records: { ...this.store().records, [updated.id]: updated },
+          });
+        }
+      })
+      .catch(this.fail('Updating the record'));
   }
 }
 

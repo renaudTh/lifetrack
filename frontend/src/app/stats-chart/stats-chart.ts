@@ -34,15 +34,15 @@ export class StatsChart {
   public readonly stats = input.required<ActivityStats[]>();
 
   constructor() {
-    // Force majeure : chart.js est imperatif, il faut lui repousser les donnees
-    // a chaque changement de signal. C'est le seul effect du projet.
+    // Unavoidable: chart.js is imperative and has to be pushed the data on every
+    // signal change. This is the only effect in the project.
     effect(() => this.draw(this.buckets(), this.stats()));
     inject(DestroyRef).onDestroy(() => this.chart?.destroy());
   }
 
   private draw(buckets: string[], stats: ActivityStats[]): void {
-    // ponytail: un axe unique pour des unites heterogenes (min, cl, u).
-    // Passer a un axe par unite si la lecture devient trompeuse.
+    // ponytail: a single axis for heterogeneous units (min, cl, u).
+    // Move to one axis per unit if this becomes misleading.
     const datasets = stats.map(
       (stat, index): ChartDataset<'line', number[]> => ({
         label: `${stat.activity.representation} ${stat.activity.description}`,

@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { Activity, ActivityRecord, DjsDate } from '@lifetrack/lib';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { RecordDBO } from 'src/entities/record.entity';
@@ -12,6 +11,13 @@ import {
   recordToSaveDBO,
 } from './utils';
 
+function activityIdOf(row: unknown): string[] {
+  if (typeof row !== 'object' || row === null || !('activityId' in row)) {
+    return [];
+  }
+  return typeof row.activityId === 'string' ? [row.activityId] : [];
+}
+
 export class RepoService implements IRepoService {
   constructor(@InjectDataSource() private dataSource: DataSource) {}
 
@@ -24,10 +30,9 @@ export class RepoService implements IRepoService {
                         ORDER BY total_count DESC
                         LIMIT $2`;
 
-    const topActivities: { activityId: string; total_count: number }[] =
-      await this.dataSource.query(query, [userId, count]);
-
-    const topIds = topActivities.map((a) => a.activityId);
+    // dataSource.query() returns `any`: narrow it rather than annotate it.
+    const rows: unknown = await this.dataSource.query(query, [userId, count]);
+    const topIds = Array.isArray(rows) ? rows.flatMap(activityIdOf) : [];
 
     let activityEntities: ActivityDBO[] = [];
     if (topIds.length > 0) {
@@ -38,9 +43,9 @@ export class RepoService implements IRepoService {
     }
 
     const activityMap = new Map(activityEntities.map((a) => [a.id, a]));
-    const sortedActivities = topActivities.flatMap((r) => {
-      const id = activityMap.get(r.activityId);
-      return id === undefined ? [] : [id];
+    const sortedActivities = topIds.flatMap((activityId) => {
+      const found = activityMap.get(activityId);
+      return found === undefined ? [] : [found];
     });
     if (sortedActivities.length < count) {
       const missingCount = count - sortedActivities.length;
@@ -54,8 +59,10 @@ export class RepoService implements IRepoService {
   }
   async updateActivity(userId: string, activity: Activity): Promise<Activity> {
     const repo = this.dataSource.getRepository(ActivityDBO);
-    const dbo = activityToSaveDbo(activity, userId);
-    await repo.save(dbo);
+    const { id, owner_id, ...fields } = activityToSaveDbo(activity, userId);
+    // `save` on an existing key would write owner_id: an activity belonging to
+    // someone else would change hands instead of being left alone.
+    await repo.update({ id, owner_id: owner_id }, fields);
     return activity;
   }
   async deleteActivity(userId: string, activityId: string): Promise<void> {
@@ -69,9 +76,11 @@ export class RepoService implements IRepoService {
     return activity;
   }
 
-  async deleteRecord(recordId: string): Promise<void> {
+  async deleteRecord(userId: string, recordId: string): Promise<void> {
     const repo = this.dataSource.getRepository(RecordDBO);
-    await repo.delete({ id: recordId });
+    // Scoping by user belongs in the repository: relying on the order of service
+    // calls would leave every record deletable.
+    await repo.delete({ id: recordId, userId: userId });
   }
   async getRecordById(
     userId: string,

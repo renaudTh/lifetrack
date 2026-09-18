@@ -15,5 +15,5 @@ export class RecordDBO {
   @ManyToOne(() => ActivityDBO, (activity) => activity.records, {
     onDelete: 'NO ACTION',
   })
-  activity: ActivityDBO;
+  activity!: ActivityDBO;
 }

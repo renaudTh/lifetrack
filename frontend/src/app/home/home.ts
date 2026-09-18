@@ -42,9 +42,6 @@ export class Home implements OnInit {
     this.state.loadHistory(start, end);
     this.state.loadActivities();
   }
-  login() {
-    this.authService.loginWithRedirect();
-  }
   openActivityForm() {
     this.activityToEdit.set(null);
     this.displayForm.set(true);

@@ -1,33 +1,43 @@
 @let title = displayedMonth();
 
 <div class="content">
-  @if(title) {
-  <div
-    class="is-flex is-justify-content-space-between is-align-items-center is-vertial-align-middle">
-    <button (click)="previous()" class="button is-small">
+  @if (title) {
+  <div class="is-flex is-justify-content-space-between is-align-items-center">
+    <button
+      (click)="previous()"
+      class="button is-small"
+      type="button"
+      aria-label="Previous month">
       <span class="icon">
-        <i class="pi pi-angle-left"></i>
+        <i class="pi pi-angle-left" aria-hidden="true"></i>
       </span>
     </button>
-    <h2 class="title is-4 is-block">{{title}}</h2>
-    <button (click)="next()" [disabled]="!canNext" class="button is-small">
+    <h2 class="title is-4 is-block">{{ title }}</h2>
+    <button
+      (click)="next()"
+      class="button is-small"
+      type="button"
+      aria-label="Next month">
       <span class="icon">
-        <i class="pi pi-angle-right"></i>
+        <i class="pi pi-angle-right" aria-hidden="true"></i>
       </span>
     </button>
   </div>
-  } @let daysList = daysOfMonth(); @if(daysList){
+  }
   <div class="fixed-grid has-7-cols">
-    <div class="grid is-gap-0.5">
-      @for (day of daysList; track day.date) {
-      <div
-        class="cell"
-        (click)="selectDay(day.date)"
-        [ngClass]="getClassList(day)">
-        {{day.date.format("D")}}
-      </div>
+    <div class="grid is-gap-0.5" role="grid" [attr.aria-label]="title">
+      @for (entry of days(); track entry.key) {
+      <button
+        type="button"
+        role="gridcell"
+        [class]="entry.classes"
+        [attr.aria-selected]="entry.day.selected"
+        [attr.aria-current]="entry.day.currentDate ? 'date' : null"
+        [attr.aria-label]="entry.key"
+        (click)="selectDay(entry.day.date)">
+        {{ entry.label }}
+      </button>
       }
     </div>
   </div>
-  }
 </div>

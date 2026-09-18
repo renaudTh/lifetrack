@@ -1,6 +1,6 @@
 @let activities = activitiesSignal();
 
-<div class="is-flex is-gap-1 is-flex-wrap-nowrap is-overflow-auto">
+<div class="is-flex is-gap-1 is-flex-wrap-nowrap overflow">
   @for (entry of activities | keyvalue; track entry.value.id) {
   <app-activity-component
     [activity]="entry.value"

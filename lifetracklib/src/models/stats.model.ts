@@ -5,25 +5,25 @@ export type HistoryStats = {
   start: DjsDate;
   end: DjsDate;
   sampling: DateSampling;
-  /** Cles de periode couvrant [start, end], dans l'ordre chronologique. */
+  /** Period keys covering [start, end], in chronological order. */
   buckets: string[];
   stats: ActivityStats[];
 };
 
 export interface ActivityStats {
   activity: Activity;
-  /** Somme brute des quantites enregistrees. */
+  /** Raw sum of the recorded quantities. */
   cumsum: number;
-  /** cumsum rapporte a l'unite de l'activite. */
+  /** cumsum expressed in the activity's unit. */
   total: number;
-  /** total divise par le nombre de periodes couvertes. */
+  /** total divided by the number of periods covered. */
   average: number;
   last: DjsDate;
-  /** Une valeur par bucket, meme longueur et meme ordre que HistoryStats.buckets. */
+  /** One value per bucket, same length and order as HistoryStats.buckets. */
   series: number[];
 }
 
-/** Ce qui transite reellement sur le reseau : les dates y sont des chaines ISO. */
+/** What actually travels over the wire: dates are ISO strings there. */
 export type ActivityStatsDTO = Omit<ActivityStats, 'last'> & { last: string };
 
 export type HistoryStatsDTO = Omit<HistoryStats, 'start' | 'end' | 'stats'> & {

@@ -22,7 +22,7 @@ export class ActivityDBO {
   @Column({ type: 'numeric' })
   base_amount!: number;
   @OneToMany(() => RecordDBO, (record: RecordDBO) => record.activity)
-  records: RecordDBO[];
+  records?: RecordDBO[];
   @DeleteDateColumn()
-  deleted_date: Date;
+  deleted_date?: Date;
 }

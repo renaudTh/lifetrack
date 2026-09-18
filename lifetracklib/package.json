@@ -9,7 +9,7 @@
   "scripts": {
     "lint": "prettier . --write --config ../.prettierrc",
     "lint:check": "prettier . --check --config ../.prettierrc",
-    "build": "tsc",
+    "build": "tsc -p tsconfig.build.json",
     "test": "vitest"
   },
   "keywords": [],
@@ -21,7 +21,7 @@
     "dayjs": "^1.11.13",
     "prettier": "^3.7.4",
     "ts-jest": "^29.2.5",
-    "typescript": "^5.7.2",
+    "typescript": "~5.9.3",
     "vitest": "^4.0.16"
   },
   "peerDependencies": {

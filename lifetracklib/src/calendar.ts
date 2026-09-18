@@ -1,72 +1,76 @@
 import dayjs from 'dayjs';
 import { Day, DjsDate } from './models/date.model';
 
+const SUNDAY = 0;
+
+function assertValid(date: DjsDate, what: string): DjsDate {
+  // `dayjs('nonsense').day()` is NaN, and NaN !== SUNDAY is always true: an
+  // invalid date would spin the grid loops forever.
+  if (!date.isValid()) {
+    throw new Error(`${what} is not a valid date`);
+  }
+  return date;
+}
+
 export class Calendar {
-  private _selectedDate: DjsDate;
-  private _currentMonth: DjsDate;
+  private selected: DjsDate;
+  private month: DjsDate;
 
-  constructor(currenMonth?: DjsDate, selectedDate?: DjsDate) {
-    this._currentMonth = currenMonth?.date(1) ?? dayjs().date(1);
-    this._selectedDate = selectedDate ?? dayjs();
-  }
-
-  public nextMonth() {
-    this._currentMonth = this._currentMonth.add(1, 'month');
-  }
-  public previousMonth() {
-    this._currentMonth = this._currentMonth.subtract(1, 'month');
+  constructor(currentMonth?: DjsDate, selectedDate?: DjsDate) {
+    this.month = assertValid(currentMonth ?? dayjs(), 'currentMonth').date(1);
+    this.selected = assertValid(selectedDate ?? dayjs(), 'selectedDate');
   }
 
-  get currentMonth(): DjsDate {
-    return this._currentMonth;
+  public nextMonth(): void {
+    this.month = this.month.add(1, 'month');
   }
 
-  get selectedDate(): DjsDate {
-    return this._selectedDate;
-  }
-  set selectedDate(date: DjsDate) {
-    this._selectedDate = date;
+  public previousMonth(): void {
+    this.month = this.month.subtract(1, 'month');
   }
 
-  get daysOfMonths(): Day[] {
-    const result: Day[] = [];
-    let runner = this.currentMonth.clone();
-    while (runner.day() !== 0) {
+  public currentMonth(): DjsDate {
+    return this.month;
+  }
+
+  public selectedDate(): DjsDate {
+    return this.selected;
+  }
+
+  public selectDate(date: DjsDate): void {
+    this.selected = assertValid(date, 'selectedDate');
+  }
+
+  /** The grid spans whole weeks: 28 to 42 days depending on the month. */
+  public daysOfMonths(): Day[] {
+    const today = dayjs();
+    const toDay = (date: DjsDate, inCurrentMonth: boolean): Day => ({
+      date,
+      inCurrentMonth,
+      currentDate: date.isSame(today, 'day'),
+      selected: date.isSame(this.selected, 'day'),
+    });
+
+    const before: Day[] = [];
+    let runner = this.month;
+    while (runner.day() !== SUNDAY) {
       runner = runner.subtract(1, 'day');
-      const selected = runner.isSame(this.selectedDate, 'day');
-      const currentDate = runner.isSame(dayjs(), 'day');
-      const day: Day = {
-        date: runner,
-        inCurrentMonth: false,
-        currentDate,
-        selected,
-      };
-      result.unshift(day);
+      before.unshift(toDay(runner, false));
     }
-    runner = this.currentMonth.clone();
-    while (runner.month() === this.currentMonth.month()) {
-      const selected = runner.isSame(this.selectedDate, 'day');
-      const currentDate = runner.isSame(dayjs(), 'day');
-      result.push({
-        date: runner,
-        inCurrentMonth: true,
-        currentDate,
-        selected,
-      });
+
+    const current: Day[] = [];
+    runner = this.month;
+    while (runner.month() === this.month.month()) {
+      current.push(toDay(runner, true));
       runner = runner.add(1, 'day');
     }
 
-    while (runner.day() !== 0) {
-      const selected = runner.isSame(this.selectedDate, 'day');
-      const currentDate = runner.isSame(dayjs(), 'day');
-      result.push({
-        date: runner,
-        inCurrentMonth: false,
-        currentDate,
-        selected,
-      });
+    const after: Day[] = [];
+    while (runner.day() !== SUNDAY) {
+      after.push(toDay(runner, false));
       runner = runner.add(1, 'day');
     }
-    return result;
+
+    return [...before, ...current, ...after];
   }
 }

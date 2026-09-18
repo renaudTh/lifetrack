@@ -13,7 +13,7 @@ COPY frontend ./frontend
 
 RUN cd lifetracklib && npm run build
 
-# L'URL de l'API est figee dans le bundle au build : une instance = une image.
+# The API URL is baked into the bundle at build time: one instance, one image.
 ARG API_URL=https://lifetrack.renaudlab.dev/api
 RUN sed -i "s#apiUrl: '.*'#apiUrl: '${API_URL}'#" frontend/src/environments/environment.ts
 

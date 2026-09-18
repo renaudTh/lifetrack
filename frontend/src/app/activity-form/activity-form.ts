@@ -20,7 +20,6 @@ import { ModalComponent } from '../modal-component/modal-component';
   selector: 'app-activity-form',
   imports: [ModalComponent, ReactiveFormsModule],
   templateUrl: './activity-form.html',
-  styleUrl: './activity-form.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ActivityForm {
@@ -61,16 +60,18 @@ export class ActivityForm {
   close() {
     this.visible.set(false);
   }
-  delete() {
+  async delete(): Promise<void> {
     const form = this.activityForm();
     const a = this.activity();
     if (a === null) return;
-    this.state.deleteActivity(a);
+    // Only close once the write is confirmed: otherwise a failure looks like a
+    // success and the input is lost.
+    if (!(await this.state.deleteActivity(a))) return;
     this.visible.set(false);
     form.reset();
   }
 
-  addOrUpdate() {
+  async addOrUpdate(): Promise<void> {
     const form = this.activityForm();
     if (form.invalid) return;
     const value = form.value;
@@ -80,23 +81,23 @@ export class ActivityForm {
       representation: value.representation!,
       unit: value.unit!,
     };
-    if (this.activity() === null) {
-      this.addActivity(dto);
-    } else {
-      this.updateActivity(dto);
-    }
+    const saved = await (this.activity() === null
+      ? this.addActivity(dto)
+      : this.updateActivity(dto));
+    // The dialog stays open when the write fails, so the input is kept.
+    if (!saved) return;
     this.visible.set(false);
     form.reset();
   }
-  private updateActivity(dto: ActivityDto) {
+  private updateActivity(dto: ActivityDto): Promise<boolean> {
     const a = this.activity();
     const activity: Activity = {
       ...dto,
       id: a!.id,
     };
-    this.state.updateActivity(activity);
+    return this.state.updateActivity(activity);
   }
-  private addActivity(dto: ActivityDto) {
-    this.state.addActivity(dto);
+  private addActivity(dto: ActivityDto): Promise<boolean> {
+    return this.state.addActivity(dto);
   }
 }

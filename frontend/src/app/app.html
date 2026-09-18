@@ -1,4 +1,13 @@
 <div class="container is-max-tablet p-5">
   <app-menu></app-menu>
+  @if (error(); as message) {
+  <div class="notification is-danger is-light">
+    <button
+      class="delete"
+      aria-label="Dismiss error"
+      (click)="dismissError()"></button>
+    {{ message }}
+  </div>
+  }
   <router-outlet />
 </div>

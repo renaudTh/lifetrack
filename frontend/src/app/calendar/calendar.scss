@@ -5,6 +5,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  // Cells are <button> so they can be reached with a keyboard: this resets the
+  // native rendering, not the semantics.
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  width: 100%;
 }
 .cell:hover {
   cursor: pointer;
@@ -14,7 +21,7 @@
 }
 .selected {
   background-color: var(--bulma-primary);
-  color: var(--bulma-primary-bold);
+  color: var(--bulma-primary-invert);
 }
 .in-current-month {
   background-color: var(--bulma-primary-soft);

@@ -1,52 +1,61 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+} from '@angular/core';
 import { Day, DjsDate } from '@lifetrack/lib';
 import { DateService } from '../../domain/date.service';
 import { StateService } from '../../domain/state.service';
 
+function classesOf(day: Day): string {
+  if (day.selected) return 'cell selected';
+  if (!day.inCurrentMonth) return 'cell not-in-current-month';
+  if (day.currentDate) return 'cell current-date';
+  return 'cell in-current-month';
+}
+
 @Component({
   selector: 'app-calendar',
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './calendar.html',
   styleUrl: './calendar.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Calendar {
   private readonly dateService = inject(DateService);
   private readonly state = inject(StateService);
-  protected displayedMonth = this.dateService.currentMonthString;
-  protected daysOfMonth = this.dateService.daysOfCurrentMonth;
 
-  getClassList(day: Day) {
-    if (day.selected) return ['selected'];
-    if (!day.inCurrentMonth) return ['not-in-current-month'];
-    if (day.currentDate) return ['current-date'];
-    return ['in-current-month'];
-  }
+  protected displayedMonth = this.dateService.currentMonthString;
+
+  /** Classes are derived here: called from the template, they would be
+   * recomputed on every cycle for each of the 42 cells. */
+  protected days = computed(() =>
+    this.dateService.daysOfCurrentMonth().map((day) => ({
+      day,
+      classes: classesOf(day),
+      label: day.date.format('D'),
+      key: day.date.format('YYYY-MM-DD'),
+    })),
+  );
 
   previous() {
     this.dateService.previousMonth();
-    const sortedDisplayed = this.dateService
-      .daysOfCurrentMonth()
-      .map((d) => d.date)
-      .sort((a, b) => (a.isBefore(b) ? -1 : 1));
-    const start = sortedDisplayed[0];
-    const end = sortedDisplayed[sortedDisplayed.length - 1];
-    this.state.loadHistory(start, end);
+    this.loadDisplayedRange();
   }
+
   next() {
     this.dateService.nextMonth();
-    const sortedDisplayed = this.dateService
-      .daysOfCurrentMonth()
-      .map((d) => d.date)
-      .sort((a, b) => (a.isBefore(b) ? -1 : 1));
-    const start = sortedDisplayed[0];
-    const end = sortedDisplayed[sortedDisplayed.length - 1];
-    this.state.loadHistory(start, end);
+    this.loadDisplayedRange();
   }
+
   selectDay(day: DjsDate) {
-    this.dateService.selectedDate = day;
+    this.dateService.selectDate(day);
   }
-  get canNext(): boolean {
-    return true;
+
+  private loadDisplayedRange(): void {
+    const displayed = this.days().map((entry) => entry.day.date);
+    if (displayed.length === 0) return;
+    this.state.loadHistory(displayed[0], displayed[displayed.length - 1]);
   }
 }

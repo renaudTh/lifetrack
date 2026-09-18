@@ -1,6 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import dayjs from 'dayjs';
+import { DateService } from '../../domain/date.service';
 import { Calendar } from './calendar';
+import { testProviders } from '../../testing/test-providers';
 
 describe('Calendar', () => {
   let component: Calendar;
@@ -9,6 +12,7 @@ describe('Calendar', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [Calendar],
+      providers: testProviders(),
     }).compileComponents();
 
     fixture = TestBed.createComponent(Calendar);
@@ -18,5 +22,42 @@ describe('Calendar', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  const cells = () =>
+    (fixture.nativeElement as HTMLElement).querySelectorAll('.cell');
+
+  it('reuses the day cells when the selection changes', () => {
+    const before = cells()[10];
+
+    TestBed.inject(DateService).selectDate(dayjs().date(15));
+    fixture.detectChanges();
+
+    // If the track identity changes on every render, Angular recreates all 42
+    // buttons: the calendar flashes and focus is lost.
+    expect(cells()[10]).toBe(before);
+  });
+
+  it('keeps the cell class alongside the state class', () => {
+    const selected = TestBed.inject(DateService);
+    selected.selectDate(dayjs().date(15));
+    fixture.detectChanges();
+    const cell = (fixture.nativeElement as HTMLElement).querySelector(
+      '.selected',
+    );
+
+    expect(cell?.classList.contains('cell')).toBe(true);
+  });
+
+  it('moves the selected class onto the newly selected day', () => {
+    const target = dayjs().date(15);
+
+    TestBed.inject(DateService).selectDate(target);
+    fixture.detectChanges();
+    const selected = (fixture.nativeElement as HTMLElement).querySelectorAll(
+      '.selected',
+    );
+
+    expect(selected.length).toBe(1);
   });
 });

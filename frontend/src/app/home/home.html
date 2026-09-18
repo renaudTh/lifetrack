@@ -1,12 +1,20 @@
 <app-calendar></app-calendar>
 <div
   class="content is-flex is-gap-1 is-flex-wrap-nowrap is-justify-content-center mt-5">
-  <button class="button is-primary" (click)="openActivityForm()">
-    <i class="pi pi-plus"></i>
+  <button
+    class="button is-primary"
+    type="button"
+    aria-label="Add an activity"
+    (click)="openActivityForm()">
+    <i class="pi pi-plus" aria-hidden="true"></i>
   </button>
   <app-recent-activities></app-recent-activities>
-  <button class="button is-primary is-normal" (click)="openActivityPicker()">
-    <i class="pi pi-ellipsis-h"></i>
+  <button
+    class="button is-primary is-normal"
+    type="button"
+    aria-label="Show all activities"
+    (click)="openActivityPicker()">
+    <i class="pi pi-ellipsis-h" aria-hidden="true"></i>
   </button>
 </div>
 <app-daily></app-daily>

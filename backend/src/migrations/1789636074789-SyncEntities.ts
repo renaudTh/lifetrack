@@ -7,8 +7,8 @@ export class SyncEntities1789636074789 implements MigrationInterface {
     await queryRunner.query(
       `ALTER TABLE "Activities" ADD "deleted_date" TIMESTAMP`,
     );
-    // Conversion en place : le DROP COLUMN + ADD genere par TypeORM perdrait les dates
-    // deja enregistrees.
+    // Converted in place: the DROP COLUMN + ADD that TypeORM generates would
+    // lose the dates already recorded.
     await queryRunner.query(
       `ALTER TABLE "Records" ALTER COLUMN "date" TYPE date USING "date"::date`,
     );

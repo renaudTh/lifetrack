@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ActivityForm } from './activity-form';
+import { testProviders } from '../../testing/test-providers';
 
 describe('ActivityForm', () => {
   let component: ActivityForm;
@@ -9,6 +10,7 @@ describe('ActivityForm', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ActivityForm],
+      providers: testProviders(),
     }).compileComponents();
 
     fixture = TestBed.createComponent(ActivityForm);
