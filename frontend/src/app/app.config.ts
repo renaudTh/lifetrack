@@ -29,6 +29,11 @@ export const appConfig: ApplicationConfig = {
     provideAuth0({
       domain: environment.auth0.domain,
       clientId: environment.auth0.clientId,
+      // Sans refresh tokens, le renouvellement passe par une iframe silencieuse
+      // que Safari et Firefox bloquent : la session expire sans rien dire.
+      useRefreshTokens: true,
+      useRefreshTokensFallback: true,
+      cacheLocation: 'localstorage',
       authorizationParams: {
         redirect_uri: window.location.origin,
         audience: environment.auth0.audience,
@@ -54,10 +59,6 @@ export const appConfig: ApplicationConfig = {
       useClass: ApiProvider,
     },
     StateService,
-    provideServiceWorker('ngsw-worker.js', {
-      enabled: !isDevMode(),
-      registrationStrategy: 'registerWhenStable:30000',
-    }),
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000',
