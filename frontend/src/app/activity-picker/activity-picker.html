@@ -3,7 +3,7 @@
 <app-modal-component [(visible)]="visible">
   <div class="card">
     <div class="card-header">
-      <div class="card-header-title">{{dialogTitle()}}</div>
+      <h2 class="card-header-title">{{ dialogTitle() }}</h2>
     </div>
     <div class="card-content">
       <div class="block is-flex is-gap-2 is-flex-wrap-wrap">
@@ -17,7 +17,9 @@
       </div>
     </div>
     <footer class="card-footer">
-      <a class="card-footer-item" (click)="onEdit()">{{ editButton()}}</a>
+      <button class="card-footer-item" type="button" (click)="onEdit()">
+        {{ editButton() }}
+      </button>
     </footer>
   </div>
 </app-modal-component>

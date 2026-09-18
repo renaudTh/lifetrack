@@ -1,28 +1,22 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '@auth0/auth0-angular';
 
 @Component({
   selector: 'app-menu',
-  imports: [AsyncPipe],
+  imports: [AsyncPipe, RouterLink, RouterLinkActive],
   templateUrl: './menu.html',
   styleUrl: './menu.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Menu {
   private readonly authService = inject(AuthService);
-  private router = inject(Router);
   public user$ = this.authService.user$;
 
   logout() {
     this.authService.logout({
       logoutParams: { returnTo: document.location.origin },
     });
-  }
-  home() {
-    this.router.navigate(['']);
-  }
-  displayStats() {
-    this.router.navigate(['stats']);
   }
 }

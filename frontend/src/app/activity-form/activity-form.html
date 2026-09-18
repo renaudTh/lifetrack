@@ -3,35 +3,39 @@
 <app-modal-component [(visible)]="visible">
   <div class="card">
     <div class="card-header">
-      <div class="card-header-title">{{dialogTitle()}}</div>
+      <h2 class="card-header-title">{{ dialogTitle() }}</h2>
     </div>
     <div class="card-content">
-      <form [formGroup]="formGroup">
+      <form [formGroup]="formGroup" (ngSubmit)="addOrUpdate()">
         <div class="field">
-          <label class="label">Representation</label>
+          <label class="label" for="activity-representation">
+            Representation
+          </label>
           <div class="control">
             <input
+              id="activity-representation"
               class="input"
               formControlName="representation"
-              type="input"
               type="text"
               placeholder="🚀" />
           </div>
         </div>
         <div class="field">
-          <label class="label">Description</label>
+          <label class="label" for="activity-description">Description</label>
           <div class="control">
             <input
+              id="activity-description"
               formControlName="description"
               class="input"
-              type="Text"
+              type="text"
               placeholder="Launch skyrocket" />
           </div>
         </div>
         <div class="field">
-          <label class="label">Base amount</label>
+          <label class="label" for="activity-amount">Base amount</label>
           <div class="control">
             <input
+              id="activity-amount"
               formControlName="base_amount"
               class="input"
               type="number"
@@ -39,12 +43,13 @@
           </div>
         </div>
         <div class="field">
-          <label class="label">Unit</label>
+          <label class="label" for="activity-unit">Unit</label>
           <div class="control">
             <input
+              id="activity-unit"
               formControlName="unit"
               class="input"
-              type="Text"
+              type="text"
               placeholder="kph" />
           </div>
         </div>
@@ -52,19 +57,23 @@
           <div class="control">
             <button
               class="button is-primary"
-              (click)="addOrUpdate()"
+              type="submit"
               [disabled]="formGroup.invalid">
-              {{submitLabel()}}
+              {{ submitLabel() }}
             </button>
           </div>
-          @if(displayDelete()){
+          @if (displayDelete()) {
           <div class="control">
-            <button class="button is-danger" (click)="delete()">Delete</button>
+            <button class="button is-danger" type="button" (click)="delete()">
+              Delete
+            </button>
           </div>
           }
 
           <div class="control">
-            <button class="button" (click)="close()">Cancel</button>
+            <button class="button" type="button" (click)="close()">
+              Cancel
+            </button>
           </div>
         </div>
       </form>
