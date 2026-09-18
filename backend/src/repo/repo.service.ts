@@ -12,6 +12,13 @@ import {
   recordToSaveDBO,
 } from './utils';
 
+function activityIdOf(row: unknown): string[] {
+  if (typeof row !== 'object' || row === null || !('activityId' in row)) {
+    return [];
+  }
+  return typeof row.activityId === 'string' ? [row.activityId] : [];
+}
+
 export class RepoService implements IRepoService {
   constructor(@InjectDataSource() private dataSource: DataSource) {}
 
@@ -24,10 +31,9 @@ export class RepoService implements IRepoService {
                         ORDER BY total_count DESC
                         LIMIT $2`;
 
-    const topActivities: { activityId: string; total_count: number }[] =
-      await this.dataSource.query(query, [userId, count]);
-
-    const topIds = topActivities.map((a) => a.activityId);
+    // dataSource.query() rend `any` : on narrow au lieu de l'annoter.
+    const rows: unknown = await this.dataSource.query(query, [userId, count]);
+    const topIds = Array.isArray(rows) ? rows.flatMap(activityIdOf) : [];
 
     let activityEntities: ActivityDBO[] = [];
     if (topIds.length > 0) {
@@ -38,9 +44,9 @@ export class RepoService implements IRepoService {
     }
 
     const activityMap = new Map(activityEntities.map((a) => [a.id, a]));
-    const sortedActivities = topActivities.flatMap((r) => {
-      const id = activityMap.get(r.activityId);
-      return id === undefined ? [] : [id];
+    const sortedActivities = topIds.flatMap((activityId) => {
+      const found = activityMap.get(activityId);
+      return found === undefined ? [] : [found];
     });
     if (sortedActivities.length < count) {
       const missingCount = count - sortedActivities.length;
