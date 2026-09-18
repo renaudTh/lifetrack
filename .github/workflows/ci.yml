@@ -1,71 +1,77 @@
 name: CI Pipeline
 
 on:
+  # Se declenche a chaque push sur une PR ouverte vers main (opened, synchronize,
+  # reopened), et sur main lui-meme pour couvrir les merges.
   pull_request:
     branches:
       - main
-
   push:
-    tags: -'*'
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+# Un push sur une PR annule le run precedent de la meme PR.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  build:
-    name: Build Library and App
+  ci:
+    name: Lint, build and test
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      # Checkout the code
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      # Setup Node.js
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            lifetracklib/package-lock.json
+            backend/package-lock.json
+            frontend/package-lock.json
 
-      # Build the library
-      - name: Build the library
+      # La lib doit etre installee et construite en premier : backend et frontend
+      # la consomment par `file:` et compilent contre son dist.
+      - name: Install and build the library
         run: |
           cd lifetracklib
           npm ci
           npm run build
 
-      # Build the Angular app
-      - name: Build the Angular app
+      - name: Install the backend
+        run: cd backend && npm ci
+
+      - name: Install the frontend
+        run: cd frontend && npm ci
+
+      - name: Check formatting
         run: |
-          cd frontend
-          npm ci
-          npm run build
+          cd lifetracklib && npm run lint:check
+          cd ../backend && npm run lint:check
+          cd ../frontend && npm run lint:check
 
-      - name: Build backend
-        run: |
-          cd backend
-          npm ci
-          npm run build
+      - name: Build the backend
+        run: cd backend && npm run build
 
-  test:
-    name: Test Library
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      # Checkout the code
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Build the frontend
+        run: cd frontend && npm run build
 
-      # Setup Node.js
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 22
+      - name: Test the library
+        run: cd lifetracklib && npm test -- --run --coverage
 
-      # Run tests with coverage
-      - name: Run library tests with coverage
-        run: |
-          cd lifetracklib
-          npm ci
-          npm test -- --coverage
+      - name: Test the backend
+        run: cd backend && npm test
 
-      # Upload coverage report as artifact
+      - name: Test the frontend
+        run: cd frontend && npm test -- --watch=false --browsers=ChromeHeadless
+
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:
