@@ -1,27 +1,56 @@
-import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import dayjs from 'dayjs';
+import { API_PROVIDER } from '../domain/api.provider.interface';
+import { StateService } from '../domain/state.service';
+import { apiStub, testProviders } from '../testing/test-providers';
 import { App } from './app';
 
 describe('App', () => {
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [App],
-      providers: [provideZonelessChangeDetection()],
-    }).compileComponents();
-  });
-
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(App);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
-  });
-
-  it('should render title', () => {
+  const render = () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain(
-      'Hello, frontend',
-    );
+    return fixture.nativeElement as HTMLElement;
+  };
+
+  const banner = () => render().querySelector('.notification.is-danger');
+
+  it('should create the app', async () => {
+    await TestBed.configureTestingModule({
+      imports: [App],
+      providers: testProviders(),
+    }).compileComponents();
+
+    expect(TestBed.createComponent(App).componentInstance).toBeTruthy();
+  });
+
+  it('shows no error banner while nothing has failed', async () => {
+    await TestBed.configureTestingModule({
+      imports: [App],
+      providers: testProviders(),
+    }).compileComponents();
+
+    expect(banner()).toBeNull();
+  });
+
+  it('shows an error banner once a request has failed', async () => {
+    await TestBed.configureTestingModule({
+      imports: [App],
+      providers: [
+        ...testProviders(),
+        {
+          provide: API_PROVIDER,
+          useValue: {
+            ...apiStub,
+            getHistory: () => Promise.reject(new Error('offline')),
+          },
+        },
+      ],
+    }).compileComponents();
+
+    TestBed.inject(StateService).loadHistory(dayjs(), dayjs());
+    // La chaine .then().catch() doit se derouler avant qu'on regarde le DOM.
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(banner()).not.toBeNull();
   });
 });
