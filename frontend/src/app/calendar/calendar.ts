@@ -44,6 +44,6 @@ export class Calendar {
     this.state.loadHistory(start, end);
   }
   selectDay(day: DjsDate) {
-    this.dateService.selectedDate = day;
+    this.dateService.selectDate(day);
   }
 }

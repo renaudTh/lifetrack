@@ -19,18 +19,18 @@ export class DateService {
   private calendar: Calendar;
   constructor() {
     this.calendar = new Calendar();
-    this._currentMonth = signal<DjsDate>(this.calendar.currentMonth);
-    this._selectedDate = signal<DjsDate>(this.calendar.selectedDate);
+    this._currentMonth = signal<DjsDate>(this.calendar.currentMonth());
+    this._selectedDate = signal<DjsDate>(this.calendar.selectedDate());
     this.currentMonthSignal = computed(() => this._currentMonth());
     this.selectedDateSignal = computed(() => this._selectedDate());
   }
   public nextMonth() {
     this.calendar.nextMonth();
-    this._currentMonth.set(this.calendar.currentMonth);
+    this._currentMonth.set(this.calendar.currentMonth());
   }
   public previousMonth() {
     this.calendar.previousMonth();
-    this._currentMonth.set(this.calendar.currentMonth);
+    this._currentMonth.set(this.calendar.currentMonth());
   }
   public readonly currentMonthString: Signal<string> = computed(() =>
     this._currentMonth().format('MMMM YYYY'),
@@ -41,11 +41,11 @@ export class DateService {
   public readonly daysOfCurrentMonth: Signal<Day[]> = computed(() => {
     this._currentMonth();
     this._selectedDate();
-    return this.calendar.daysOfMonths;
+    return this.calendar.daysOfMonths();
   });
 
-  set selectedDate(date: DjsDate) {
-    this.calendar.selectedDate = date;
-    this._selectedDate.set(this.calendar.selectedDate);
+  public selectDate(date: DjsDate): void {
+    this.calendar.selectDate(date);
+    this._selectedDate.set(this.calendar.selectedDate());
   }
 }
