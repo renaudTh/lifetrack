@@ -21,13 +21,17 @@ import dayjs from 'dayjs';
 import { AppService } from './app.service';
 import { CallingContext } from './auth/calling.context.decorator';
 import { type CallingContext as CC } from './domain/calling.context';
-import { type ActivityDto, type ActivityUpdateDto } from './dto/activity.dto';
-import { type RecordUpsertDto } from './dto/record.dto';
 import {
   assertOrderedRange,
   parseDateParam,
   parseSamplingParam,
 } from './dto/range.query';
+import {
+  parseActivityDto,
+  parseActivityUpdateDto,
+  parseRecordUpsertDto,
+  parseUuidParam,
+} from './dto/body.validation';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller()
@@ -45,23 +49,22 @@ export class AppController {
   @Post('/activity')
   async addActivity(
     @CallingContext() ctx: CC,
-    @Body() dto: ActivityDto,
+    @Body() body: unknown,
   ): Promise<Activity> {
-    return this.appService.addActivity(ctx, dto);
+    return this.appService.addActivity(ctx, parseActivityDto(body));
   }
   @Delete('/activity/:id')
   async deleteActivity(
     @CallingContext() ctx: CC,
     @Param('id') id: string,
   ): Promise<void> {
-    return this.appService.deleteActivity(ctx, { id });
+    return this.appService.deleteActivity(ctx, {
+      id: parseUuidParam(id, 'id'),
+    });
   }
   @Patch('/activity')
-  async updateActivity(
-    @CallingContext() ctx: CC,
-    @Body() dto: ActivityUpdateDto,
-  ) {
-    return this.appService.updateActivity(ctx, dto);
+  async updateActivity(@CallingContext() ctx: CC, @Body() body: unknown) {
+    return this.appService.updateActivity(ctx, parseActivityUpdateDto(body));
   }
 
   @Get('/records')
@@ -99,8 +102,9 @@ export class AppController {
   @Post('/record')
   async newRecord(
     @CallingContext() ctx: CC,
-    @Body() dto: RecordUpsertDto,
+    @Body() body: unknown,
   ): Promise<ActivityRecordDTO> {
+    const dto = parseRecordUpsertDto(body);
     const r = await this.appService.addRecord(
       ctx,
       dayjs(dto.date),
@@ -114,7 +118,10 @@ export class AppController {
     @CallingContext() ctx: CC,
     @Param('id') id: string,
   ): Promise<ActivityRecordDTO | null> {
-    const record = await this.appService.downsertRecord(ctx, id);
+    const record = await this.appService.downsertRecord(
+      ctx,
+      parseUuidParam(id, 'id'),
+    );
     return record
       ? {
           ...record,
