@@ -60,8 +60,10 @@ export class RepoService implements IRepoService {
   }
   async updateActivity(userId: string, activity: Activity): Promise<Activity> {
     const repo = this.dataSource.getRepository(ActivityDBO);
-    const dbo = activityToSaveDbo(activity, userId);
-    await repo.save(dbo);
+    const { id, owner_id, ...fields } = activityToSaveDbo(activity, userId);
+    // `save` sur une cle existante ecrirait owner_id : une activite appartenant
+    // a quelqu'un d'autre changerait de proprietaire au lieu d'etre ignoree.
+    await repo.update({ id, owner_id: owner_id }, fields);
     return activity;
   }
   async deleteActivity(userId: string, activityId: string): Promise<void> {
@@ -75,9 +77,11 @@ export class RepoService implements IRepoService {
     return activity;
   }
 
-  async deleteRecord(recordId: string): Promise<void> {
+  async deleteRecord(userId: string, recordId: string): Promise<void> {
     const repo = this.dataSource.getRepository(RecordDBO);
-    await repo.delete({ id: recordId });
+    // Le filtre sur l'utilisateur appartient au repo : le faire reposer sur
+    // l'ordre des appels du service rendrait n'importe quel record supprimable.
+    await repo.delete({ id: recordId, userId: userId });
   }
   async getRecordById(
     userId: string,

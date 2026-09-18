@@ -23,5 +23,5 @@ export interface IRepoService {
     recordId: string,
   ): Promise<ActivityRecord | null>;
   saveRecord(record: ActivityRecord, userId: string): Promise<ActivityRecord>;
-  deleteRecord(recordId: string): Promise<void>;
+  deleteRecord(userId: string, recordId: string): Promise<void>;
 }
