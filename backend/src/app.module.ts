@@ -1,5 +1,6 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_FILTER } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -9,6 +10,7 @@ import { ActivityDBO } from './entities/activity.entity';
 import { RecordDBO } from './entities/record.entity';
 import { RepoService } from './repo/repo.service';
 import { AppLoggerMiddleware } from './utils/logger.middleware';
+import { DomainExceptionFilter } from './utils/domain-exception.filter';
 import { HealthController } from './health.controller';
 
 const REQUIRED_ENV = [
@@ -61,6 +63,10 @@ const validateEnv = (env: Record<string, unknown>): Record<string, unknown> => {
   ],
   controllers: [AppController, HealthController],
   providers: [
+    {
+      provide: APP_FILTER,
+      useClass: DomainExceptionFilter,
+    },
     {
       provide: REPO_SERVICE,
       useClass: RepoService,
