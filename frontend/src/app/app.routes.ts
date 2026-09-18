@@ -1,20 +1,25 @@
 import { Routes } from '@angular/router';
 import { AuthGuard } from '@auth0/auth0-angular';
 import { Home } from './home/home';
-import { PickerService } from './picker.service';
-import { StatisticsPage } from './statistics-page/statistics-page';
 
 export const routes: Routes = [
   {
     path: '',
     component: Home,
+    title: 'Lifetrack',
     canActivate: [AuthGuard],
-    providers: [PickerService],
   },
   {
+    // Chargee a la demande : elle embarque chart.js, inutile a qui n'ouvre
+    // jamais les statistiques.
     path: 'stats',
-    component: StatisticsPage,
+    loadComponent: () =>
+      import('./statistics-page/statistics-page').then((m) => m.StatisticsPage),
+    title: 'Statistics · Lifetrack',
     canActivate: [AuthGuard],
-    providers: [],
+  },
+  {
+    path: '**',
+    redirectTo: '',
   },
 ];

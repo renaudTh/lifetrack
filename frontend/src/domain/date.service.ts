@@ -13,7 +13,6 @@ export class DateService {
   private _selectedDate: WritableSignal<DjsDate>;
   private _currentMonth: WritableSignal<DjsDate>;
 
-  public readonly currentMonthSignal: Signal<DjsDate>;
   public readonly selectedDateSignal: Signal<DjsDate>;
 
   private calendar: Calendar;
@@ -21,7 +20,6 @@ export class DateService {
     this.calendar = new Calendar();
     this._currentMonth = signal<DjsDate>(this.calendar.currentMonth());
     this._selectedDate = signal<DjsDate>(this.calendar.selectedDate());
-    this.currentMonthSignal = computed(() => this._currentMonth());
     this.selectedDateSignal = computed(() => this._selectedDate());
   }
   public nextMonth() {
@@ -34,9 +32,6 @@ export class DateService {
   }
   public readonly currentMonthString: Signal<string> = computed(() =>
     this._currentMonth().format('MMMM YYYY'),
-  );
-  public readonly selectedDateString: Signal<string> = computed(() =>
-    this._selectedDate().format('dddd, MMMM D'),
   );
   public readonly daysOfCurrentMonth: Signal<Day[]> = computed(() => {
     this._currentMonth();

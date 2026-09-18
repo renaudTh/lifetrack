@@ -7,7 +7,6 @@ import { Menu } from './menu/menu';
   selector: 'app-root',
   imports: [RouterOutlet, Menu],
   templateUrl: './app.html',
-  styleUrl: './app.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App {

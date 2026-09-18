@@ -16,7 +16,6 @@ import { ModalComponent } from '../modal-component/modal-component';
   selector: 'app-activity-picker',
   imports: [ModalComponent, ActivityComponent, KeyValuePipe],
   templateUrl: './activity-picker.html',
-  styleUrl: './activity-picker.scss',
 })
 export class ActivityPicker {
   private readonly state = inject(StateService);

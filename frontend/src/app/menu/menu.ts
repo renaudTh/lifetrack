@@ -7,7 +7,6 @@ import { AuthService } from '@auth0/auth0-angular';
   selector: 'app-menu',
   imports: [AsyncPipe, RouterLink, RouterLinkActive],
   templateUrl: './menu.html',
-  styleUrl: './menu.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Menu {

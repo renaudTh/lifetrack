@@ -8,7 +8,6 @@ import { Record } from '../record/record';
   selector: 'app-daily',
   imports: [Record],
   templateUrl: './daily.html',
-  styleUrl: './daily.scss',
 })
 export class Daily {
   private readonly dateService = inject(DateService);

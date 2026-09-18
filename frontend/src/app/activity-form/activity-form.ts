@@ -20,7 +20,6 @@ import { ModalComponent } from '../modal-component/modal-component';
   selector: 'app-activity-form',
   imports: [ModalComponent, ReactiveFormsModule],
   templateUrl: './activity-form.html',
-  styleUrl: './activity-form.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ActivityForm {
