@@ -30,7 +30,7 @@ export class RepoService implements IRepoService {
                         ORDER BY total_count DESC
                         LIMIT $2`;
 
-    // dataSource.query() rend `any` : on narrow au lieu de l'annoter.
+    // dataSource.query() returns `any`: narrow it rather than annotate it.
     const rows: unknown = await this.dataSource.query(query, [userId, count]);
     const topIds = Array.isArray(rows) ? rows.flatMap(activityIdOf) : [];
 
@@ -60,8 +60,8 @@ export class RepoService implements IRepoService {
   async updateActivity(userId: string, activity: Activity): Promise<Activity> {
     const repo = this.dataSource.getRepository(ActivityDBO);
     const { id, owner_id, ...fields } = activityToSaveDbo(activity, userId);
-    // `save` sur une cle existante ecrirait owner_id : une activite appartenant
-    // a quelqu'un d'autre changerait de proprietaire au lieu d'etre ignoree.
+    // `save` on an existing key would write owner_id: an activity belonging to
+    // someone else would change hands instead of being left alone.
     await repo.update({ id, owner_id: owner_id }, fields);
     return activity;
   }
@@ -78,8 +78,8 @@ export class RepoService implements IRepoService {
 
   async deleteRecord(userId: string, recordId: string): Promise<void> {
     const repo = this.dataSource.getRepository(RecordDBO);
-    // Le filtre sur l'utilisateur appartient au repo : le faire reposer sur
-    // l'ordre des appels du service rendrait n'importe quel record supprimable.
+    // Scoping by user belongs in the repository: relying on the order of service
+    // calls would leave every record deletable.
     await repo.delete({ id: recordId, userId: userId });
   }
   async getRecordById(

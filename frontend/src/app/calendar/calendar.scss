@@ -5,8 +5,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  // Les cellules sont des <button> pour etre atteignables au clavier : on
-  // neutralise le rendu natif, pas la semantique.
+  // Cells are <button> so they can be reached with a keyboard: this resets the
+  // native rendering, not the semantics.
   border: none;
   background: none;
   font: inherit;

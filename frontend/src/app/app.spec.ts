@@ -48,7 +48,7 @@ describe('App', () => {
     }).compileComponents();
 
     TestBed.inject(StateService).loadHistory(dayjs(), dayjs());
-    // La chaine .then().catch() doit se derouler avant qu'on regarde le DOM.
+    // The .then().catch() chain must settle before we inspect the DOM.
     await new Promise((resolve) => setTimeout(resolve, 0));
 
     expect(banner()).not.toBeNull();

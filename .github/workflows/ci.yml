@@ -1,8 +1,8 @@
 name: CI Pipeline
 
 on:
-  # Se declenche a chaque push sur une PR ouverte vers main (opened, synchronize,
-  # reopened), et sur main lui-meme pour couvrir les merges.
+  # Fires on every push to an open PR targeting main (opened, synchronize,
+  # reopened), and on main itself to cover merges.
   pull_request:
     branches:
       - main
@@ -13,7 +13,7 @@ on:
 permissions:
   contents: read
 
-# Un push sur une PR annule le run precedent de la meme PR.
+# A new push to a PR cancels the previous run for that PR.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -37,8 +37,8 @@ jobs:
             backend/package-lock.json
             frontend/package-lock.json
 
-      # La lib doit etre installee et construite en premier : backend et frontend
-      # la consomment par `file:` et compilent contre son dist.
+      # The library must be installed and built first: backend and frontend
+      # consume it through `file:` and compile against its dist.
       - name: Install and build the library
         run: |
           cd lifetracklib

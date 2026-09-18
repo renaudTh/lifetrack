@@ -28,8 +28,8 @@ export class Calendar {
 
   protected displayedMonth = this.dateService.currentMonthString;
 
-  /** Les classes sont derivees ici : appelees depuis le template, elles
-   * seraient recalculees a chaque cycle pour chacune des 42 cellules. */
+  /** Classes are derived here: called from the template, they would be
+   * recomputed on every cycle for each of the 42 cells. */
   protected days = computed(() =>
     this.dateService.daysOfCurrentMonth().map((day) => ({
       day,

@@ -10,8 +10,8 @@ export default tseslint.config(
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
-  // Desactive les regles de mise en forme : c'est prettier qui s'en charge,
-  // via lint:check. Pas de double execution.
+  // Turns off formatting rules: prettier owns that, through lint:check.
+  // No double run.
   eslintConfigPrettier,
   {
     languageOptions: {
@@ -28,8 +28,8 @@ export default tseslint.config(
   },
   {
     rules: {
-      // Une promesse non attendue est ce qui a rendu les erreurs invisibles
-      // cote frontend : on ne veut pas du meme angle mort ici.
+      // An unawaited promise is what made failures invisible on the frontend:
+      // we do not want the same blind spot here.
       '@typescript-eslint/no-floating-promises': 'error',
     },
   },

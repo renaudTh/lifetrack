@@ -10,8 +10,8 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
   },
   {
-    // Chargee a la demande : elle embarque chart.js, inutile a qui n'ouvre
-    // jamais les statistiques.
+    // Loaded on demand: it carries chart.js, useless to anyone who never opens
+    // the statistics.
     path: 'stats',
     loadComponent: () =>
       import('./statistics-page/statistics-page').then((m) => m.StatisticsPage),

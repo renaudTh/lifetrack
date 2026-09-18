@@ -12,7 +12,7 @@ const STATUS: Record<DomainErrorKind, HttpStatus> = {
   'record-not-found': HttpStatus.NOT_FOUND,
 };
 
-/** Seul endroit ou une erreur du domaine devient un statut HTTP. */
+/** The only place where a domain error becomes an HTTP status. */
 @Catch(DomainError)
 export class DomainExceptionFilter implements ExceptionFilter<DomainError> {
   catch(exception: DomainError, host: ArgumentsHost): void {

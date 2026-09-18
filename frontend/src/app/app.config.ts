@@ -29,8 +29,8 @@ export const appConfig: ApplicationConfig = {
     provideAuth0({
       domain: environment.auth0.domain,
       clientId: environment.auth0.clientId,
-      // Sans refresh tokens, le renouvellement passe par une iframe silencieuse
-      // que Safari et Firefox bloquent : la session expire sans rien dire.
+      // Without refresh tokens, renewal goes through a silent iframe that Safari
+      // and Firefox block: the session expires without a word.
       useRefreshTokens: true,
       useRefreshTokensFallback: true,
       cacheLocation: 'localstorage',

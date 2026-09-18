@@ -19,7 +19,7 @@ const emptyStats: HistoryStats = {
   stats: [],
 };
 
-/** Frontiere HTTP : la seule chose qu'on double, le reste est le vrai service. */
+/** HTTP boundary: the only thing we stub, everything else is the real service. */
 export const apiStub: ILifetrackApi = {
   getHistory: (): Promise<ActivityRecord[]> => Promise.resolve([]),
   getActivities: (): Promise<Activity[]> => Promise.resolve([]),

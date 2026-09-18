@@ -1,35 +1,34 @@
 # lifetrack
 
-Suivi d'activités du quotidien : on déclare des activités (« courir », « boire un
-café »), on les enregistre jour par jour depuis un calendrier, et on consulte des
-statistiques par période.
+Daily activity tracker. You declare activities ("run", "drink coffee"), record them
+day by day from a calendar, and review statistics over a period.
 
-## Structure
+## Layout
 
-Trois paquets npm indépendants, sans workspace : chacun a son `package.json` et son
+Three independent npm packages, no workspace: each has its own `package.json` and
 `package-lock.json`.
 
-| Paquet          | Rôle                                                                  | Stack                                                     |
-| --------------- | --------------------------------------------------------------------- | --------------------------------------------------------- |
-| `lifetracklib/` | Logique métier partagée : calendrier, moteur de statistiques, modèles | TypeScript, vitest                                        |
-| `backend/`      | API REST                                                              | NestJS 11, Fastify, TypeORM, PostgreSQL 17, Auth0         |
-| `frontend/`     | Application web                                                       | Angular 20 (standalone, zoneless), Bulma, chart.js, Auth0 |
+| Package         | Role                                                     | Stack                                                     |
+| --------------- | -------------------------------------------------------- | --------------------------------------------------------- |
+| `lifetracklib/` | Shared domain logic: calendar, statistics engine, models | TypeScript, vitest                                        |
+| `backend/`      | REST API                                                 | NestJS 11, Fastify, TypeORM, PostgreSQL 17, Auth0         |
+| `frontend/`     | Web application                                          | Angular 20 (standalone, zoneless), Bulma, chart.js, Auth0 |
 
-**`lifetracklib` doit être construite en premier.** Les deux applications la consomment
-par `file:../lifetracklib` et compilent contre son `dist/` : sans `npm run build` dans la
-lib, leur build échoue.
+**`lifetracklib` must be built first.** Both applications consume it through
+`file:../lifetracklib` and compile against its `dist/`: without `npm run build` in the
+library, their own build fails.
 
-Corollaire à connaître : ni `nest start --watch` ni `ng serve` ne surveillent
-`node_modules/@lifetrack/lib`. Après avoir modifié la lib, il faut la reconstruire **et**
-redémarrer le serveur de dev concerné.
+A consequence worth knowing: neither `nest start --watch` nor `ng serve` watches
+`node_modules/@lifetrack/lib`. After changing the library, rebuild it **and** restart the
+dev server that consumes it.
 
-## Démarrer
+## Getting started
 
-Le plus simple est le devcontainer (`.devcontainer/`), qui fournit Node, PostgreSQL et
-pgAdmin. `postCreateCommand` lance `scripts/init_devcontainer.sh`, qui installe les trois
-paquets et construit la lib.
+The devcontainer (`.devcontainer/`) is the shortest path: it provides Node, PostgreSQL
+and pgAdmin. Its `postCreateCommand` runs `scripts/init_devcontainer.sh`, which installs
+the three packages and builds the library.
 
-Sans devcontainer :
+Without the devcontainer:
 
 ```bash
 cd lifetracklib && npm ci && npm run build
@@ -37,69 +36,70 @@ cd ../backend    && npm ci
 cd ../frontend   && npm ci
 ```
 
-Il faut aussi une base PostgreSQL joignable et un `backend/.env.local` (voir plus bas).
+You also need a reachable PostgreSQL instance and a `backend/.env.local` (see below).
 
 ```bash
-cd backend  && npm run start:dev   # API sur :5556
-cd frontend && npm run start:dev   # app sur :4200
+cd backend  && npm run start:dev   # API on :5556
+cd frontend && npm run start:dev   # app on :4200
 ```
 
-`scripts/launch_tmux_session.sh` lance les deux dans une session tmux.
+`scripts/launch_tmux_session.sh` starts both in a tmux session.
 
-## Variables d'environnement
+## Environment variables
 
-Deux fichiers distincts, pour deux usages :
+Two separate files, for two purposes:
 
-| Fichier              | Lu par                                           | Modèle                 |
-| -------------------- | ------------------------------------------------ | ---------------------- |
-| `backend/.env.local` | `npm run start:dev` et les scripts `migration:*` | `backend/.env.example` |
-| `.env` (racine)      | `docker compose` en selfhosting                  | `.env.example`         |
+| File                 | Read by                                           | Template               |
+| -------------------- | ------------------------------------------------- | ---------------------- |
+| `backend/.env.local` | `npm run start:dev` and the `migration:*` scripts | `backend/.env.example` |
+| `.env` (root)        | `docker compose` when self-hosting                | `.env.example`         |
 
-`AUTH0_TENANT` **doit finir par un `/`** : le code concatène
-`${AUTH0_TENANT}.well-known/jwks.json` et réutilise la valeur comme `issuer`. Sans le
-slash, toutes les requêtes authentifiées répondent 401 sans message explicite.
+`AUTH0_TENANT` **must end with a `/`**: the code concatenates
+`${AUTH0_TENANT}.well-known/jwks.json` and reuses the value as the issuer. Without the
+slash, every authenticated request answers 401 with no useful message.
 
-## Base de données
+## Database
 
-Le schéma est géré par migrations TypeORM, jouées au démarrage de l'API
-(`migrationsRun`). `synchronize` est désactivé : une modification d'entité demande une
-migration.
+The schema is owned by TypeORM migrations, run when the API starts (`migrationsRun`).
+`synchronize` is off: changing an entity means writing a migration.
 
 ```bash
 cd backend
-npm run migration:generate src/migrations/MaMigration
+npm run migration:generate src/migrations/MyMigration
 npm run migration:show
 ```
 
-Un `migration:generate` sur un schéma à jour doit répondre « No changes in database
-schema were found » : c'est le signal que les entités et les migrations sont alignées.
+Running `migration:generate` against an up-to-date schema must report "No changes in
+database schema were found". That is the signal that entities and migrations agree.
 
 ## Tests
 
 ```bash
 cd lifetracklib && npm test -- --run     # vitest
 cd backend      && npm test              # jest
-cd frontend     && npm test              # karma, nécessite Chrome
+cd frontend     && npm test              # karma, requires Chrome
 ```
 
-La CI (`.github/workflows/ci.yml`) lance les trois suites, le contrôle de formatage des
-trois paquets et ESLint sur le backend, à chaque push sur une PR ouverte vers `main` et
-sur `main`.
+The pipeline (`.github/workflows/ci.yml`) runs the three suites, the format check on all
+three packages and ESLint on the backend, on every push to an open pull request against
+`main` and on `main` itself.
 
-## Selfhosting
+## Self-hosting
 
-`docker-compose.yaml` à la racine construit les images et démarre front, API et base. Il
-attend un `.env` (voir `.env.example`) et ne publie que `127.0.0.1:8080` et
-`127.0.0.1:5556` : le TLS et le routage `/api` sont assurés par un reverse proxy externe,
-qui doit retirer le préfixe `/api` — l'API expose ses routes à la racine.
+The root `docker-compose.yaml` builds the images and starts the frontend, the API and the
+database. It expects a `.env` (see `.env.example`) and publishes only
+`127.0.0.1:8080` and `127.0.0.1:5556`: TLS and `/api` routing belong to an external
+reverse proxy, which must strip the `/api` prefix — the API serves its routes at the
+root.
 
 ```bash
-cp .env.example .env   # puis remplir
+cp .env.example .env   # then fill it in
 docker compose up -d --build
 ```
 
 ## Conventions
 
-- Commits au format [Conventional Commits](https://www.conventionalcommits.org).
-- TypeScript `strict` sur les trois paquets, une seule version (5.9.x).
-- Formatage par prettier, configuration unique à la racine (`.prettierrc`).
+- Commits follow [Conventional Commits](https://www.conventionalcommits.org).
+- TypeScript `strict` across the three packages, on a single version (5.9.x).
+- Formatting by prettier, one configuration at the root (`.prettierrc`).
+- Code and comments are written in English.

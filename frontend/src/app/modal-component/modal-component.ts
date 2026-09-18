@@ -30,7 +30,7 @@ export class ModalComponent {
     if (this.visible()) this.close();
   }
 
-  /** Piege le focus : sans lui, la tabulation part derriere la modale. */
+  /** Traps focus: without it, tabbing walks out behind the dialog. */
   @HostListener('document:keydown.tab', ['$event'])
   onTab(event: Event): void {
     if (!this.visible() || !(event instanceof KeyboardEvent)) return;

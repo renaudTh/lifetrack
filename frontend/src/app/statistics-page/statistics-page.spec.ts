@@ -31,8 +31,8 @@ describe('StatisticsPage', () => {
     await TestBed.configureTestingModule({
       imports: [StatisticsPage],
       providers: [
-        // Le reste de la suite frontend echoue en NG0908 faute de ce provider :
-        // l'app est passee en zoneless sans que la config de test suive.
+        // The rest of the frontend suite fails with NG0908 without this provider:
+        // the app went zoneless without the test configuration following.
         provideZonelessChangeDetection(),
         {
           provide: StateService,

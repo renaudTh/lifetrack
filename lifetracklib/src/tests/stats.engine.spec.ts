@@ -34,8 +34,8 @@ describe('generateSampleKeys', () => {
       dayjs('2025-02-01'),
       'week',
     );
-    // Une semaine est identifiee par le jour qui la commence : pas de collision
-    // d'une annee sur l'autre, et aucun plugin dayjs requis.
+    // A week is identified by the day it starts on: no collision across years,
+    // and no dayjs plugin required.
     expect(keys).toEqual(
       new Set([
         '2024-12-29',

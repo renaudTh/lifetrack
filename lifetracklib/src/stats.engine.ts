@@ -9,8 +9,8 @@ export function getSampleKey(date: DjsDate, sampling: DateSampling): string {
     case 'day':
       return date.format('YYYY-MM-DD');
     case 'week':
-      // Uniquement du dayjs "core" : un plugin etendu ici porterait sur la copie
-      // de dayjs de la lib, pas sur celle qui a cree les dates de l'appelant.
+      // Core dayjs only: a plugin extended here would apply to the library's own
+      // copy of dayjs, not to the one that built the caller's dates.
       return date.startOf('week').format('YYYY-MM-DD');
     case 'month':
       return date.format('YYYY-MM');
@@ -26,7 +26,7 @@ export function generateSampleKeys(
 ): Set<string> {
   const res = new Set<string>();
   let date = start.clone();
-  // Sans ce garde, un sampling inconnu n'avance pas la date et boucle a l'infini.
+  // Without this guard an unknown sampling never advances the date and loops.
   if (!SAMPLINGS.includes(sampling)) {
     throw new Error(`Unknown sampling: ${String(sampling)}`);
   }
@@ -72,7 +72,7 @@ export class StatsEngine {
         const series = new Array<number>(buckets.length).fill(0);
         records.forEach((record) => {
           const index = bucketIndexes.get(getSampleKey(record.date, sampling));
-          // Un record hors de [start, end] n'appartient a aucun bucket.
+          // A record outside [start, end] belongs to no bucket.
           if (index === undefined) return;
           series[index] += record.number * activity.amount;
         });

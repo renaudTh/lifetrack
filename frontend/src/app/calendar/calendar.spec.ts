@@ -33,8 +33,8 @@ describe('Calendar', () => {
     TestBed.inject(DateService).selectDate(dayjs().date(15));
     fixture.detectChanges();
 
-    // Si le track change d'identite a chaque rendu, Angular recree les 42
-    // boutons : le calendrier clignote et le focus est perdu.
+    // If the track identity changes on every render, Angular recreates all 42
+    // buttons: the calendar flashes and focus is lost.
     expect(cells()[10]).toBe(before);
   });
 

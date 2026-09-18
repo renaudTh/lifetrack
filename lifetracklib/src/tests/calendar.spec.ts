@@ -71,25 +71,25 @@ describe('Calendar', () => {
 
   describe('daysOfMonths', () => {
     it('should generate the correct number of days including days outside the current month', () => {
-      const customMonth = dayjs('2024-02-01'); // Février 2024 commence un jeudi
+      const customMonth = dayjs('2024-02-01'); // February 2024 starts on a Thursday
       const calendar = new Calendar(customMonth);
 
       const days = calendar.daysOfMonths();
 
-      // Vérifier le nombre total de jours (42 : 6 semaines complètes pour une vue de calendrier standard)
+      // Five whole weeks: February 2024 fits in 35 cells
       expect(days.length).toBe(35);
 
-      // Vérifier que les jours avant le mois sont inclus
+      // Days before the month are included
       const daysBefore = days.filter(
         (day) => !day.inCurrentMonth && day.date.isBefore(customMonth, 'month'),
       );
-      expect(daysBefore.length).toBe(4); // Janvier 2024 : Dimanche à Mercredi avant Février
+      expect(daysBefore.length).toBe(4); // January 2024: Sunday to Wednesday
 
-      // Vérifier que les jours du mois sont correctement marqués
+      // Days of the month are flagged as such
       const daysInMonth = days.filter((day) => day.inCurrentMonth);
-      expect(daysInMonth.length).toBe(29); // Février 2024 (année bissextile)
+      expect(daysInMonth.length).toBe(29); // February 2024 is a leap year
 
-      // Vérifier que les jours après le mois sont inclus
+      // Days after the month are included
       const daysAfter = days.filter(
         (day) => !day.inCurrentMonth && day.date.isAfter(customMonth, 'month'),
       );
@@ -126,7 +126,7 @@ describe('Calendar', () => {
     });
 
     it('spans six weeks when the month needs them', () => {
-      // Mars 2025 commence un samedi et compte 31 jours : 6 lignes.
+      // March 2025 starts on a Saturday and has 31 days: six rows.
       const days = new Calendar(dayjs('2025-03-01')).daysOfMonths();
 
       expect(days.length).toBe(42);

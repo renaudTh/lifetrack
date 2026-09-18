@@ -4,8 +4,8 @@ import { Day, DjsDate } from './models/date.model';
 const SUNDAY = 0;
 
 function assertValid(date: DjsDate, what: string): DjsDate {
-  // `dayjs('n importe quoi').day()` vaut NaN, et NaN !== SUNDAY est toujours
-  // vrai : une date invalide ferait tourner les boucles de grille sans fin.
+  // `dayjs('nonsense').day()` is NaN, and NaN !== SUNDAY is always true: an
+  // invalid date would spin the grid loops forever.
   if (!date.isValid()) {
     throw new Error(`${what} is not a valid date`);
   }
@@ -41,7 +41,7 @@ export class Calendar {
     this.selected = assertValid(date, 'selectedDate');
   }
 
-  /** La grille couvre des semaines entieres : 28 a 42 jours selon le mois. */
+  /** The grid spans whole weeks: 28 to 42 days depending on the month. */
   public daysOfMonths(): Day[] {
     const today = dayjs();
     const toDay = (date: DjsDate, inCurrentMonth: boolean): Day => ({

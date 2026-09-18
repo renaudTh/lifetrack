@@ -19,13 +19,13 @@ export type StatsSlice =
 
 export interface LifetrackState {
   loading: boolean;
-  /** Derniere action ayant echoue, affichee par le shell. */
+  /** Last failed action, displayed by the shell. */
   error: string | null;
   records: Record<string, ActivityRecord>;
   activities: Record<string, Activity>;
   top: Record<string, Activity>;
-  // Tranche distincte de `records` : celui-ci est reecrit par la navigation du
-  // calendrier, ce qui tronquerait silencieusement la plage des statistiques.
+  // Kept apart from `records`, which calendar navigation rewrites: sharing it
+  // would silently truncate the statistics range.
   stats: StatsSlice;
 }
 
@@ -69,7 +69,7 @@ export class StateService {
     this.store.set({ ...this.store(), error: null });
   }
 
-  /** Sans ce report, une ecriture qui echoue reste totalement invisible. */
+  /** Without this report, a failed write stays entirely invisible. */
   private fail(action: string) {
     return (error: unknown): false => {
       this.store.set({

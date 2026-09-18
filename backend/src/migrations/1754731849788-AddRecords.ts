@@ -4,8 +4,8 @@ export class AddRecords1754731849788 implements MigrationInterface {
   name = 'AddRecords1754731849788';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // Ajout en nullable puis backfill : un ADD ... NOT NULL sans DEFAULT echoue
-    // des que la table contient deja des lignes.
+    // Added as nullable then backfilled: ADD ... NOT NULL without a DEFAULT
+    // fails as soon as the table holds rows.
     await queryRunner.query(`ALTER TABLE "Records" ADD "userId" text`);
     await queryRunner.query(
       `UPDATE "Records" SET "userId" = "Activities"."owner_id"
@@ -13,7 +13,7 @@ export class AddRecords1754731849788 implements MigrationInterface {
         WHERE "Records"."activityId" = "Activities"."id"
           AND "Records"."userId" IS NULL`,
     );
-    // Un record sans activite rattachee n'a pas de proprietaire identifiable.
+    // A record with no linked activity has no identifiable owner.
     await queryRunner.query(`DELETE FROM "Records" WHERE "userId" IS NULL`);
     await queryRunner.query(
       `ALTER TABLE "Records" ALTER COLUMN "userId" SET NOT NULL`,

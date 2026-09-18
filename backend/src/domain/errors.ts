@@ -1,6 +1,6 @@
 /**
- * Erreurs du domaine. Elles ne connaissent pas HTTP : la traduction en statut
- * est faite par DomainExceptionFilter.
+ * Domain errors. They know nothing about HTTP: DomainExceptionFilter maps them
+ * to status codes.
  */
 export type DomainErrorKind = 'activity-not-found' | 'record-not-found';
 

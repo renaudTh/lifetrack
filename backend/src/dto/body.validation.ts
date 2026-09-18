@@ -68,8 +68,8 @@ export function parseActivityDto(body: unknown): ActivityDto {
 
 export function parseActivityUpdateDto(body: unknown): ActivityUpdateDto {
   const raw = asRecord(body, 'activity');
-  // Sans cet identifiant, TypeORM ignore le `where` et renvoie une activite
-  // arbitraire, que l'appelant ecrase ensuite.
+  // Without this id TypeORM drops the `where` clause and returns an arbitrary
+  // activity, which the caller then overwrites.
   const id = parseUuidParam(
     requireString(raw['id'], 'id', 'activity'),
     'activity.id',

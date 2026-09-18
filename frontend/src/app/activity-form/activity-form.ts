@@ -64,8 +64,8 @@ export class ActivityForm {
     const form = this.activityForm();
     const a = this.activity();
     if (a === null) return;
-    // On ne ferme qu'une fois l'ecriture confirmee : sinon un echec passe pour
-    // une reussite et la saisie est perdue.
+    // Only close once the write is confirmed: otherwise a failure looks like a
+    // success and the input is lost.
     if (!(await this.state.deleteActivity(a))) return;
     this.visible.set(false);
     form.reset();
@@ -84,7 +84,7 @@ export class ActivityForm {
     const saved = await (this.activity() === null
       ? this.addActivity(dto)
       : this.updateActivity(dto));
-    // La modale reste ouverte si l'ecriture a echoue : la saisie est conservee.
+    // The dialog stays open when the write fails, so the input is kept.
     if (!saved) return;
     this.visible.set(false);
     form.reset();

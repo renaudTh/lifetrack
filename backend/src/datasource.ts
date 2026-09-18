@@ -1,8 +1,8 @@
 import { DataSource } from 'typeorm';
 
-// DataSource du CLI TypeORM uniquement (migration:generate / migration:show).
-// L'application, elle, passe par ConfigService dans app.module.ts.
-// A lancer avec `node --env-file=.env.local`.
+// DataSource for the TypeORM CLI only (migration:generate / migration:show).
+// The application itself goes through ConfigService in app.module.ts.
+// Run it with `node --env-file=.env.local`.
 export const LIFETRACK_DATASOURCE = new DataSource({
   type: 'postgres',
   host: process.env.DB_HOST,

@@ -23,7 +23,7 @@ export function parseDateParam(
 
 export function parseSamplingParam(value: string | undefined): DateSampling {
   const sampling = SAMPLINGS.find((candidate) => candidate === value);
-  // Sans ce garde, une valeur inconnue fait boucler generateSampleKeys indefiniment.
+  // Without this guard an unknown value makes generateSampleKeys loop forever.
   if (value !== undefined && sampling === undefined) {
     throw new BadRequestException(
       `Invalid sampling "${value}", expected one of ${SAMPLINGS.join(', ')}`,
