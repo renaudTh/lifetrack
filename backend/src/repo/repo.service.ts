@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { Activity, ActivityRecord, DjsDate } from '@lifetrack/lib';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { RecordDBO } from 'src/entities/record.entity';

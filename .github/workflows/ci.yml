@@ -57,6 +57,9 @@ jobs:
           cd ../backend && npm run lint:check
           cd ../frontend && npm run lint:check
 
+      - name: Lint the backend
+        run: cd backend && npm run lint:code
+
       - name: Build the backend
         run: cd backend && npm run build
 

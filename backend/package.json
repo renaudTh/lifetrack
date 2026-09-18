@@ -13,6 +13,7 @@
     "start:prod": "node dist/main",
     "lint": "prettier . --write --config ../.prettierrc",
     "lint:check": "prettier . --check --config ../.prettierrc",
+    "lint:code": "eslint src",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
