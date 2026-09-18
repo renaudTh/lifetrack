@@ -46,7 +46,4 @@ export class Calendar {
   selectDay(day: DjsDate) {
     this.dateService.selectedDate = day;
   }
-  get canNext(): boolean {
-    return true;
-  }
 }
