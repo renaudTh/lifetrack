@@ -34,7 +34,6 @@
     "@lifetrack/lib": "file:../lifetracklib",
     "chart.js": "^4.5.1",
     "dayjs": "^1.11.13",
-    "dotenv": "^17.2.1",
     "primeicons": "^7.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
@@ -51,6 +50,6 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
     "prettier": "^3.7.4",
-    "typescript": "~5.8.2"
+    "typescript": "~5.9.3"
   }
 }
