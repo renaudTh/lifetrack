@@ -61,16 +61,18 @@ export class ActivityForm {
   close() {
     this.visible.set(false);
   }
-  delete() {
+  async delete(): Promise<void> {
     const form = this.activityForm();
     const a = this.activity();
     if (a === null) return;
-    this.state.deleteActivity(a);
+    // On ne ferme qu'une fois l'ecriture confirmee : sinon un echec passe pour
+    // une reussite et la saisie est perdue.
+    if (!(await this.state.deleteActivity(a))) return;
     this.visible.set(false);
     form.reset();
   }
 
-  addOrUpdate() {
+  async addOrUpdate(): Promise<void> {
     const form = this.activityForm();
     if (form.invalid) return;
     const value = form.value;
@@ -80,23 +82,23 @@ export class ActivityForm {
       representation: value.representation!,
       unit: value.unit!,
     };
-    if (this.activity() === null) {
-      this.addActivity(dto);
-    } else {
-      this.updateActivity(dto);
-    }
+    const saved = await (this.activity() === null
+      ? this.addActivity(dto)
+      : this.updateActivity(dto));
+    // La modale reste ouverte si l'ecriture a echoue : la saisie est conservee.
+    if (!saved) return;
     this.visible.set(false);
     form.reset();
   }
-  private updateActivity(dto: ActivityDto) {
+  private updateActivity(dto: ActivityDto): Promise<boolean> {
     const a = this.activity();
     const activity: Activity = {
       ...dto,
       id: a!.id,
     };
-    this.state.updateActivity(activity);
+    return this.state.updateActivity(activity);
   }
-  private addActivity(dto: ActivityDto) {
-    this.state.addActivity(dto);
+  private addActivity(dto: ActivityDto): Promise<boolean> {
+    return this.state.addActivity(dto);
   }
 }
